@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Security check: Must have both parameters
     if (!bizSlug || !adminKey) {
-        nameEl.textContent = "Access Denied";
-        statusEl.textContent = "Missing secure admin link.";
-        gridEl.innerHTML = '<div class="empty-state">Please use the exact secure link provided to you.</div>';
+        nameEl.textContent = "Oops!";
+        statusEl.textContent = "Dashboard link is incomplete.";
+        gridEl.innerHTML = '<div class="empty-state">Please use the exact link provided to you.</div>';
         return;
     }
 
@@ -30,15 +30,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ p_slug: bizSlug, p_key: adminKey })
         });
 
-        if (!response.ok) throw new Error("Database connection failed");
+        if (!response.ok) throw new Error("Connection failed");
 
         const data = await response.json();
 
         // 3. If Supabase rejects the key, it returns null
         if (!data) {
             nameEl.textContent = "Access Denied";
-            statusEl.textContent = "Invalid key or business.";
-            gridEl.innerHTML = '<div class="empty-state">We could not verify your admin key.</div>';
+            statusEl.textContent = "Dashboard not found.";
+            gridEl.innerHTML = '<div class="empty-state">We could not verify this dashboard. Please check your link.</div>';
             return;
         }
 
