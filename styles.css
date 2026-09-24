@@ -20,14 +20,17 @@ html, body {
   background: var(--bg-gradient);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; /* Center vertically on PC */
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; /* Locks it to the top so it doesn't bounce */
 }
 
-body { padding: 40px 16px; }
+body { padding: 6vh 16px 40px 16px; }
 
 /* The "Mobile Phone" floating card look */
 .container-public, .container-owner {
   width: 100%;
+  min-height: 550px; /* Forces a tall mobile app shape */
+  display: flex;
+  flex-direction: column;
   background-color: var(--surface);
   border-radius: 32px; /* Very round, like an modern iPhone */
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15); /* Deep, soft shadow */
