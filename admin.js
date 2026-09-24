@@ -70,11 +70,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             dates.push(d);
         }
 
-        // Generate standard business hours (8 AM to 5 PM)
-        const standardTimes = [
-            '08:00', '09:00', '10:00', '11:00', '12:00', 
-            '13:00', '14:00', '15:00', '16:00', '17:00'
-        ];
+        // Generate business hours based on URL parameters (or default to 8 AM - 5 PM)
+        let startHour = parseInt(urlParams.get('start')) || 8;
+        let endHour = parseInt(urlParams.get('end')) || 17;
+        
+        const standardTimes = [];
+        for (let i = startHour; i <= endHour; i++) {
+            standardTimes.push(i.toString().padStart(2, '0') + ':00');
+        }
 
         // 5. Draw Day Tabs
         tabsEl.innerHTML = '';
