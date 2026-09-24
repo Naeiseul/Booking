@@ -1,0 +1,88 @@
+:root {
+  /* Elegant Spa/Salon Theme */
+  --bg-gradient: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+  --surface: #FFFFFF;
+  --text: #1E293B;
+  --muted: #64748B;
+  
+  /* Brand Color (Deep Teal - very popular in high-end salon apps) */
+  --brand: #0F766E; 
+  --brand-light: #CCFBF1;
+  
+  --taken: #94A3B8;
+  --taken-bg: #F1F5F9;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; min-height: 100vh;
+  background: var(--bg-gradient);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; /* Center vertically on PC */
+}
+
+body { padding: 40px 16px; }
+
+/* The "Mobile Phone" floating card look */
+.container-public, .container-owner {
+  width: 100%;
+  background-color: var(--surface);
+  border-radius: 32px; /* Very round, like an modern iPhone */
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15); /* Deep, soft shadow */
+  padding: 40px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+.container-public { max-width: 420px; } /* Typical mobile width */
+.container-owner { max-width: 520px; }
+
+header { text-align: center; margin-bottom: 32px; }
+h1 {
+  color: var(--text); font-weight: 700; font-size: 24px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.muted-text { color: var(--muted); font-size: 14px; font-weight: 500; }
+
+/* Day Tabs - Soft floating pills */
+.day-tab-list {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 24px;
+}
+.day-tab-list::-webkit-scrollbar { display: none; }
+
+.day-tab {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 64px; min-width: 56px; padding: 12px;
+  background-color: var(--taken-bg); color: var(--muted);
+  border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+.day-tab.active {
+  background-color: var(--brand); color: #FFFFFF;
+  box-shadow: 0 8px 16px -4px rgba(15, 118, 110, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Time Chips - Soft filled shapes, no harsh borders */
+.time-chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-bottom: 24px; }
+
+.time-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 12px;
+  font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
+  border: none; transition: all 0.2s ease;
+}
+
+.time-chip.open { background-color: var(--brand-light); color: var(--brand); }
+.time-chip.open:active { transform: scale(0.95); }
+
+.time-chip.taken { background-color: var(--taken-bg); color: var(--taken); text-decoration: line-through; cursor: not-allowed; }
+.container-owner .time-chip.taken { cursor: pointer; }
+.container-owner .time-chip.taken:active { transform: scale(0.95); }
+
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 140px; padding: 24px; text-align: center;
+  background-color: var(--taken-bg); border-radius: 20px; color: var(--muted); font-size: 14px; font-weight: 500;
+}
