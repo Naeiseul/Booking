@@ -70,6 +70,10 @@ h1 {
 /* Time Chips - Soft filled shapes, no harsh borders */
 .time-chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-bottom: 24px; }
 
+/* Make Admin grid denser to fit all 14 hours without making the card too long */
+.container-owner .time-chip-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+.container-owner .time-chip { padding: 8px 4px; font-size: 13px; min-height: 40px; }
+
 .time-chip {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 44px; padding: 8px; border-radius: 12px;
