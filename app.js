@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } else {
                     // Create a sleek, cute toast bubble instead of an aggressive alert
                     const toast = document.createElement('div');
-                    toast.innerHTML = "✨ Please reply in WhatsApp to claim your slot!";
+                    toast.innerHTML = "✨ Please reply on WhatsApp to secure your slot!";
                     toast.style.cssText = `
                         position: fixed; bottom: calc(48px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
                         background-color: #1E293B; color: #FFF; padding: 14px 24px; border-radius: 100px;
