@@ -2,7 +2,7 @@ $gitPath = (Get-ChildItem -Path "$env:LOCALAPPDATA\GitHubDesktop\app-*\resources
 if (-not $gitPath) { $gitPath = "C:\Program Files\Git\cmd\git.exe" }
 if (Test-Path $gitPath) {
     & $gitPath add .
-    & $gitPath commit -m "Fix: Sanitized admin UI to remove all technical jargon and key mentions"
+    & $gitPath commit -m "Fix: Resolved browser DOM parsing bug causing skeletons to detach and pulse infinitely"
     Write-Host "Success"
 } else {
     Write-Host "Could not find git"
