@@ -139,6 +139,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     chip.className = `time-chip ${newStatus === 'taken' ? 'taken' : 'open'}`;
                     isTaken = !isTaken;
                     
+                    // Update local memory so it doesn't revert if they switch tabs
+                    if (!slotMap[dateString]) slotMap[dateString] = {};
+                    if (!slotMap[dateString][time]) slotMap[dateString][time] = {};
+                    slotMap[dateString][time].status = newStatus;
+                    
                     // Save to Supabase using Claude's set_slot door
                     try {
                         const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/set_slot`, {
