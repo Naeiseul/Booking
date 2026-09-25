@@ -144,6 +144,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (!slotMap[dateString][time]) slotMap[dateString][time] = {};
                     slotMap[dateString][time].status = newStatus;
                     
+                    // Instantly bump the "Last updated" text on screen
+                    const now = new Date();
+                    updateEl.textContent = `Last updated: ${now.toLocaleString()}`;
+                    
                     // Save to Supabase using Claude's set_slot door
                     try {
                         const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/set_slot`, {
