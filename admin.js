@@ -1,8 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Get both the slug and secret key from the URL
+    // 1. Get both the slug and secret key from the URL query OR clean path
     const urlParams = new URLSearchParams(window.location.search);
-    const bizSlug = urlParams.get('biz');
-    const adminKey = urlParams.get('key');
+    let bizSlug = urlParams.get('biz');
+    let adminKey = urlParams.get('key');
+    if (!bizSlug || !adminKey) {
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        // Clean URL expected format: /admin/slug-name/secret123
+        if (pathParts.length >= 3 && pathParts[0] === 'admin') {
+            bizSlug = pathParts[1];
+            adminKey = pathParts[2];
+        }
+    }
 
     const nameEl = document.getElementById('biz-title-text');
     const statusEl = document.getElementById('business-status');

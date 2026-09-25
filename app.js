@@ -1,7 +1,11 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Get the business slug from the URL (e.g., ?biz=balon-salon)
+    // 1. Get the business slug from the URL query OR clean path
     const urlParams = new URLSearchParams(window.location.search);
-    const bizSlug = urlParams.get('biz');
+    let bizSlug = urlParams.get('biz');
+    if (!bizSlug) {
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        if (pathParts.length > 0) bizSlug = pathParts[0];
+    }
 
     // UI Elements
     const nameEl = document.getElementById('biz-title-text');

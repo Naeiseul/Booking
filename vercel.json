@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/admin/:biz/:key", "destination": "/admin.html" },
+    { "source": "/:biz", "destination": "/index.html" }
+  ]
+}
