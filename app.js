@@ -48,6 +48,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         // 4. Update the UI with the business data
         nameEl.textContent = data.name || "Booking Calendar";
         statusEl.textContent = ""; // Removed unnecessary subtitle!
+        
+        // Logo injection
+        if (data.logo_url) {
+            const imgEl = document.getElementById('biz-avatar-img');
+            const svgEl = document.getElementById('biz-avatar-svg');
+            if (imgEl && svgEl) {
+                imgEl.src = data.logo_url;
+                imgEl.style.display = 'block';
+                svgEl.style.display = 'none';
+            }
+        }
 
         const slots = data.slots || [];
         

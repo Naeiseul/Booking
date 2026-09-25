@@ -54,6 +54,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         nameEl.textContent = `${data.name} (Admin)`;
         statusEl.textContent = "Tap a slot to toggle its availability";
         
+        // Logo injection
+        if (data.logo_url) {
+            const imgEl = document.getElementById('biz-avatar-img');
+            const svgEl = document.getElementById('biz-avatar-svg');
+            if (imgEl && svgEl) {
+                imgEl.src = data.logo_url;
+                imgEl.style.display = 'block';
+                svgEl.style.display = 'none';
+            }
+        }
+        
         if (data.last_updated_at) {
             const updatedTime = new Date(data.last_updated_at).toLocaleString();
             updateEl.textContent = `Last updated: ${updatedTime}`;

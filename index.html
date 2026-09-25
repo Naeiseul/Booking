@@ -11,8 +11,9 @@
     <div class="container-public">
         <header style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 32px;">
             <!-- Avatar Bubble -->
-            <div style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-light), #E0F2FE); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <div id="biz-avatar-container" style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-light), #E0F2FE); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25); overflow: hidden;">
+                <svg id="biz-avatar-svg" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <img id="biz-avatar-img" src="" alt="Business Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
             </div>
             
             <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
