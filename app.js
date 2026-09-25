@@ -131,7 +131,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (waBtn) {
             waBtn.addEventListener('click', () => {
                 if (data.whatsapp_number) {
-                    window.location.href = `https://wa.me/${data.whatsapp_number.replace(/[^0-9]/g, '')}`;
+                    const cleanNumber = data.whatsapp_number.replace(/[^0-9]/g, '');
+                    const message = `Hi! I just saw your available times on your booking calendar. I'd like to book an appointment.`;
+                    window.location.href = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
                 } else {
                     // Create a sleek, cute toast bubble instead of an aggressive alert
                     const toast = document.createElement('div');
