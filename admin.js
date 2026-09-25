@@ -65,6 +65,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
         
+        // Social links injection
+        if (data.instagram_url) {
+            const igEl = document.getElementById('ig-link');
+            if (igEl) { igEl.href = data.instagram_url; igEl.style.display = 'block'; }
+        }
+        if (data.facebook_url) {
+            const fbEl = document.getElementById('fb-link');
+            if (fbEl) { fbEl.href = data.facebook_url; fbEl.style.display = 'block'; }
+        }
+        
         if (data.last_updated_at) {
             const updatedTime = new Date(data.last_updated_at).toLocaleString();
             updateEl.textContent = `Last updated: ${updatedTime}`;

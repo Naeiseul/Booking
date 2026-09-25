@@ -59,6 +59,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 svgEl.style.display = 'none';
             }
         }
+        
+        // Social links injection
+        if (data.instagram_url) {
+            const igEl = document.getElementById('ig-link');
+            if (igEl) { igEl.href = data.instagram_url; igEl.style.display = 'block'; }
+        }
+        if (data.facebook_url) {
+            const fbEl = document.getElementById('fb-link');
+            if (fbEl) { fbEl.href = data.facebook_url; fbEl.style.display = 'block'; }
+        }
 
         const slots = data.slots || [];
         
