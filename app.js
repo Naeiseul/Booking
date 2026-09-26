@@ -49,7 +49,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         nameEl.textContent = data.name || "Booking Calendar";
         statusEl.textContent = ""; // Removed unnecessary subtitle!
         
-        // Logo injection
+        // Logo and PWA injection
+        if (data.name) {
+            document.title = data.name + " Booking";
+        }
         if (data.logo_url) {
             const imgEl = document.getElementById('biz-avatar-img');
             const svgEl = document.getElementById('biz-avatar-svg');
@@ -57,6 +60,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                 imgEl.src = data.logo_url;
                 imgEl.style.display = 'block';
                 svgEl.style.display = 'none';
+            }
+            
+            // Update Favicon & Apple Touch Icon
+            let icon = document.querySelector("link[rel~='icon']");
+            if (icon) icon.href = data.logo_url;
+            
+            let appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            appleIcon.href = data.logo_url;
+            document.head.appendChild(appleIcon);
+
+            // Generate Dynamic Web App Manifest for Android 'Add to Home Screen'
+            if (data.name) {
+                const manifest = {
+                    name: data.name,
+                    short_name: data.name,
+                    start_url: window.location.href,
+                    display: "standalone",
+                    background_color: "#ffffff",
+                    theme_color: "#0F766E",
+                    icons: [
+                        { src: data.logo_url, sizes: "192x192", type: "image/png" },
+                        { src: data.logo_url, sizes: "512x512", type: "image/png" }
+                    ]
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                const manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                manifestLink.href = URL.createObjectURL(manifestBlob);
+                document.head.appendChild(manifestLink);
             }
         }
         
