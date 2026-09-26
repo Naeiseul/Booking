@@ -6,7 +6,17 @@
     <title>Owner Dashboard</title>
     <link rel="icon" type="image/png" href="/final_tax_logo.png">
     <link rel="apple-touch-icon" href="/logo_square.png">
-    <link rel="manifest" href="/manifest.json">
+    <script>
+        (function() {
+            var path = window.location.pathname;
+            var parts = path.split('/').filter(Boolean);
+            var slug = parts[parts.length - 1] || 'default';
+            var link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = '/api/manifest?slug=' + encodeURIComponent(slug);
+            document.head.appendChild(link);
+        })();
+    </script>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
