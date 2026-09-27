@@ -1,7 +1,7 @@
 module.exports = async function handler(req, res) {
     const { slug } = req.query;
 
-    // Prevent Chrome from caching an old manifest
+    // Prevent Chrome from caching a stale manifest
     res.setHeader('Cache-Control', 'no-store, max-age=0');
 
     const defaultManifest = {
@@ -16,21 +16,23 @@ module.exports = async function handler(req, res) {
         ]
     };
 
-    if (!slug || slug === 'default') {
+    if (!slug) {
         return res.status(200).json(defaultManifest);
     }
 
     try {
         const SUPABASE_URL = "https://jtonmfevmcmnkmdjmubn.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0b25tZmV2bWNtbmttZGptdWJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNTE0MDMsImV4cCI6MjEwNTgyNzQwM30.SLrkoolgzsCVgLW2XJusgh1QCSYMPrq2TzppYK1irgs";
+
         const response = await fetch(`${SUPABASE_URL}/rest/v1/businesses?slug=eq.${slug}&select=name,logo_url`, {
             headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
             }
         });
         const data = await response.json();
-        if (data && data.length > 0) {
+
+        if (Array.isArray(data) && data.length > 0) {
             const biz = data[0];
             const logo = biz.logo_url || "/logo_square.png";
             return res.status(200).json({
@@ -46,7 +48,7 @@ module.exports = async function handler(req, res) {
             });
         }
     } catch (err) {
-        // If anything goes wrong we fall back to defaultManifest
+        // ignore and fall back to default
     }
 
     return res.status(200).json(defaultManifest);
