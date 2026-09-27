@@ -25,10 +25,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // 2. Knock on the "public door" in Supabase
         const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_page`, {
             method: 'POST',
+            cache: 'no-store', // Force browser to always fetch fresh data
             headers: {
                 'Content-Type': 'application/json',
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             },
             body: JSON.stringify({ p_slug: bizSlug })
         });
