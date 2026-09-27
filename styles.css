@@ -92,7 +92,7 @@ h1 {
 .empty-state {
   grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 140px; padding: 24px; text-align: center;
-  background-color: var(--taken-bg); border-radius: 20px; color: var(--muted); font-size: 14px; font-weight: 500;
+  background-color: transparent; border-radius: 20px; color: var(--muted); font-size: 15px; font-weight: 500;
 }
 
 /* Skeleton Loading Animation */
