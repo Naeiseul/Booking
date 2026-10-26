@@ -8,6 +8,9 @@ Status: Paused at the user's request.
 - GitHub: https://github.com/Naeiseul/Booking
 - Default branch: main
 - Live site supplied by the user: https://booking.logtraq.co.za
+- Confirmed client page for this work: https://booking.logtraq.co.za/logtraq
+- Confirmed admin page for this work: https://booking.logtraq.co.za/admin/logtraq/logtraq
+- The user explicitly confirmed these two pages as the scope for upcoming calendar edits. These exact page URLs have not yet been tested.
 - Stack described by the user: GitHub, Supabase, and Vercel.
 - Repository access was verified through the connected GitHub tools, including reported read and write permissions.
 - Repository listing confirms separate client files (index.html, app.js) and admin files (admin.html, admin.js), plus styles.css, api/, supabase/, and vercel.json.
