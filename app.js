@@ -84,35 +84,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (fbEl) { fbEl.href = data.facebook_url; fbEl.style.display = 'block'; }
             }
 
-            // WhatsApp Button Logic (only attach once)
-            const waBtn = document.getElementById('whatsapp-btn');
-            if (waBtn && !waBtn.hasAttribute('data-attached')) {
-                waBtn.setAttribute('data-attached', 'true');
-                waBtn.addEventListener('click', () => {
-                    if (data.whatsapp_number) {
-                        const cleanNumber = data.whatsapp_number.replace(/[^0-9]/g, '');
-                        const message = `Hi! I just saw your available times on your booking calendar. I'd like to book an appointment.`;
-                        window.location.href = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
-                    } else {
-                        const toast = document.createElement('div');
-                        toast.innerHTML = "✨ Please reply on WhatsApp to secure your slot!";
-                        toast.style.cssText = `
-                            position: fixed; bottom: calc(48px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
-                            background-color: #1E293B; color: #FFF; padding: 14px 24px; border-radius: 100px;
-                            font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                            z-index: 9999; opacity: 0; transition: opacity 0.3s ease; text-align: center;
-                            width: max-content; max-width: 85%;
-                        `;
-                        document.body.appendChild(toast);
-                        setTimeout(() => toast.style.opacity = '1', 10);
-                        setTimeout(() => {
-                            toast.style.opacity = '0';
-                            setTimeout(() => toast.remove(), 300);
-                        }, 3500);
-                    }
-                });
-            }
-
             const slots = data.slots || [];
             if (slots.length === 0) {
                 gridEl.innerHTML = `
