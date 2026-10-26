@@ -144,7 +144,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 gridEl.innerHTML = '';
                 daySlots.forEach(slot => {
                     const chip = document.createElement('button');
-                    const isOpen = slot.status === 'open';
+                    // The public API already filters to open slots and omits status.
+                    const isOpen = slot.status === undefined || slot.status === 'open';
                     const time = slot.time ? slot.time.substring(0, 5) : "";
 
                     chip.type = 'button';

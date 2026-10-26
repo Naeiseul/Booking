@@ -4,7 +4,7 @@ Implemented for the Booking demo on 2026-10-26.
 
 ## Behaviour
 
-- Open slots are keyboard-accessible buttons; taken or unknown statuses cannot be selected.
+- The public API filters to open slots and returns date/time without a status field. These slots are keyboard-accessible buttons. Explicit open status is also accepted; explicit taken or unknown statuses cannot be selected.
 - Selecting an open slot navigates to /:biz/details?date=YYYY-MM-DD&time=HH:mm.
 - The details page shows the selected date/time and collects name, surname, phone, email, and optional notes.
 - Required fields are validated, and availability is fetched when the page opens and again before payment.
@@ -25,3 +25,7 @@ Run `node tests/client-booking-flow.cjs` with Node.js. This dependency-free suit
 Browser rendering and a complete hosted checkout have not been verified in this session.
 
 Paystack prefill reference: https://support.paystack.com/en/articles/2129218
+
+## Availability regression fixed
+
+Verified get_public_page in Supabase: it filters availability.status = 'open' and omits status from the returned slot objects. The original frontend flow incorrectly required slot.status === 'open'. Both selection and details rechecks now accept omitted status, matching the public API contract. Regression tests use the actual date/time-only response and still reject explicit taken/unknown statuses and slots absent from the returned list.

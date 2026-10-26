@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         if (data) document.getElementById('booking-business').textContent = data.name || '';
         return Boolean(data && (data.slots || []).some(slot =>
-            slot.date === date && slot.time && slot.time.substring(0, 5) === time && slot.status === 'open'
+            slot.date === date && slot.time && slot.time.substring(0, 5) === time &&
+            (slot.status === undefined || slot.status === 'open')
         ));
     }
 
