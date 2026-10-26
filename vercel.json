@@ -1,6 +1,16 @@
 {
   "rewrites": [
-    { "source": "/admin/:biz/:key", "destination": "/admin.html" },
-    { "source": "/:biz", "destination": "/index.html" }
+    {
+      "source": "/admin/:biz/:key",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/:biz/details",
+      "destination": "/details.html"
+    },
+    {
+      "source": "/:biz",
+      "destination": "/index.html"
+    }
   ]
 }

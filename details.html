@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Your details | Booking</title>
+    <link rel="icon" href="/final_tax_logo.png">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/config.js" defer></script>
+    <script src="/details.js" defer></script>
+</head>
+<body>
+    <main class="container-public">
+        <a id="back-to-calendar" class="booking-back" href="/">Back to calendar</a>
+        <header class="booking-heading">
+            <h1>Your details</h1>
+            <p id="booking-business" class="muted-text"></p>
+        </header>
+        <section class="booking-summary" aria-label="Selected appointment">
+            <strong id="selected-date">Checking your selected time…</strong>
+            <span id="selected-time"></span>
+        </section>
+        <p id="booking-error" class="booking-error" role="alert" hidden></p>
+        <form id="booking-form" class="booking-form" hidden>
+            <div class="booking-field">
+                <label for="first-name">Name</label>
+                <input id="first-name" name="first_name" autocomplete="given-name" maxlength="100" required>
+            </div>
+            <div class="booking-field">
+                <label for="last-name">Surname</label>
+                <input id="last-name" name="last_name" autocomplete="family-name" maxlength="100" required>
+            </div>
+            <div class="booking-field">
+                <label for="phone">Phone number</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="30" required>
+            </div>
+            <div class="booking-field">
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required>
+            </div>
+            <div class="booking-field">
+                <label for="notes">Additional details (optional)</label>
+                <textarea id="notes" name="notes" maxlength="2000" placeholder="Anything you would like us to know"></textarea>
+            </div>
+            <button id="continue-payment" class="booking-button" type="submit">Continue to payment</button>
+        </form>
+        <noscript>Please enable JavaScript to enter your booking details.</noscript>
+    </main>
+</body>
+</html>

@@ -109,3 +109,28 @@ h1 {
   height: 44px; width: 100%; background-color: #E2E8F0; border-radius: 12px;
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Client booking details */
+.time-chip, .booking-button, .booking-field input, .booking-field textarea { font-family: inherit; }
+.time-chip:focus-visible, .booking-button:focus-visible, .booking-back:focus-visible {
+  outline: 3px solid var(--brand); outline-offset: 4px;
+}
+.booking-back { align-self: flex-start; color: var(--brand); font-size: 14px; margin-bottom: 24px; }
+.booking-heading { margin-bottom: 24px; }
+.booking-summary { background: var(--taken-bg); border-radius: 16px; padding: 16px; margin-bottom: 24px; line-height: 1.6; }
+.booking-summary strong, .booking-field label { display: block; }
+.booking-form { display: grid; gap: 18px; }
+.booking-field label { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.booking-field input, .booking-field textarea {
+  width: 100%; border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px;
+  font-size: 16px; color: var(--text); background: var(--surface);
+}
+.booking-field input:focus, .booking-field textarea:focus { outline: 2px solid var(--brand); outline-offset: 2px; }
+.booking-field textarea { min-height: 110px; resize: vertical; }
+.booking-button {
+  width: 100%; padding: 18px 24px; border: 0; border-radius: 100px;
+  background: var(--brand); color: #FFF; font-size: 16px; font-weight: 600; cursor: pointer;
+}
+.booking-button:disabled { opacity: 0.6; cursor: wait; }
+.booking-error { color: #B91C1C; font-size: 14px; line-height: 1.5; }
+[hidden] { display: none !important; }

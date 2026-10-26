@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // 4. Update the UI with the business data
             nameEl.textContent = data.name || "Booking Calendar";
-            statusEl.textContent = ""; 
+            statusEl.textContent = "Select an available time to continue."; 
             
             // Logo and PWA injection
             if (data.name) {
@@ -143,12 +143,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 gridEl.innerHTML = '';
                 daySlots.forEach(slot => {
-                    const chip = document.createElement('div');
-                    const isTaken = slot.status === 'taken';
-                    
-                    chip.className = `time-chip ${isTaken ? 'taken' : 'open'}`;
-                    chip.textContent = slot.time ? slot.time.substring(0, 5) : "";
-                    
+                    const chip = document.createElement('button');
+                    const isOpen = slot.status === 'open';
+                    const time = slot.time ? slot.time.substring(0, 5) : "";
+
+                    chip.type = 'button';
+                    chip.disabled = !isOpen;
+                    chip.className = `time-chip ${isOpen ? 'open' : 'taken'}`;
+                    chip.textContent = time;
+                    chip.setAttribute('aria-label', `${slot.date} at ${time}${isOpen ? '' : ', unavailable'}`);
+                    if (isOpen) {
+                        chip.addEventListener('click', () => {
+                            const query = new URLSearchParams({ date: slot.date, time });
+                            window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
+                        });
+                    }
+
                     gridEl.appendChild(chip);
                 });
             }
