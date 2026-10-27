@@ -26,9 +26,98 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let selectedSlot = null;
     let availabilityLoaded = false;
+    let services = [];
+    let selectedService = null;
+    let requestedServiceId = urlParams.get('service') || '';
+    let catalogueSignature = null;
+    const catalogueEl = document.getElementById('service-catalogue');
+    const serviceList = document.getElementById('client-services');
+    const calendarEl = document.getElementById('client-calendar');
+
+    function serviceDuration(service) {
+        const hours = Math.floor(service.duration_minutes / 60);
+        const minutes = service.duration_minutes % 60;
+        return [hours ? hours + ' hr' : '', minutes ? minutes + ' min' : ''].filter(Boolean).join(' ');
+    }
+
+    function servicePrice(service, total = false) {
+        const multiplier = total && service.price_basis === 'per_person' ? service.participant_count : 1;
+        return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: service.currency })
+            .format(service.price_amount * multiplier / 100);
+    }
+
+    function serviceDetails(service) {
+        return serviceDuration(service) + ' · ' + (service.service_type === 'class'
+            ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking');
+    }
+
+    function renderCatalogue() {
+        const signature = JSON.stringify([services, selectedService && selectedService.id]);
+        if (signature !== catalogueSignature) {
+            serviceList.innerHTML = '';
+            services.forEach(service => {
+                const card = document.createElement('article');
+                card.className = 'client-service-card';
+                const title = document.createElement('h3');
+                title.textContent = service.name;
+                card.appendChild(title);
+                if (service.description) {
+                    const description = document.createElement('p');
+                    description.className = 'client-service-description';
+                    description.textContent = service.description;
+                    card.appendChild(description);
+                }
+                const details = document.createElement('p');
+                details.className = 'muted-text';
+                details.textContent = serviceDetails(service);
+                card.appendChild(details);
+                const price = document.createElement('p');
+                price.className = 'client-service-price';
+                price.textContent = servicePrice(service) + (service.price_basis === 'per_person' ? ' per person' : ' per booking');
+                card.appendChild(price);
+                if (service.price_basis === 'per_person' && service.service_type === 'private' && service.participant_count > 1) {
+                    const total = document.createElement('p');
+                    total.className = 'muted-text';
+                    total.textContent = servicePrice(service, true) + ' total for ' + service.participant_count + ' people';
+                    card.appendChild(total);
+                }
+                const choose = document.createElement('button');
+                choose.type = 'button';
+                choose.className = 'catalogue-service-button';
+                choose.disabled = service.service_type === 'class';
+                const isSelected = Boolean(selectedService && selectedService.id === service.id);
+                choose.textContent = choose.disabled ? 'Class times not available yet' : isSelected ? 'Selected' : 'View available times';
+                choose.setAttribute('aria-pressed', String(isSelected));
+                choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'View available times for ') + service.name);
+                choose.addEventListener('click', () => {
+                    if (choose.disabled) return;
+                    selectedService = service;
+                    requestedServiceId = '';
+                    selectedSlot = null;
+                    renderCatalogue();
+                    updateBookButton();
+                    document.getElementById('calendar-heading').focus();
+                });
+                card.appendChild(choose);
+                serviceList.appendChild(card);
+            });
+            catalogueSignature = signature;
+        }
+        catalogueEl.hidden = false;
+        document.getElementById('catalogue-message').textContent = services.length
+            ? (requestedServiceId ? 'This service is no longer listed. Please choose another.' : 'Choose a service to see what is included.')
+            : 'Services will be listed here soon. You can view available times below.';
+        calendarEl.hidden = services.length > 0 && !selectedService;
+        document.getElementById('calendar-service').hidden = !selectedService;
+        if (selectedService) {
+            document.getElementById('calendar-service-name').textContent = selectedService.name;
+            document.getElementById('calendar-service-details').textContent = serviceDetails(selectedService) + ' · ' +
+                servicePrice(selectedService, true) + ' per booking';
+        }
+    }
 
     function updateBookButton() {
-        bookButton.disabled = !selectedSlot || !availabilityLoaded;
+        bookButton.disabled = !selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService);
         if (!selectedSlot) {
             bookButton.textContent = 'Select a time to book';
             return;
@@ -41,8 +130,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     bookButton.addEventListener('click', () => {
-        if (!selectedSlot || !availabilityLoaded) return;
+        if (!selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService)) return;
         const query = new URLSearchParams(selectedSlot);
+        if (selectedService) query.set('service', selectedService.id);
         window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
     });
 
@@ -68,6 +158,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             // 3. If Supabase returns null, the business doesn't exist
             if (!data) {
                 selectedSlot = null;
+                selectedService = null;
+                services = [];
+                catalogueEl.hidden = true;
+                calendarEl.hidden = false;
                 availabilityLoaded = false;
                 updateBookButton();
                 nameEl.textContent = "Not Found";
@@ -125,6 +219,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (fbEl) { fbEl.href = data.facebook_url; fbEl.style.display = 'block'; }
             }
 
+            const nextServices = data.services || [];
+            if (selectedService) {
+                const fresh = nextServices.find(service => service.id === selectedService.id && service.service_type === 'private');
+                if (!fresh || JSON.stringify(fresh) !== JSON.stringify(selectedService)) selectedSlot = null;
+                selectedService = fresh || null;
+            }
+            services = nextServices;
+            if (requestedServiceId) {
+                selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
+                if (selectedService) requestedServiceId = '';
+            }
+            renderCatalogue();
             const slots = data.slots || [];
             availabilityLoaded = true;
             if (selectedSlot && !slots.some(slot =>

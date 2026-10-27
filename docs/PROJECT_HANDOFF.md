@@ -16,7 +16,7 @@ Work one small step at a time, functionality first. Complete verification, save 
 4. Database reservations, booking records, double-booking/capacity enforcement, and automatic admin updates.
 5. Real Paystack checkout tied to the reservation and correct amount, server-side payment verification, and release of abandoned/failed reservations.
 
-Steps 2–5 remain pending. Do not implement them as part of step 1.
+Steps 1 and 2 are implemented. Steps 3–5 remain pending; do not advance without the owner's instruction.
 
 ## Step 1 implementation
 
@@ -24,7 +24,7 @@ Steps 2–5 remain pending. Do not implement them as part of step 1.
 - Fields: name, optional description, private appointment/shared class, hours and minutes, fixed price in ZAR, price per booking/per person, private-booking participants, and catalogue visibility.
 - Duration is stored in minutes and price in integer cents. Hours/minutes supports 1h30m = 90 minutes.
 - Shared classes charge per person and do not store capacity on the service. Scheduled-class capacity belongs to step 3.
-- New services default to hidden. Visibility is stored now; the client catalogue is step 2 and is not yet connected.
+- New services default to hidden. The client catalogue added in step 2 now displays published services.
 - No deletion, hourly/overtime charging, packages, scheduling, or payment changes in this step.
 - public.services has RLS enabled and no direct anon/authenticated table privileges.
 - Public get_admin_services/save_admin_service are SECURITY INVOKER wrappers. Private implementations verify the existing business slug/admin key and active flag before every access. Updates also match business ownership and updated_at to reject stale edits.
@@ -33,12 +33,27 @@ Steps 2–5 remain pending. Do not implement them as part of step 1.
 - Calendar and service scripts are separate so a service-loading failure does not prevent calendar use.
 - Migration: supabase/migrations/20261027140653_add_admin_service_catalogue.sql, matching the recorded remote migration version.
 
+## Step 2 implementation
+
+- The existing client URL now displays published services as a mobile-friendly list: name, description, duration, private-booking people/shared-class type, price basis, and private-group total when priced per person.
+- get_public_page now includes a services array containing nine explicit client-facing fields. Hidden services, other businesses' services, admin keys, business IDs and internal timestamps are excluded. Missing/inactive businesses return null.
+- Public get_public_page is now a SECURITY INVOKER wrapper with a pinned search_path; its privileged read implementation lives in private. Existing business/social fields and date/time-only available slots are preserved.
+- Selecting a private service reveals the existing general-availability calendar. Its ID travels in the details URL, and the details page fetches current service information from Supabase rather than trusting names/prices in query parameters.
+- Per-person private bookings show the total for the configured number of people. 90 minutes displays as 1 hr 30 min.
+- Polling refreshes catalogue edits without replacing unchanged catalogue buttons. Removing/hiding a selected service clears it; changing its information clears the selected time.
+- Browser Back links preserve the selected service. Invalid, hidden, cross-business or shared-class service IDs cannot open the details form. With published services present, a service-less details URL cannot bypass service selection.
+- No published services: show an honest empty catalogue and preserve the original slot-only real-Paystack demo. No sample services were created.
+- Scope boundary: service-specific duration-aware availability is step 3. The calendar explicitly labels current times as general availability. Shared classes are listed but cannot select times until class scheduling exists.
+- Scope boundary: Paystack service amount alignment is step 5. For a selected service, Continue to payment is disabled with an explanation; it cannot send a client to a checkout with an unrelated amount. The original no-catalogue slot-only demo continues to open the actual supplied Paystack URL. No simulated checkout was introduced.
+- Migration: supabase/migrations/20261027142033_publish_client_service_catalogue.sql, matching the remote migration version.
+
 ## Verification
 
 - node tests/admin-services.cjs: form create/edit/reload, 90-minute duration, cents conversion, visibility, class fields, validation, preserved input on failure, duplicate-submit prevention, idempotent retry, stale edit error, safe text rendering, and HTML labels/script order.
 - tests/admin-services.sql: integration tests ran on the target database under anon and authenticated roles. Verified create/read/edit, ownership isolation, wrong/inactive keys, table-access denial, validation, retry idempotency, stale edits, and the public slot response contract. All fixtures were rolled back; no sample services remain.
-- node tests/client-booking-flow.cjs: existing suite passed, including date/time-only slots and the exact real Paystack checkout destination.
-- Security/performance advisors checked. New services RLS-without-policy notice is intentional: direct table grants are revoked and access is through credential-checked RPCs. Existing calendar/public-page function search-path and SECURITY DEFINER warnings predate this change and remain outside step 1.
+- node tests/client-booking-flow.cjs: existing suite and new catalogue cases passed, including service selection, per-person totals, stale/removed services, safe text rendering, back links, service payment guard, date/time-only slots and the unchanged real Paystack destination for the slot-only demo.
+- tests/client-catalogue.sql: passed on the target database under anon/authenticated roles; published-only filtering, business isolation, field whitelist, sort order, inactive/missing businesses, fresh admin data and original slot contract. Fixtures were rolled back.
+- Security/performance advisors checked. New services RLS-without-policy notice is intentional: direct table grants are revoked and access is through credential-checked RPCs. Existing admin calendar function warnings predate this change. The public-page warnings were resolved by the private implementation added in step 2. Performance advisors returned no findings after step 2.
 - Local browser automation was unavailable. Rendering at desktop/mobile sizes and an actual browser-to-REST save were not verified in this environment. Live page/asset and Vercel deployment checks are performed when releasing.
 
 ## Project and runtime
@@ -56,7 +71,7 @@ Steps 2–5 remain pending. Do not implement them as part of step 1.
 
 get_public_page returns only available slots as date/time objects without a status field. Do not require status === 'open'. Preserve fix 7d2cd5bb5afea8048d227dfddbea7377a0c95cc0.
 
-The calendar selects a slot; a separate button opens the details form; Continue to payment has no arrow and opens https://paystack.shop/pay/o495iejvn3. Keep the real checkout.
+With no published services, the original calendar selects a slot; a separate button opens the details form; Continue to payment has no arrow and opens https://paystack.shop/pay/o495iejvn3. For catalogue-selected services, the payment action is guarded until step 5. Keep the real checkout; never replace it with a simulation.
 
 Client details remain in the browser tab. Database reservations, payment verification and automatic admin booking updates are not implemented. A service save is not a booking.
 
@@ -73,4 +88,4 @@ Client details remain in the browser tab. Database reservations, payment verific
 
 ## Next step
 
-After the owner reviews step 1, discuss and authorize step 2: the client catalogue. Do not automatically advance to scheduling, reservations or payments.
+After the owner reviews the catalogue, discuss and authorize step 3: duration-aware private appointment availability and scheduled shared classes with capacity. Do not automatically advance to reservations or payments.

@@ -58,6 +58,18 @@
         </header>
 
         <main style="margin-top: 24px;">
+            <section id="service-catalogue" class="client-catalogue" aria-labelledby="catalogue-heading" hidden>
+                <h2 id="catalogue-heading" class="client-section-heading" tabindex="-1">Our services</h2>
+                <p id="catalogue-message" class="muted-text catalogue-message" role="status"></p>
+                <div id="client-services" class="client-service-list"></div>
+            </section>
+            <section id="client-calendar" aria-labelledby="calendar-heading">
+                <h2 id="calendar-heading" class="client-section-heading" tabindex="-1">Available times</h2>
+                <div id="calendar-service" class="catalogue-selection" hidden>
+                    <strong id="calendar-service-name"></strong>
+                    <p id="calendar-service-details" class="muted-text"></p>
+                    <p class="muted-text catalogue-stage-note">Times shown are general availability. Online booking for this service is not available yet.</p>
+                </div>
             <!-- Day selector tabs will be injected here by JavaScript -->
             <div class="day-tab-list" id="day-tabs"></div>
 
@@ -71,6 +83,7 @@
                 <div class="skeleton-chip"></div>
             </div>
             <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Select a time to book</button>
+            </section>
         </main>
 
         <footer style="margin-top: auto; text-align: center;">

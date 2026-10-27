@@ -4,12 +4,15 @@ Implemented for the Booking demo on 2026-10-26.
 
 ## Behaviour
 
+- Published services now appear before the calendar. Private service selection carries into the details URL and summary. Shared classes are listed without bookable times until scheduling is implemented.
+- With no published services, the empty catalogue keeps the original slot-only demo available.
+
 - The public API filters to open slots and returns date/time without a status field. These slots are keyboard-accessible buttons. Explicit open status is also accepted; explicit taken or unknown statuses cannot be selected.
 - Selecting an open slot highlights it without leaving the calendar. A bottom button shows the selected day, date and time (for example, Book Tuesday 27 October at 10:00). Only clicking this button navigates to /:biz/details?date=YYYY-MM-DD&time=HH:mm.
 - The button is disabled until a time is selected. Switching days clears the selection. Availability refreshes preserve a selection while it remains available, clear it if the slot disappears or becomes unavailable, and disable continuing if the refresh fails.
 - The details page shows the selected date/time and collects name, surname, phone, email, and optional notes.
 - Required fields are validated, and availability is fetched when the page opens and again before payment.
-- Continue to payment opens the existing Paystack page at https://paystack.shop/pay/o495iejvn3.
+- In the original slot-only demo, Continue to payment opens the existing Paystack page at https://paystack.shop/pay/o495iejvn3. For catalogue-selected services, payment is disabled until the listed amount is connected to checkout; an explanation is shown.
 - First name, last name, and email use Paystack's documented prefill URL parameters.
 - The calendar no longer provides a payment shortcut that skips selection and details.
 
@@ -58,3 +61,15 @@ This is catalogue step 1 only: client catalogue display is not yet connected. Cl
 See docs/PROJECT_HANDOFF.md and AGENTS.md for the agreed sequence and the owner's instruction to stay on the current step even when questions explore later features. The migration is supabase/migrations/20261027140653_add_admin_service_catalogue.sql.
 
 The admin service test suite, transactional database integration tests and existing client booking regression suite passed. Local browser rendering and an actual browser-to-REST save remain unverified.
+
+## Client catalogue (2026-10-27)
+
+Catalogue step 2 is implemented. The client list reads published services through get_public_page; its nine-field service whitelist excludes admin/internal fields and services belonging to another business. The public RPC is now an invoker wrapper around a private implementation with a pinned search path. The existing available-slot date/time contract is preserved.
+
+Cards show business-configured descriptions, durations, booking type/people, prices and per-person group totals. Private-service IDs carry through calendar selection into details, where current service data is fetched again. Hidden/missing/cross-business/class IDs are rejected. Selected service changes clear the chosen time; hiding a service clears the selection.
+
+This step does not implement service-specific availability, scheduled class capacity, reservations or payment matching. The calendar labels its existing times as general availability, and selected-service checkout is guarded until the correct amount can be charged. Businesses with no published services retain the original real-Paystack demo. No sample services were added.
+
+Migration: supabase/migrations/20261027142033_publish_client_service_catalogue.sql.
+
+Verification: the expanded client booking suite, catalogue database integration tests and existing admin-service database tests passed. Fixtures were rolled back. Desktop/mobile browser rendering and browser-to-REST interactions remain unverified in this environment.

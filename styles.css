@@ -142,3 +142,27 @@ h1 {
 }
 .calendar-book-button { line-height: 1.4; }
 .calendar-book-button:disabled { cursor: not-allowed; }
+
+/* Client service catalogue */
+.client-catalogue { margin-bottom: 32px; }
+.client-section-heading { display: block; font-size: 20px; line-height: 1.4; margin-bottom: 16px; }
+.catalogue-message { line-height: 1.6; margin-bottom: 20px; }
+.client-service-list { display: grid; gap: 16px; }
+.client-service-card { border: 1px solid #E2E8F0; border-radius: 20px; padding: 20px; overflow-wrap: anywhere; }
+.client-service-card h3 { font-size: 18px; line-height: 1.4; margin-bottom: 8px; }
+.client-service-card p { line-height: 1.6; margin-top: 8px; }
+.client-service-description { font-size: 14px; color: var(--muted); white-space: pre-wrap; }
+.client-service-price { font-size: 17px; font-weight: 700; }
+.catalogue-service-button {
+    width: 100%; min-height: 44px; margin-top: 16px; padding: 12px;
+    font: inherit; font-size: 14px; font-weight: 600; color: var(--brand);
+    background: var(--brand-light); border: 0; border-radius: 12px; cursor: pointer;
+}
+.catalogue-service-button[aria-pressed="true"] { color: white; background: var(--brand); }
+.catalogue-service-button:disabled { color: var(--muted); background: var(--taken-bg); cursor: not-allowed; }
+.catalogue-service-button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.catalogue-selection { background: var(--taken-bg); border-radius: 16px; padding: 16px; margin-bottom: 24px; overflow-wrap: anywhere; }
+.catalogue-selection strong { display: block; margin-bottom: 8px; }
+.catalogue-selection p { line-height: 1.6; margin-top: 8px; }
+.catalogue-stage-note { font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+.catalogue-selection .catalogue-stage-note { margin-bottom: 0; }

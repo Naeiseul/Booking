@@ -4,11 +4,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const query = new URLSearchParams(window.location.search);
     const date = query.get('date') || '';
     const time = query.get('time') || '';
+    const serviceId = query.get('service') || '';
+    let selectedService = null;
     const form = document.getElementById('booking-form');
     const errorEl = document.getElementById('booking-error');
     const button = document.getElementById('continue-payment');
     const back = document.getElementById('back-to-calendar');
-    if (bizSlug) back.href = '/' + encodeURIComponent(bizSlug);
+    if (bizSlug) back.href = '/' + encodeURIComponent(bizSlug) + (serviceId ? '?' + new URLSearchParams({ service: serviceId }) : '');
 
     function showError(message) {
         errorEl.textContent = message;
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         dateObj.getFullYear() !== Number(date.slice(0, 4)) ||
         dateObj.getMonth() + 1 !== Number(date.slice(5, 7)) ||
         dateObj.getDate() !== Number(date.slice(8, 10)) ||
+        (serviceId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(serviceId)) ||
         !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
         document.getElementById('selected-date').textContent = 'Choose an available time';
         showError('Please return to the calendar and select an available slot.');
@@ -46,13 +49,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!response.ok) throw new Error('Calendar request failed');
         const data = await response.json();
         if (data) document.getElementById('booking-business').textContent = data.name || '';
+        if (data) {
+            const services = data.services || [];
+            if (serviceId) {
+                selectedService = services.find(service => service.id === serviceId && service.service_type === 'private') || null;
+                if (!selectedService) return false;
+                document.getElementById('details-service').hidden = false;
+                document.getElementById('details-service-name').textContent = selectedService.name;
+                const hours = Math.floor(selectedService.duration_minutes / 60);
+                const minutes = selectedService.duration_minutes % 60;
+                document.getElementById('details-service-info').textContent =
+                    [hours ? hours + ' hr' : '', minutes ? minutes + ' min' : ''].filter(Boolean).join(' ') +
+                    ' · ' + selectedService.participant_count + (selectedService.participant_count === 1 ? ' person' : ' people') + ' per booking';
+                const total = selectedService.price_amount * (selectedService.price_basis === 'per_person' ? selectedService.participant_count : 1);
+                document.getElementById('details-service-price').textContent =
+                    new Intl.NumberFormat('en-ZA', { style: 'currency', currency: selectedService.currency }).format(total / 100) + ' per booking';
+            } else if (services.length) {
+                return false;
+            }
+        }
         return Boolean(data && (data.slots || []).some(slot =>
             slot.date === date && slot.time && slot.time.substring(0, 5) === time &&
             (slot.status === undefined || slot.status === 'open')
         ));
     }
 
-    const draftKey = 'booking-draft:' + bizSlug + ':' + date + ':' + time;
+    const draftKey = 'booking-draft:' + bizSlug + ':' + date + ':' + time + (serviceId ? ':' + serviceId : '');
     const fields = ['first_name', 'last_name', 'phone', 'email', 'notes'];
     try {
         const draft = JSON.parse(sessionStorage.getItem(draftKey) || 'null');
@@ -67,10 +89,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         if (!await checkAvailability()) {
-            showError('This time is no longer available. Please choose another slot from the calendar.');
+            showError('This service or time is no longer available. Please return to the calendar and choose again.');
             return;
         }
         form.hidden = false;
+        if (serviceId) {
+            button.disabled = true;
+            document.getElementById('service-payment-note').hidden = false;
+        }
     } catch (_) {
         showError('We could not check this time. Please refresh the page to try again.');
         return;
@@ -78,13 +104,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Restore the submit button when returning from checkout using browser Back.
     window.addEventListener('pageshow', () => {
-        button.disabled = false;
+        button.disabled = Boolean(serviceId);
         button.textContent = 'Continue to payment';
     });
 
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        if (button.disabled) return;
+        if (button.disabled || serviceId) return;
         fields.forEach(name => {
             const input = form.elements.namedItem(name);
             input.value = input.value.trim();
