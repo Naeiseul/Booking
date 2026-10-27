@@ -1,0 +1,52 @@
+/* Dashboard layout is scoped to admin pages. */
+.admin-page { padding: 32px 20px 40px; }
+.admin-shell { width: 100%; max-width: 560px; }
+.admin-shell.admin-ready {
+    max-width: 1000px; display: grid; grid-template-columns: 220px minmax(0, 1fr);
+    gap: 24px; align-items: start;
+}
+.admin-content { max-width: none; min-width: 0; }
+.admin-sidebar {
+    background: var(--surface); border: 1px solid #E2E8F0; border-radius: 24px;
+    padding: 24px 16px; position: sticky; top: 24px;
+}
+.admin-sidebar-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.admin-business-name { font-size: 18px; font-weight: 700; overflow-wrap: anywhere; margin-bottom: 24px; }
+.admin-navigation { display: flex; flex-direction: column; gap: 8px; }
+.admin-navigation a {
+    display: block; border-radius: 12px; padding: 14px 16px; color: var(--muted);
+    text-decoration: none; font-size: 15px; font-weight: 600;
+}
+.admin-navigation a:hover { background: var(--taken-bg); color: var(--text); }
+.admin-navigation a[aria-current="page"] { background: var(--brand-light); color: var(--brand); }
+.admin-navigation a:focus-visible, .admin-add-service:focus-visible {
+    outline: 3px solid var(--brand); outline-offset: 3px;
+}
+.admin-main { margin-top: 0; margin-bottom: 32px; }
+.admin-section-title { font-size: 22px; font-weight: 700; margin: 0 0 24px; }
+.admin-section-title:focus { outline: none; }
+.admin-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.admin-section-heading .admin-section-title { margin-bottom: 0; }
+.admin-section-description { margin: 12px 0 24px; line-height: 1.5; }
+.admin-add-service {
+    border: 0; border-radius: 12px; background: var(--brand); color: white;
+    font: inherit; font-size: 14px; font-weight: 600; padding: 12px 16px; min-height: 44px;
+}
+.admin-add-service:disabled { opacity: .55; cursor: not-allowed; }
+.admin-services-empty {
+    border: 1px dashed #CBD5E1; border-radius: 20px; padding: 40px 24px;
+    text-align: center; line-height: 1.6;
+}
+.admin-services-empty h3 { font-size: 18px; margin-bottom: 8px; }
+.admin-services-empty p { font-size: 14px; color: var(--muted); margin-top: 8px; }
+.admin-updated { text-align: center; margin-top: 24px; }
+@media (max-width: 700px) {
+    .admin-page { padding: 16px 12px 32px; }
+    .admin-shell.admin-ready { display: flex; flex-direction: column; gap: 16px; }
+    .admin-sidebar { position: static; width: 100%; padding: 16px; border-radius: 20px; }
+    .admin-sidebar-label { display: none; }
+    .admin-business-name { margin-bottom: 12px; font-size: 16px; }
+    .admin-navigation { flex-direction: row; }
+    .admin-navigation a { flex: 1; text-align: center; padding: 12px; }
+    .admin-content { padding: 28px 20px; border-radius: 24px; }
+}

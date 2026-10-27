@@ -38,3 +38,13 @@ Verified get_public_page in Supabase: it filters availability.status = 'open' an
 - The TikTok icon stays hidden until a valid HTTPS link on tiktok.com or one of its subdomains is saved for the business. Clearing the field hides the icon again. No sample TikTok profile is saved.
 - The database change is recorded in `supabase/migrations/20261027125000_add_tiktok_url.sql`. It preserves the public slot contract: only available slots, with date/time and no status field.
 - Chromium checks verified transparent favicon pixels, unchanged tab title, conditional TikTok visibility and rejection of invalid destinations. The client booking flow regression suite also passed under Node.
+
+## Admin catalogue navigation (2026-10-27)
+
+- The existing admin URL now has Calendar and Services navigation: a left sidebar on desktop and a compact horizontal menu on mobile.
+- Navigation is revealed after the existing admin lookup succeeds. Section links use #calendar and #services, support browser Back/Forward, and preserve the business/key URL and current calendar state.
+- Services is an empty layout only. Add service is disabled with a visible coming-soon explanation; no service form, storage, or sample offerings are implemented.
+- Calendar rendering and slot update requests retain their existing logic. Client pages, Paystack checkout, and the public slot API contract are unchanged.
+- Admin styles are isolated in admin.css. The next step is agreeing on service fields, then implementing the form and business-scoped Supabase storage.
+
+Validation for this layout: JavaScript syntax checks and a Node-based mocked-DOM check passed for navigation, focus, direct section links, calendar preservation and slot requests, query-format admin links, and denied/incomplete/offline access. Local Edge automation could not start, so desktop/mobile rendering was not visually verified in this session.

@@ -18,9 +18,19 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/admin.css">
 </head>
-<body>
-    <div class="container-owner">
+<body class="admin-page">
+    <div class="admin-shell" id="admin-shell">
+        <aside class="admin-sidebar" id="admin-sidebar" hidden>
+            <p class="admin-sidebar-label">Your business</p>
+            <p class="admin-business-name" id="admin-business-name"></p>
+            <nav class="admin-navigation" aria-label="Dashboard">
+                <a href="#calendar" id="nav-calendar" aria-controls="calendar-panel" aria-current="page">Calendar</a>
+                <a href="#services" id="nav-services" aria-controls="services-panel">Services</a>
+            </nav>
+        </aside>
+    <div class="container-owner admin-content">
         <header style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 32px;">
             <!-- Avatar Bubble -->
             <div id="biz-avatar-container" style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-light), #E0F2FE); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25); overflow: hidden;">
@@ -44,7 +54,9 @@
             </div>
         </header>
 
-        <main style="margin-top: 24px;">
+        <main class="admin-main">
+            <section id="calendar-panel" aria-labelledby="calendar-heading">
+            <h2 class="admin-section-title" id="calendar-heading" tabindex="-1">Calendar</h2>
             <!-- Day selector tabs will be injected here -->
             <div class="day-tab-list" id="day-tabs"></div>
 
@@ -68,10 +80,23 @@
                 <div class="skeleton-chip"></div>
                 <div class="skeleton-chip"></div>
             </div>
+            <p class="muted-text admin-updated" id="last-updated">Last updated: --</p>
+            </section>
+            <section id="services-panel" aria-labelledby="services-heading" hidden>
+                <div class="admin-section-heading">
+                    <h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
+                    <button class="admin-add-service" type="button" disabled aria-describedby="services-coming-soon">Add service</button>
+                </div>
+                <p class="muted-text admin-section-description">Manage what your business offers.</p>
+                <div class="admin-services-empty">
+                    <h3>Your service catalogue starts here</h3>
+                    <p>Add your first service to start building your catalogue.</p>
+                    <p class="muted-text" id="services-coming-soon">Service creation is coming soon.</p>
+                </div>
+            </section>
         </main>
 
         <footer style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
-            <p class="muted-text" style="text-align: center;" id="last-updated">Last updated: --</p>
 
             <!-- Logtraq Viral Footer -->
             <div style="margin-top: 24px; font-size: 12px; color: #94A3B8; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500;">
@@ -86,9 +111,12 @@
         </footer>
     </div>
 
+    </div>
+
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
+    <script src="/admin-navigation.js"></script>
     <script src="/admin.js"></script>
 </body>
 </html>
