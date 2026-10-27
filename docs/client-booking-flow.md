@@ -33,7 +33,7 @@ Verified get_public_page in Supabase: it filters availability.status = 'open' an
 
 ## Client branding and social links (2026-10-27)
 
-- The Logtraq client calendar and details page use `logtraq-favicon.svg`, a compact, transparent version of the existing symbol. Page titles and the business name are unchanged. The calendar keeps this favicon when the business logo loads; the avatar and installed-app icons retain their existing images.
+- All client calendar, details and admin pages use `logtraq-favicon.svg`, a compact, transparent version of the existing symbol. Page titles and the business name are unchanged. The client and admin calendars keep this favicon when the business logo loads; the avatar and installed-app icons retain their existing images.
 - Optional TikTok profile links are stored in `public.businesses.tiktok_url`, alongside Instagram and Facebook, and returned by `get_public_page`.
 - The TikTok icon stays hidden until a valid HTTPS link on tiktok.com or one of its subdomains is saved for the business. Clearing the field hides the icon again. No sample TikTok profile is saved.
 - The database change is recorded in `supabase/migrations/20261027125000_add_tiktok_url.sql`. It preserves the public slot contract: only available slots, with date/time and no status field.

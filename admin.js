@@ -69,10 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 svgEl.style.display = 'none';
             }
             
-            // Update Favicon & Apple Touch Icon (Fallbacks for Safari/Desktop)
-            let icon = document.querySelector("link[rel~='icon']");
-            if (icon) icon.href = data.logo_url;
-            
+            // Keep the shared transparent tab icon when the business logo loads.
             let appleIcon = document.querySelector("link[rel='apple-touch-icon']");
             if (appleIcon) appleIcon.href = data.logo_url;
         }

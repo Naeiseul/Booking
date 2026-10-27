@@ -93,13 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     svgEl.style.display = 'none';
                 }
                 
-                let icon = document.querySelector("link[rel~='icon']");
-                const faviconUrl = bizSlug === 'logtraq' ? '/logtraq-favicon.svg?v=1' : data.logo_url;
-                if (icon) {
-                    icon.type = bizSlug === 'logtraq' ? 'image/svg+xml' : '';
-                    if (icon.getAttribute('href') !== faviconUrl) icon.href = faviconUrl;
-                }
-                
+                // Keep the shared transparent tab icon when the business logo loads.
                 let appleIcon = document.querySelector("link[rel='apple-touch-icon']");
                 if (appleIcon && appleIcon.href !== data.logo_url) appleIcon.href = data.logo_url;
             }
