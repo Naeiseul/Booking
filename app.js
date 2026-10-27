@@ -94,12 +94,33 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
                 
                 let icon = document.querySelector("link[rel~='icon']");
-                if (icon && icon.href !== data.logo_url) icon.href = data.logo_url;
+                const faviconUrl = bizSlug === 'logtraq' ? '/logtraq-favicon.svg?v=1' : data.logo_url;
+                if (icon) {
+                    icon.type = bizSlug === 'logtraq' ? 'image/svg+xml' : '';
+                    if (icon.getAttribute('href') !== faviconUrl) icon.href = faviconUrl;
+                }
                 
                 let appleIcon = document.querySelector("link[rel='apple-touch-icon']");
                 if (appleIcon && appleIcon.href !== data.logo_url) appleIcon.href = data.logo_url;
             }
             
+            // Show TikTok only when this business has a valid TikTok profile URL.
+            const tiktokEl = document.getElementById('tiktok-link');
+            if (tiktokEl) {
+                tiktokEl.style.display = 'none';
+                tiktokEl.removeAttribute('href');
+                try {
+                    const tiktokUrl = new URL(data.tiktok_url);
+                    if (tiktokUrl.protocol === 'https:' &&
+                        (tiktokUrl.hostname === 'tiktok.com' || tiktokUrl.hostname.endsWith('.tiktok.com'))) {
+                        tiktokEl.href = tiktokUrl.href;
+                        tiktokEl.style.display = 'block';
+                    }
+                } catch (_) {
+                    // Missing or invalid links stay hidden.
+                }
+            }
+
             // Social links injection
             if (data.instagram_url) {
                 const igEl = document.getElementById('ig-link');

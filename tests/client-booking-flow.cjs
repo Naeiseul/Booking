@@ -9,6 +9,8 @@ function element() {
  const el = {textContent:'',value:'',hidden:true,disabled:false,children:[],listeners:{},style:{},className:'',
  addEventListener(type,fn){this.listeners[type]=fn;},
  setAttribute(name,value){this[name]=value;},
+ getAttribute(name){return this[name] ?? null;},
+ removeAttribute(name){delete this[name];},
  appendChild(child){this.children.push(child);},
  focus(){this.focused=true;}};
  let html='';
@@ -63,7 +65,7 @@ async function details(options={}) {
  const doc={getElementById:get,createElement:()=>element(),querySelector:()=>null,querySelectorAll:()=>get('day-tabs').children,addEventListener(type,fn){loaded=fn;}};
  let slots=[{date:'2026-11-01',time:'10:00:00'},{date:'2026-11-01',time:'11:00:00',status:'taken'},{date:'2026-11-01',time:'12:00:00',status:'pending'},{date:'2026-11-01',time:'13:00:00',status:'open'},{date:'2026-11-02',time:'09:00:00'}];
  let fail=false,missingBusiness=false;
- vm.runInNewContext(files['app.js'],{document:doc,window:win,URLSearchParams,Date,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',setInterval(fn){poll=fn;},
+ vm.runInNewContext(files['app.js'],{document:doc,window:win,URL,URLSearchParams,Date,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',setInterval(fn){poll=fn;},
  fetch:async()=>{if(fail)throw Error('offline');return {ok:true,json:async()=>missingBusiness?null:({name:'Demo',slots})};}});
  await loaded();
  let chips=get('time-grid').children;
