@@ -60,6 +60,17 @@ The calendar selects a slot; a separate button opens the details form; Continue 
 
 Client details remain in the browser tab. Database reservations, payment verification and automatic admin booking updates are not implemented. A service save is not a booking.
 
+## Completed client flow, social links and tab icons
+
+- Client slot clicks select and highlight a time without leaving the calendar. A bottom button shows the selected day/date/time and opens the details form only when clicked. Switching days clears the selection; availability polling preserves a valid selection and disables continuing when availability cannot be checked.
+- Optional TikTok links are stored in public.businesses.tiktok_url and included in get_public_page. The client TikTok icon is hidden until a valid HTTPS TikTok URL is saved, and hides again when the field is cleared. No demo TikTok URL was inserted; the owner is creating an account.
+- TikTok migration: supabase/migrations/20261027125000_add_tiktok_url.sql. Applied to the connected Supabase project and verified: tiktok_url is nullable text, the public response includes it, and slots still omit status.
+- Client calendar, details form and admin dashboard share /logtraq-favicon.svg?v=1. It contains the existing symbol with a transparent backdrop. Loading a business logo does not replace the tab icon. Page titles/business names, page avatars and installed-app icons retain their existing behaviour.
+- Saved release commits: 2e3677cfbc5724df21003aebeff8fc07e8de030c (slot confirmation), 81375a77a3aa192a0a3ab27c61b1da168332a5dd (TikTok and transparent client icon), 707efa897ac3b44e9eef3b73b334b7d99a61b7be (shared icon across admin/client).
+- Release verification: Node client booking regression suite passed. Chromium checks verified the transparent client icon, unchanged client/details titles, TikTok visibility with/without a valid link, rejected invalid destinations, and selection/details navigation. Admin/client script checks verified that logo loading preserves the shared tab icon and existing titles.
+- All three releases were saved on main and deployed to production. The final icon release was READY and aliased to booking.logtraq.co.za; live admin, client, details HTML and both calendar scripts matched the saved code. These checks describe those releases; later admin catalogue work has its separate verification above.
+- Detailed behaviour is recorded in docs/client-booking-flow.md. Use the current main handoff and working agreement when resuming; older handoff branches describe earlier project states.
+
 ## Next step
 
 After the owner reviews step 1, discuss and authorize step 2: the client catalogue. Do not automatically advance to scheduling, reservations or payments.
