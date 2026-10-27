@@ -5,7 +5,8 @@ Implemented for the Booking demo on 2026-10-26.
 ## Behaviour
 
 - The public API filters to open slots and returns date/time without a status field. These slots are keyboard-accessible buttons. Explicit open status is also accepted; explicit taken or unknown statuses cannot be selected.
-- Selecting an open slot navigates to /:biz/details?date=YYYY-MM-DD&time=HH:mm.
+- Selecting an open slot highlights it without leaving the calendar. A bottom button shows the selected day, date and time (for example, Book Tuesday 27 October at 10:00). Only clicking this button navigates to /:biz/details?date=YYYY-MM-DD&time=HH:mm.
+- The button is disabled until a time is selected. Switching days clears the selection. Availability refreshes preserve a selection while it remains available, clear it if the slot disappears or becomes unavailable, and disable continuing if the refresh fails.
 - The details page shows the selected date/time and collects name, surname, phone, email, and optional notes.
 - Required fields are validated, and availability is fetched when the page opens and again before payment.
 - Continue to payment opens the existing Paystack page at https://paystack.shop/pay/o495iejvn3.

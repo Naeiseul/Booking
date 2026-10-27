@@ -134,3 +134,11 @@ h1 {
 .booking-button:disabled { opacity: 0.6; cursor: wait; }
 .booking-error { color: #B91C1C; font-size: 14px; line-height: 1.5; }
 [hidden] { display: none !important; }
+
+/* Client calendar selection and confirmation */
+.container-public .time-chip.open.selected {
+  background: var(--brand); color: #FFF;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--brand);
+}
+.calendar-book-button { line-height: 1.4; }
+.calendar-book-button:disabled { cursor: not-allowed; }

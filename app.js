@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const statusEl = document.getElementById('business-status');
     const tabsEl = document.getElementById('day-tabs');
     const gridEl = document.getElementById('time-grid');
+    const bookButton = document.getElementById('book-selected-slot');
 
     // If no business is specified in the link
     if (!bizSlug) {
@@ -22,6 +23,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let activeDateString = null; // Track which day the user is looking at
+
+    let selectedSlot = null;
+    let availabilityLoaded = false;
+
+    function updateBookButton() {
+        bookButton.disabled = !selectedSlot || !availabilityLoaded;
+        if (!selectedSlot) {
+            bookButton.textContent = 'Select a time to book';
+            return;
+        }
+        const date = new Date(selectedSlot.date + 'T12:00:00');
+        const label = date.toLocaleDateString('en-ZA', {
+            weekday: 'long', day: 'numeric', month: 'long'
+        });
+        bookButton.textContent = 'Book ' + label + ' at ' + selectedSlot.time;
+    }
+
+    bookButton.addEventListener('click', () => {
+        if (!selectedSlot || !availabilityLoaded) return;
+        const query = new URLSearchParams(selectedSlot);
+        window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
+    });
 
     async function loadData() {
         try {
@@ -44,6 +67,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // 3. If Supabase returns null, the business doesn't exist
             if (!data) {
+                selectedSlot = null;
+                availabilityLoaded = false;
+                updateBookButton();
                 nameEl.textContent = "Not Found";
                 statusEl.textContent = "We couldn't find this calendar.";
                 gridEl.innerHTML = '<div class="empty-state">This business does not exist or is inactive.</div>';
@@ -85,6 +111,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const slots = data.slots || [];
+            availabilityLoaded = true;
+            if (selectedSlot && !slots.some(slot =>
+                slot.date === selectedSlot.date && slot.time &&
+                slot.time.substring(0, 5) === selectedSlot.time &&
+                (slot.status === undefined || slot.status === 'open')
+            )) {
+                selectedSlot = null;
+            }
+            updateBookButton();
             if (slots.length === 0) {
                 gridEl.innerHTML = `
                     <div class="empty-state">
@@ -121,6 +156,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 tab.textContent = `${dayName} ${dayNum}`;
                 
                 tab.addEventListener('click', () => {
+                    if (activeDateString !== dateString) {
+                        selectedSlot = null;
+                        updateBookButton();
+                    }
                     activeDateString = dateString;
                     document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
@@ -151,12 +190,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                     chip.type = 'button';
                     chip.disabled = !isOpen;
                     chip.className = `time-chip ${isOpen ? 'open' : 'taken'}`;
+                    const isSelected = Boolean(isOpen && selectedSlot &&
+                        selectedSlot.date === slot.date && selectedSlot.time === time);
+                    if (isSelected) chip.classList.add('selected');
+                    chip.setAttribute('aria-pressed', String(isSelected));
                     chip.textContent = time;
                     chip.setAttribute('aria-label', `${slot.date} at ${time}${isOpen ? '' : ', unavailable'}`);
                     if (isOpen) {
                         chip.addEventListener('click', () => {
-                            const query = new URLSearchParams({ date: slot.date, time });
-                            window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
+                            selectedSlot = { date: slot.date, time };
+                            updateBookButton();
+                            renderSlots(daySlots);
                         });
                     }
 
@@ -173,6 +217,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
         } catch (error) {
+            availabilityLoaded = false;
+            updateBookButton();
             console.error(error);
             // Only show error state if we don't already have slots loaded on the screen
             if (gridEl.innerHTML.includes('skeleton') || gridEl.innerHTML.trim() === '') {
