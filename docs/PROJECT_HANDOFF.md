@@ -89,3 +89,15 @@ Client details remain in the browser tab. Database reservations, payment verific
 ## Next step
 
 After the owner reviews the catalogue, discuss and authorize step 3: duration-aware private appointment availability and scheduled shared classes with capacity. Do not automatically advance to reservations or payments.
+
+## End-of-day resume notes — 2026-10-27
+
+The owner requested saving memory and a prompt for the next day's chat. The catalogue was released in commit 4ce1f9050340ac07e080e4d3731e4b5c0f9a7526. Vercel production deployment dpl_8KDzSLiNQUkkKFWdEJZ48V8bLLXN was READY. The live client HTML, app.js, details HTML, details.js and styles.css returned HTTP 200 and matched that commit.
+
+The final read-only Supabase check found zero published services for logtraq. This is a dated observation: check again when resuming, because the owner may add services. Do not insert invented business offerings. The owner can add a real service in Admin > Services and enable Show in client catalogue.
+
+Begin the next chat by reading AGENTS.md, this handoff and docs/client-booking-flow.md on current main. Verify connected GitHub, Supabase and Vercel access with read-only checks. Confirm current state and review the catalogue before changing code. Then agree on the smallest part of step 3 to implement, starting with how a private service's full duration fits the business's availability. Class scheduling/capacity follows within step 3. Do not jump to reservations or payments because a question mentions them.
+
+Pending verification: actual desktop/mobile browser rendering and browser-to-REST interactions were not verified here. Prioritize checking the owner-created service from admin through the client catalogue when browser access is available.
+
+Keep the real Paystack page. Selected-service payment stays disabled until the correct amount is connected in step 5; the original slot-only demo remains real checkout when there are no published services.
