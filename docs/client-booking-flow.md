@@ -48,3 +48,13 @@ Verified get_public_page in Supabase: it filters availability.status = 'open' an
 - Admin styles are isolated in admin.css. The next step is agreeing on service fields, then implementing the form and business-scoped Supabase storage.
 
 Validation for this layout: JavaScript syntax checks and a Node-based mocked-DOM check passed for navigation, focus, direct section links, calendar preservation and slot requests, query-format admin links, and denied/incomplete/offline access. Local Edge automation could not start, so desktop/mobile rendering was not visually verified in this session.
+
+## Admin service creation and editing (2026-10-27)
+
+The empty Services layout described above has now been extended with a working service list and add/edit form, backed by business-scoped Supabase storage. It supports private appointments and shared classes, hours/minutes, fixed ZAR prices per booking/person, private-booking participants and saved catalogue visibility. New services default to hidden.
+
+This is catalogue step 1 only: client catalogue display is not yet connected. Class capacity and service-specific availability belong to later steps. Client booking, the date/time-only public slot contract and real Paystack checkout are unchanged.
+
+See docs/PROJECT_HANDOFF.md and AGENTS.md for the agreed sequence and the owner's instruction to stay on the current step even when questions explore later features. The migration is supabase/migrations/20261027140653_add_admin_service_catalogue.sql.
+
+The admin service test suite, transactional database integration tests and existing client booking regression suite passed. Local browser rendering and an actual browser-to-REST save remain unverified.

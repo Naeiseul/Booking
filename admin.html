@@ -85,14 +85,81 @@
             <section id="services-panel" aria-labelledby="services-heading" hidden>
                 <div class="admin-section-heading">
                     <h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
-                    <button class="admin-add-service" type="button" disabled aria-describedby="services-coming-soon">Add service</button>
+                    <button class="admin-add-service" id="add-service" type="button" disabled>Add service</button>
                 </div>
                 <p class="muted-text admin-section-description">Manage what your business offers.</p>
-                <div class="admin-services-empty">
+                <p class="service-feedback" id="services-message" role="status" hidden></p>
+                <p class="booking-error" id="services-error" role="alert" hidden></p>
+                <div class="service-list-toolbar">
+                    <p class="muted-text" id="services-loading" role="status">Loading services…</p>
+                    <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
+                </div>
+                <div id="services-list" class="services-list"></div>
+                <div class="admin-services-empty" id="services-empty" hidden>
                     <h3>Your service catalogue starts here</h3>
                     <p>Add your first service to start building your catalogue.</p>
-                    <p class="muted-text" id="services-coming-soon">Service creation is coming soon.</p>
                 </div>
+                <form class="service-form" id="service-form" aria-labelledby="service-form-heading" hidden>
+                    <h3 id="service-form-heading" tabindex="-1">Add service</h3>
+                    <fieldset id="service-fields">
+                        <div class="booking-field">
+                            <label for="service-name">Service name</label>
+                            <input id="service-name" name="service_name" maxlength="120" required>
+                        </div>
+                        <div class="booking-field">
+                            <label for="service-description">Description (optional)</label>
+                            <textarea id="service-description" name="description" maxlength="2000"></textarea>
+                        </div>
+                        <div class="booking-field">
+                            <label for="service-type">Booking type</label>
+                            <select id="service-type" name="service_type">
+                                <option value="private">Private appointment</option>
+                                <option value="class">Shared class</option>
+                            </select>
+                            <p class="service-hint" id="service-type-help">One booking covers the people included below.</p>
+                        </div>
+                        <div class="service-duration" role="group" aria-labelledby="service-duration-label">
+                            <p class="service-field-label" id="service-duration-label">Duration</p>
+                            <div class="service-form-columns">
+                                <div class="booking-field">
+                                    <label for="service-hours">Hours</label>
+                                    <input id="service-hours" name="hours" type="number" min="0" max="24" step="1" value="0" required>
+                                </div>
+                                <div class="booking-field">
+                                    <label for="service-minutes">Minutes</label>
+                                    <input id="service-minutes" name="minutes" type="number" min="0" max="59" step="1" value="0" required>
+                                </div>
+                            </div>
+                            <p class="service-hint">Enter a duration between 1 minute and 24 hours.</p>
+                        </div>
+                        <div class="service-form-columns">
+                            <div class="booking-field">
+                                <label for="service-price">Price (ZAR)</label>
+                                <input id="service-price" name="price" type="number" inputmode="decimal" min="0" max="21474836.47" step="0.01" required>
+                            </div>
+                            <div class="booking-field">
+                                <label for="service-price-basis">Price applies to</label>
+                                <select id="service-price-basis" name="price_basis">
+                                    <option value="per_session">Whole booking</option>
+                                    <option value="per_person">Each person</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="booking-field" id="service-participants-field">
+                            <label for="service-participants">People included in one booking</label>
+                            <input id="service-participants" name="participants" type="number" min="1" max="10000" step="1" value="1" required>
+                        </div>
+                        <label class="service-checkbox" for="service-published">
+                            <input id="service-published" name="published" type="checkbox">
+                            Show in client catalogue
+                        </label>
+                        <p class="booking-error" id="service-form-error" role="alert" hidden></p>
+                        <div class="service-form-actions">
+                            <button class="admin-add-service" id="save-service" type="submit">Save service</button>
+                            <button class="service-secondary-button" id="cancel-service" type="button">Cancel</button>
+                        </div>
+                    </fieldset>
+                </form>
             </section>
         </main>
 
@@ -117,6 +184,7 @@
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
     <script src="/admin-navigation.js"></script>
+    <script src="/admin-services.js"></script>
     <script src="/admin.js"></script>
 </body>
 </html>

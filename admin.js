@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         nameEl.textContent = `${data.name} (Admin)`;
         statusEl.textContent = "Tap a slot to toggle its availability";
         window.initializeAdminNavigation(data.name);
+        window.initializeAdminServices({ bizSlug, adminKey });
         
         // Logo and PWA injection
         if (data.name) {
