@@ -212,3 +212,8 @@ The owner clarified the Select a time to book button must remain visible, not di
 The owner authorized showing dates even when no times are available. Choose date & Time now always lists the next seven local calendar dates, plus any additional dates supplied by the real slots API. Selecting an empty day shows No available times for this date. No times are invented and the bottom button remains disabled until a real available slot is chosen. Empty-day selection persists through polling; day controls are keyboard-accessible buttons with aria-pressed/full-date labels. Real slot-only date/time responses, selection/details navigation and shared bottom button remain intact. Client JavaScript only; no backend/admin changes.
 
 Validation: syntax plus mocked-DOM flow checks for empty dates, refresh preservation, real slots, step navigation and selection clearing. Live files verified after release; actual browser rendering remains outstanding.
+
+
+## Current-step label typography — 2026-10-28
+
+Centred the client Current step label and changed it to a small italic Georgia/serif font, distinct from the main button text. Existing muted silver colour and active visibility remain. Client HTML/CSS cache version only; no backend/admin changes. Live assets verified after deployment; browser visual check remains outstanding.

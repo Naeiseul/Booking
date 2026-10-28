@@ -42,12 +42,15 @@
 }
 .step-indicator {
     display: block;
-    min-height: 14px;
+    min-height: 16px;
     margin-top: 5px;
     color: #CBD5E1;
-    font-size: 10px;
-    line-height: 1.4;
-    font-weight: 500;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.3;
+    font-weight: 400;
+    text-align: center;
     visibility: hidden;
 }
 .catalogue-menu button[aria-pressed="true"] .step-indicator { visibility: visible; }
