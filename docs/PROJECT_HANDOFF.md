@@ -185,3 +185,8 @@ Removed the successful-load instruction Select an available time to continue, pl
 The owner requested replacing sidebar labels with session selection, date/time selection and checkout. Navigation is now Choose a session, Choose date & time, Checkout. These are actual frontend section switches, no longer service category filters. Session view displays all published services, with existing empty card when none exist. Date/time view retains the existing general calendar and details navigation. Selecting a private service opens date/time; links returning with a service also restore that step. Navigation/polling preserve selected service/time. Checkout is an honest unconnected placeholder; no payment simulation, new backend, reservations or admin work. Existing real Paystack details flow remains unchanged and service-specific payment stays guarded.
 
 Validation: JavaScript syntax and isolated step-navigation checks; production assets compared at release. Actual browser rendering remains outstanding. Continue client-only shell work in small agreed edits and keep explanations concise.
+
+
+## Boxed client step buttons — 2026-10-28
+
+At the owner's request, capitalized Time in Choose date & Time and separated the three sidebar/mobile navigation buttons with gaps and bold 3px borders. Active buttons retain the teal highlight/border. Client HTML/CSS only; no admin/backend or navigation logic changes. Live assets verified after deployment; visual browser check remains outstanding.
