@@ -1,6 +1,48 @@
 # Booking project handoff
 
-Updated 2026-10-27.
+Updated 2026-10-28.
+
+## Latest resume state — 2026-10-28 (read before older notes)
+
+### Current working agreement
+
+- Client-facing work ONLY. Do not edit admin or backend unless the owner explicitly requests it. Existing client Supabase reads remain; new Supabase integration/features are postponed.
+- Focus on the client shell for preselling, one small agreed edit at a time. The owner thinks visually and wants concise explanations (about 100 words per step), saying what changes in the frontend, what the backend needs, and one clear next action.
+- Discuss the next small edit before changing anything. Questions are exploration, not permission to expand/reorder work. Complete authorized changes, save to GitHub, deploy to production, and verify affected live assets.
+- The owner rejected the separate sales demo. Its files/route were removed in commit 73fc7a2b3fb274679e819fd5b2d3d15af0c9b6e6. Never restore/reuse/republish it unless explicitly requested.
+- Visual reference: a McDonald's kiosk catalogue with narrow sidebar and compact picture-led menu cards. Adapt the structure to booking, not its branding. Do not invent actual business offerings.
+
+### Current client UI
+
+- Live client: https://booking.logtraq.co.za/logtraq
+- Existing background gradient shows through; no large white page panel. Phone icon has a transparent background. Phone and TikTok links use saved business data; scheme-less TikTok domains are normalized to HTTPS.
+- Sidebar now represents booking STEPS, not categories: Choose a session; Choose date & Time; Checkout. The capital T in Time was explicitly requested. All/group/private/class category tabs were replaced, not retained as hidden filters.
+- Desktop: narrow 144px sidebar close to content. Mobile (700px and below): sticky horizontal scrolling row, separated buttons with bold borders and useful touch targets. Client pinch zoom is enabled.
+- ALL three step boxes stay black with white text, even on hover. The selected step has a muted silver border and Current step label. The label is centred, small italic Georgia/serif in muted silver. aria-current=step follows the active panel. No animated shine.
+- Choose a session: existing published service cards with neutral photo areas and service details. Empty catalogue has an honest non-interactive No services added yet card. No real service records or business photos were added. Photo upload remains future work.
+- Choose date & Time: existing calendar/selection logic, now always showing the next seven LOCAL dates even with no openings, plus any further dates provided by real availability. Empty days say No available times for this date. No bookable times are fabricated. Selection persists across steps/polling; changing days clears the time.
+- The black/white Select a time to book button stays below the panels and visible across all steps. Do not remove or hide it when styling/navigation changes. It stays disabled until a valid real selection and updates its label when a time is selected; its existing details navigation is retained.
+- Checkout: explicitly unconnected placeholder. No cart/multi-service checkout implemented in the retained client. The owner discussed adding multiple services without leaving the catalogue, but a new implementation must be agreed separately.
+- Removed copy: Select an available time to continue; Our services heading; Services will be listed here soon. You can view available times below. Do not silently restore these.
+- Shared classes and duration-aware availability are still unfinished. Original numbered plan: admin services and catalogue implemented; step 3 duration/class scheduling/capacity; step 4 reservations; step 5 real verified Paystack payments. Client-shell work is currently the explicit priority before resuming that plan.
+
+### Data and payment constraints
+
+- Last read-only check today found zero available public slots. Earlier check found no services. Recheck only if relevant; these are dated observations, not permanent assumptions.
+- Public slots contain date/time without status. Never require status === 'open'; retain date/time-only selection.
+- Keep the real supplied Paystack destination and existing no-catalogue details flow. Service-specific payment remains disabled until correct pricing is connected. Never simulate payments.
+- Do not modify business data or insert sample services to fill the shell.
+
+### Release and verification
+
+- Latest UI release before this memory save: f4e885d97b26c9964dc9a2290001d6810943b194, Vercel dpl_D6jPCvCfTYz8HjbQcohPTJTp2eWR READY. Client HTML and catalogue.css?v=6 matched saved files.
+- Date-picker release: 6b8f11c841a2e5db2230bfa6a3f37eccf807d4a0, verified live. In-memory DOM checks exercised seven empty dates, no fabricated times, preserved empty-day polling, real date/time-only selection, step navigation and clearing time on day changes.
+- Navigation/current-step/card interactions had isolated JS checks. Local shell execution is rejected by environment policy; full Node regression suite and actual desktop/mobile browser rendering remain outstanding. Do not claim end-to-end browser verification.
+- Connected GitHub/Supabase/Vercel tools worked. Use current main as authority; avoid .env/credentials. Repo/project identifiers are in Project and runtime below.
+
+### Start tomorrow
+
+Read AGENTS.md, this latest section and docs/client-booking-flow.md on current main. Confirm the client state and preserve all owner preferences above. The owner should review the latest client shell first; discuss the next small edit before changing code. Likely topic is the compact picture-led kiosk card grid, but it is not automatically authorized. Do not jump to admin, Supabase, duration scheduling, reservations, cart or payments. Browser verification remains pending.
 
 ## Working agreement and persistent project memory
 
