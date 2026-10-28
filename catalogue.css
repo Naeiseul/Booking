@@ -132,3 +132,5 @@
 .catalogue-page .calendar-book-button { background: #000; color: #FFF; }
 .catalogue-page .calendar-book-button:disabled { opacity: 1; }
 .catalogue-page .calendar-book-button:focus-visible { outline-color: #64748B; }
+
+.catalogue-page .calendar-book-button { margin-top: 24px; }

@@ -200,3 +200,8 @@ Replaced the selected step's green highlight with black fill, white text and bla
 ## Permanent black step tracker — 2026-10-28
 
 The owner wants all step boxes permanently black with white text, including on hover, with a separate clear current-step signal. The active box now has a muted silver border and visible Current step label; inactive boxes reserve that label space to avoid layout jumps. aria-current=step tracks the active section for assistive technology. No animated shine. Existing responsive navigation and black booking action remain. Client HTML/CSS/state annotation only; no backend/admin changes. Live files verified on deployment; visual browser verification remains outstanding.
+
+
+## Keep bottom booking button visible — 2026-10-28
+
+The owner clarified the Select a time to book button must remain visible, not disappear with the date/time panel. Moved the existing button below the three step panels within the client content column; retained its ID, black/white styling and existing selection/availability disabled checks and details navigation. Do not hide/remove this bottom action when changing steps. No backend/admin changes.
