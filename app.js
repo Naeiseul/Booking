@@ -67,6 +67,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking');
     }
 
+    function createPhotoPlaceholder() {
+        const photo = document.createElement('div');
+        photo.className = 'service-photo-placeholder';
+        photo.setAttribute('aria-hidden', 'true');
+        const label = document.createElement('span');
+        label.textContent = 'No photo yet';
+        photo.appendChild(label);
+        return photo;
+    }
+
     function renderCatalogue() {
         const visibleServices = services.filter(service => activeCategory === 'all' || serviceCategory(service) === activeCategory);
         categoryMenu.hidden = false;
@@ -78,28 +88,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             visibleServices.forEach(service => {
                 const card = document.createElement('article');
                 card.className = 'client-service-card';
+                card.appendChild(createPhotoPlaceholder());
+                const body = document.createElement('div');
+                body.className = 'service-card-body';
                 const title = document.createElement('h3');
                 title.textContent = service.name;
-                card.appendChild(title);
+                body.appendChild(title);
                 if (service.description) {
                     const description = document.createElement('p');
                     description.className = 'client-service-description';
                     description.textContent = service.description;
-                    card.appendChild(description);
+                    body.appendChild(description);
                 }
                 const details = document.createElement('p');
                 details.className = 'muted-text';
                 details.textContent = serviceDetails(service);
-                card.appendChild(details);
+                body.appendChild(details);
                 const price = document.createElement('p');
                 price.className = 'client-service-price';
                 price.textContent = servicePrice(service) + (service.price_basis === 'per_person' ? ' per person' : ' per booking');
-                card.appendChild(price);
+                body.appendChild(price);
                 if (service.price_basis === 'per_person' && service.service_type === 'private' && service.participant_count > 1) {
                     const total = document.createElement('p');
                     total.className = 'muted-text';
                     total.textContent = servicePrice(service, true) + ' total for ' + service.participant_count + ' people';
-                    card.appendChild(total);
+                    body.appendChild(total);
                 }
                 const choose = document.createElement('button');
                 choose.type = 'button';
@@ -118,9 +131,28 @@ document.addEventListener("DOMContentLoaded", async () => {
                     updateBookButton();
                     document.getElementById('calendar-heading').focus();
                 });
-                card.appendChild(choose);
+                body.appendChild(choose);
+                card.appendChild(body);
                 serviceList.appendChild(card);
             });
+            if (!visibleServices.length) {
+                const empty = document.createElement('article');
+                empty.className = 'client-service-card service-card-empty';
+                empty.appendChild(createPhotoPlaceholder());
+                const body = document.createElement('div');
+                body.className = 'service-card-body';
+                const title = document.createElement('h3');
+                title.textContent = 'No services added yet';
+                const message = document.createElement('p');
+                message.className = 'muted-text';
+                message.textContent = activeCategory === 'all'
+                    ? 'Published services will appear here.'
+                    : 'Services in this category will appear here.';
+                body.appendChild(title);
+                body.appendChild(message);
+                empty.appendChild(body);
+                serviceList.appendChild(empty);
+            }
             catalogueSignature = signature;
         }
         catalogueEl.hidden = false;

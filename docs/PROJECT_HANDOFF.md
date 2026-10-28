@@ -126,3 +126,12 @@ The owner explicitly paused availability planning to design intuitive client bro
 Categories use existing published service fields: class maps to Classes; private services for more than one participant map to Group sessions; other private services map to Private sessions. No invented offerings or database changes. Empty categories display an honest message. All preserves the existing empty-catalogue slot-only demo; choosing an empty category does not show unrelated legacy times. Category changes preserve an existing service/time selection. Availability polling preserves the category and does not replace unchanged service buttons. Client-only catalogue.css isolates layout changes from admin/details pages.
 
 Verification: JavaScript syntax and isolated catalogue rendering checks performed. Local shell/Node execution is rejected by the environment policy, so the existing Node regression suite and desktop/mobile browser checks could not run here. Verify production release and affected live assets before reporting deployment complete.
+
+
+## Catalogue card skeleton — 2026-10-28
+
+Authorized client-only edit: service cards with a neutral photo placeholder above real service details, responsive grid on desktop and stacked cards on mobile. Existing service selection buttons retain their behaviour; no cart action is implied. Empty categories display a non-interactive card labelled No services added yet so the layout is visible without invented offerings. No sample service records were created.
+
+Backend: existing get_public_page published service fields supply text. Photo uploads, Storage configuration, image fields and cart behaviour remain future agreed steps. No schema or payment changes. The owner wants concise updates (about 100 words per step) explaining frontend, backend and the next small step. Prioritize the client skeleton before scheduling.
+
+Validation: JavaScript syntax and isolated card rendering checks; live deployment/assets checked at release. Actual browser rendering and the full Node suite remain unverified because local command execution is unavailable.
