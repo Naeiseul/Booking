@@ -205,3 +205,10 @@ The owner wants all step boxes permanently black with white text, including on h
 ## Keep bottom booking button visible — 2026-10-28
 
 The owner clarified the Select a time to book button must remain visible, not disappear with the date/time panel. Moved the existing button below the three step panels within the client content column; retained its ID, black/white styling and existing selection/availability disabled checks and details navigation. Do not hide/remove this bottom action when changing steps. No backend/admin changes.
+
+
+## Date picker without openings — 2026-10-28
+
+The owner authorized showing dates even when no times are available. Choose date & Time now always lists the next seven local calendar dates, plus any additional dates supplied by the real slots API. Selecting an empty day shows No available times for this date. No times are invented and the bottom button remains disabled until a real available slot is chosen. Empty-day selection persists through polling; day controls are keyboard-accessible buttons with aria-pressed/full-date labels. Real slot-only date/time responses, selection/details navigation and shared bottom button remain intact. Client JavaScript only; no backend/admin changes.
+
+Validation: syntax plus mocked-DOM flow checks for empty dates, refresh preservation, real slots, step navigation and selection clearing. Live files verified after release; actual browser rendering remains outstanding.
