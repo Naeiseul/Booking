@@ -154,3 +154,8 @@ The owner explicitly rejected the standalone sales demo and instructed us to dis
 ## Transparent page panels — 2026-10-28
 
 The owner requested removing the white background from both client and admin, retaining the existing background colour. The shared client/admin outer page panels now have transparent backgrounds, no borders and no shadows. Admin sidebar and client category-menu panels are transparent too. Existing gradient, spacing, controls, service cards and backend behaviour are preserved. CSS-only change; no database work or rejected demo restoration. Actual visual browser verification remains outstanding; affected live styles checked at release.
+
+
+## Transparent phone icon — 2026-10-28
+
+Removed the white background from the supplied handset image using image editing with transparent output. Replaced shared phone.png and changed both client/admin image URLs to /phone.png?v=2 to refresh cached copies. Phone number logic and backend are unchanged. Production icon/page assets checked on release; actual browser rendering remains outstanding.
