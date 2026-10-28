@@ -101,3 +101,10 @@ Begin the next chat by reading AGENTS.md, this handoff and docs/client-booking-f
 Pending verification: actual desktop/mobile browser rendering and browser-to-REST interactions were not verified here. Prioritize checking the owner-created service from admin through the client catalogue when browser access is available.
 
 Keep the real Paystack page. Selected-service payment stays disabled until the correct amount is connected in step 5; the original slot-only demo remains real checkout when there are no published services.
+
+
+## Business call icon — 2026-10-28
+
+The owner confirmed whatsapp_number is the business phone number and supplied phone.png. The client header now displays that handset image next to social links when a valid business number is returned. It opens tel: with formatting removed. Polling updates the destination and hides/clears the icon when the number is removed or invalid. No separate number field or schema change was needed. The footer's existing platform contact remains separate.
+
+Validation: JavaScript syntax and isolated DOM checks passed for international/local formatted numbers, empty/missing/invalid values and removal after display. Browser rendering and an actual device dialler remain unverified. Step 3 still awaits agreement; no scheduling, reservations or payments changed. The TikTok issue was diagnosed separately: the saved URL lacked https://; it has not been changed.

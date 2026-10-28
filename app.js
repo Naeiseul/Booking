@@ -209,6 +209,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
 
+            // The existing WhatsApp field stores the business contact number.
+            const phoneEl = document.getElementById('business-phone-link');
+            if (phoneEl) {
+                phoneEl.style.display = 'none';
+                phoneEl.removeAttribute('href');
+                phoneEl.removeAttribute('title');
+                phoneEl.setAttribute('aria-label', 'Call business');
+                const phone = typeof data.whatsapp_number === 'string' ? data.whatsapp_number.trim() : '';
+                const dialNumber = phone.replace(/[\s().-]/g, '');
+                if (/^\+?\d[\d\s().-]*$/.test(phone) && /^\+?\d{7,15}$/.test(dialNumber)) {
+                    phoneEl.href = 'tel:' + dialNumber;
+                    phoneEl.title = 'Call ' + phone;
+                    phoneEl.setAttribute('aria-label', 'Call business on ' + phone);
+                    phoneEl.style.display = 'block';
+                }
+            }
+
             // Social links injection
             if (data.instagram_url) {
                 const igEl = document.getElementById('ig-link');
