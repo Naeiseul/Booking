@@ -190,3 +190,8 @@ Validation: JavaScript syntax and isolated step-navigation checks; production as
 ## Boxed client step buttons — 2026-10-28
 
 At the owner's request, capitalized Time in Choose date & Time and separated the three sidebar/mobile navigation buttons with gaps and bold 3px borders. Active buttons retain the teal highlight/border. Client HTML/CSS only; no admin/backend or navigation logic changes. Live assets verified after deployment; visual browser check remains outstanding.
+
+
+## Neutral client navigation/action — 2026-10-28
+
+Replaced the selected step's green highlight with black fill, white text and black border. Inactive step boxes retain their transparent background and now use black borders; keyboard focus uses a neutral grey outline. The client Select a time to book button also uses black fill/white text, including its initial disabled appearance; disabled behaviour is unchanged. Client-only CSS/cache-version edit; no admin/backend change. Live assets verified on release; visual browser check remains outstanding.
