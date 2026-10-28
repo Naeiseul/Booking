@@ -144,3 +144,8 @@ The owner explicitly requested postponing Supabase/backend work and building the
 No Supabase/network booking/payment calls occur in the demo. Booking/checkout is visibly disabled with an explanation. Existing live client/admin and real Paystack flow remain separate and unchanged. Future work should stay on the client shell in small agreed steps; backend connection, scheduling, reservations and actual checkout follow later. Communication preference: about 100 words per step, explain frontend/backend and one next action.
 
 Validation: JavaScript syntax and isolated category/cart interaction checks; production assets checked on release. Actual desktop/mobile browser rendering remains outstanding. No live transactions or invented business offerings were inserted.
+
+
+## Discarded sales demo — 2026-10-28
+
+The owner explicitly rejected the standalone sales demo and instructed us to discard it and prevent accidental future pushes. demo.html, demo.css, demo.js and the /demo rewrite have been removed. Do not restore, reuse, or republish that design unless explicitly requested by the owner. The earlier client catalogue/category menu and card skeleton remain. No replacement design is currently authorized. Stop and agree on the next small client edit before building anything further.
