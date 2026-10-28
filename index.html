@@ -62,16 +62,16 @@
         </header>
 
         <main class="catalogue-layout">
-            <nav class="catalogue-menu" aria-label="Service categories" hidden>
-                <button type="button" data-category="group" aria-pressed="true">Group sessions</button>
-                <button type="button" data-category="private" aria-pressed="false">Private sessions</button>
-                <button type="button" data-category="class" aria-pressed="false">Classes</button>
+            <nav class="catalogue-menu" aria-label="Booking steps" hidden>
+                <button type="button" data-step="sessions" aria-controls="service-catalogue" aria-pressed="true">Choose a session</button>
+                <button type="button" data-step="schedule" aria-controls="client-calendar" aria-pressed="false">Choose date &amp; time</button>
+                <button type="button" data-step="checkout" aria-controls="client-checkout" aria-pressed="false">Checkout</button>
             </nav>
             <div class="catalogue-content">
-            <section id="service-catalogue" class="client-catalogue" aria-label="Services" hidden>
+            <section id="service-catalogue" class="client-catalogue" aria-label="Services" tabindex="-1" hidden>
                 <div id="client-services" class="client-service-list"></div>
             </section>
-            <section id="client-calendar" aria-labelledby="calendar-heading">
+            <section id="client-calendar" aria-labelledby="calendar-heading" hidden>
                 <h2 id="calendar-heading" class="client-section-heading" tabindex="-1">Available times</h2>
                 <div id="calendar-service" class="catalogue-selection" hidden>
                     <strong id="calendar-service-name"></strong>
@@ -91,6 +91,10 @@
                 <div class="skeleton-chip"></div>
             </div>
             <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Select a time to book</button>
+            </section>
+            <section id="client-checkout" aria-labelledby="checkout-heading" hidden>
+                <h2 id="checkout-heading" class="client-section-heading" tabindex="-1">Checkout</h2>
+                <p class="muted-text">Checkout is not connected yet.</p>
             </section>
             </div>
         </main>

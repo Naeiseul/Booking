@@ -178,3 +178,10 @@ Client-only request: removed All from the category menu. Group sessions is the i
 ## Remove client instructional copy — 2026-10-28
 
 Removed the successful-load instruction Select an available time to continue, plus the catalogue heading and introductory/empty-list message above the cards, as requested. Category menu and card empty state remain. Client error messages still appear when needed; the status element is hidden on successful loads. Replaced the section's removed heading reference with an accessible Services label. No admin/backend changes. JavaScript syntax and reference checks passed; live assets verified on release. Browser rendering remains outstanding.
+
+
+## Client booking-step menu — 2026-10-28
+
+The owner requested replacing sidebar labels with session selection, date/time selection and checkout. Navigation is now Choose a session, Choose date & time, Checkout. These are actual frontend section switches, no longer service category filters. Session view displays all published services, with existing empty card when none exist. Date/time view retains the existing general calendar and details navigation. Selecting a private service opens date/time; links returning with a service also restore that step. Navigation/polling preserve selected service/time. Checkout is an honest unconnected placeholder; no payment simulation, new backend, reservations or admin work. Existing real Paystack details flow remains unchanged and service-specific payment stays guarded.
+
+Validation: JavaScript syntax and isolated step-navigation checks; production assets compared at release. Actual browser rendering remains outstanding. Continue client-only shell work in small agreed edits and keep explanations concise.

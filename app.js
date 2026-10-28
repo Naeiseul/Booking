@@ -31,24 +31,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selectedService = null;
     let requestedServiceId = urlParams.get('service') || '';
     let catalogueSignature = null;
-    let activeCategory = 'group';
+    let activeStep = 'sessions';
     const categoryMenu = document.querySelector('.catalogue-menu');
-    const categoryButtons = Array.from(categoryMenu.querySelectorAll('button[data-category]'));
-
-    function serviceCategory(service) {
-        if (service.service_type === 'class') return 'class';
-        return service.participant_count > 1 ? 'group' : 'private';
-    }
-
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            activeCategory = button.dataset.category;
-            renderCatalogue();
-        });
-    });
+    const stepButtons = Array.from(categoryMenu.querySelectorAll('button[data-step]'));
     const catalogueEl = document.getElementById('service-catalogue');
     const serviceList = document.getElementById('client-services');
     const calendarEl = document.getElementById('client-calendar');
+    const checkoutEl = document.getElementById('client-checkout');
+
+    function showStep(step, moveFocus = false) {
+        activeStep = step;
+        catalogueEl.hidden = step !== 'sessions';
+        calendarEl.hidden = step !== 'schedule';
+        checkoutEl.hidden = step !== 'checkout';
+        stepButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.step === step)));
+        if (moveFocus) {
+            const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : 'checkout-heading');
+            target.focus();
+        }
+    }
+
+    stepButtons.forEach(button => {
+        button.addEventListener('click', () => showStep(button.dataset.step, true));
+    });
 
     function serviceDuration(service) {
         const hours = Math.floor(service.duration_minutes / 60);
@@ -78,10 +83,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderCatalogue() {
-        const visibleServices = services.filter(service => serviceCategory(service) === activeCategory);
+        const visibleServices = services;
         categoryMenu.hidden = false;
-        categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory)));
-        const signature = JSON.stringify([services, selectedService && selectedService.id, activeCategory]);
+        const signature = JSON.stringify([services, selectedService && selectedService.id]);
         if (signature !== catalogueSignature) {
             serviceList.innerHTML = '';
             visibleServices.forEach(service => {
@@ -128,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     selectedSlot = null;
                     renderCatalogue();
                     updateBookButton();
-                    document.getElementById('calendar-heading').focus();
+                    showStep('schedule', true);
                 });
                 body.appendChild(choose);
                 card.appendChild(body);
@@ -144,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 title.textContent = 'No services added yet';
                 const message = document.createElement('p');
                 message.className = 'muted-text';
-                message.textContent = 'Services in this category will appear here.';
+                message.textContent = 'Published services will appear here.';
                 body.appendChild(title);
                 body.appendChild(message);
                 empty.appendChild(body);
@@ -152,8 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             catalogueSignature = signature;
         }
-        catalogueEl.hidden = false;
-        calendarEl.hidden = services.length > 0 && !selectedService;
+        showStep(activeStep);
         document.getElementById('calendar-service').hidden = !selectedService;
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
@@ -208,6 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 services = [];
                 catalogueEl.hidden = true;
                 categoryMenu.hidden = true;
+                checkoutEl.hidden = true;
                 calendarEl.hidden = false;
                 availabilityLoaded = false;
                 updateBookButton();
@@ -297,7 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (requestedServiceId) {
                 selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
                 if (selectedService) {
-                    activeCategory = serviceCategory(selectedService);
+                    activeStep = 'schedule';
                     requestedServiceId = '';
                 }
             }
