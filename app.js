@@ -44,7 +44,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         catalogueEl.hidden = step !== 'sessions';
         calendarEl.hidden = step !== 'schedule';
         checkoutEl.hidden = step !== 'checkout';
-        stepButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.step === step)));
+        stepButtons.forEach(button => {
+            const isCurrent = button.dataset.step === step;
+            button.setAttribute('aria-pressed', String(isCurrent));
+            if (isCurrent) button.setAttribute('aria-current', 'step');
+            else button.removeAttribute('aria-current');
+        });
         if (moveFocus) {
             const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : 'checkout-heading');
             target.focus();

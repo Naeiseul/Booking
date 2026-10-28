@@ -195,3 +195,8 @@ At the owner's request, capitalized Time in Choose date & Time and separated the
 ## Neutral client navigation/action — 2026-10-28
 
 Replaced the selected step's green highlight with black fill, white text and black border. Inactive step boxes retain their transparent background and now use black borders; keyboard focus uses a neutral grey outline. The client Select a time to book button also uses black fill/white text, including its initial disabled appearance; disabled behaviour is unchanged. Client-only CSS/cache-version edit; no admin/backend change. Live assets verified on release; visual browser check remains outstanding.
+
+
+## Permanent black step tracker — 2026-10-28
+
+The owner wants all step boxes permanently black with white text, including on hover, with a separate clear current-step signal. The active box now has a muted silver border and visible Current step label; inactive boxes reserve that label space to avoid layout jumps. aria-current=step tracks the active section for assistive technology. No animated shine. Existing responsive navigation and black booking action remain. Client HTML/CSS/state annotation only; no backend/admin changes. Live files verified on deployment; visual browser verification remains outstanding.
