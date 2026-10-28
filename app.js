@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selectedService = null;
     let requestedServiceId = urlParams.get('service') || '';
     let catalogueSignature = null;
-    let activeCategory = 'all';
+    let activeCategory = 'group';
     const categoryMenu = document.querySelector('.catalogue-menu');
     const categoryButtons = Array.from(categoryMenu.querySelectorAll('button[data-category]'));
-    const categoryLabels = { all: 'Our services', group: 'Group sessions', private: 'Private sessions', class: 'Classes' };
+    const categoryLabels = { group: 'Group sessions', private: 'Private sessions', class: 'Classes' };
 
     function serviceCategory(service) {
         if (service.service_type === 'class') return 'class';
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderCatalogue() {
-        const visibleServices = services.filter(service => activeCategory === 'all' || serviceCategory(service) === activeCategory);
+        const visibleServices = services.filter(service => serviceCategory(service) === activeCategory);
         categoryMenu.hidden = false;
         categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory)));
         document.getElementById('catalogue-heading').textContent = categoryLabels[activeCategory];
@@ -145,9 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 title.textContent = 'No services added yet';
                 const message = document.createElement('p');
                 message.className = 'muted-text';
-                message.textContent = activeCategory === 'all'
-                    ? 'Published services will appear here.'
-                    : 'Services in this category will appear here.';
+                message.textContent = 'Services in this category will appear here.';
                 body.appendChild(title);
                 body.appendChild(message);
                 empty.appendChild(body);
@@ -158,10 +156,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         catalogueEl.hidden = false;
         document.getElementById('catalogue-message').textContent = visibleServices.length
             ? (requestedServiceId ? 'This service is no longer listed. Please choose another.' : 'Choose a service to see what is included.')
-            : activeCategory !== 'all' ? 'No services are listed in this category yet.'
             : services.length ? 'No services are listed in this category yet.'
             : 'Services will be listed here soon. You can view available times below.';
-        calendarEl.hidden = services.length > 0 ? !selectedService : activeCategory !== 'all';
+        calendarEl.hidden = services.length > 0 && !selectedService;
         document.getElementById('calendar-service').hidden = !selectedService;
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
@@ -302,7 +299,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             services = nextServices;
             if (requestedServiceId) {
                 selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
-                if (selectedService) requestedServiceId = '';
+                if (selectedService) {
+                    activeCategory = serviceCategory(selectedService);
+                    requestedServiceId = '';
+                }
             }
             renderCatalogue();
             const slots = data.slots || [];

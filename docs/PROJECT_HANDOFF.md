@@ -168,3 +168,8 @@ The owner confirmed client-only work, referenced a kiosk menu catalogue and auth
 Current preference: concise updates around 100 words, frontend/backend distinction, one small agreed change at a time. Next: review the sidebar before changing cards toward the compact picture-led kiosk grid. Supabase enhancements remain postponed. No new cart/scheduling/payment work is authorized.
 
 Verification: static CSS/viewport checks and live release asset comparison. Actual desktop/mobile browser rendering remains outstanding because no browser automation tool is available in this session.
+
+
+## Remove All category — 2026-10-28
+
+Client-only request: removed All from the category menu. Group sessions is the initial active category; Private sessions and Classes remain. Returning via a service link selects that service's matching category. Existing empty-catalogue slot-only demo is retained. No admin/backend changes. Syntax/static checks and live assets verified; browser rendering remains unverified.
