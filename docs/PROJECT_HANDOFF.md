@@ -173,3 +173,8 @@ Verification: static CSS/viewport checks and live release asset comparison. Actu
 ## Remove All category — 2026-10-28
 
 Client-only request: removed All from the category menu. Group sessions is the initial active category; Private sessions and Classes remain. Returning via a service link selects that service's matching category. Existing empty-catalogue slot-only demo is retained. No admin/backend changes. Syntax/static checks and live assets verified; browser rendering remains unverified.
+
+
+## Remove client instructional copy — 2026-10-28
+
+Removed the successful-load instruction Select an available time to continue, plus the catalogue heading and introductory/empty-list message above the cards, as requested. Category menu and card empty state remain. Client error messages still appear when needed; the status element is hidden on successful loads. Replaced the section's removed heading reference with an accessible Services label. No admin/backend changes. JavaScript syntax and reference checks passed; live assets verified on release. Browser rendering remains outstanding.

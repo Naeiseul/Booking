@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // If no business is specified in the link
     if (!bizSlug) {
         nameEl.textContent = "Welcome";
+        statusEl.hidden = false;
         statusEl.textContent = "Please use a valid business link.";
         gridEl.innerHTML = '<div class="empty-state">No business specified in link.</div>';
         return;
@@ -33,7 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     let activeCategory = 'group';
     const categoryMenu = document.querySelector('.catalogue-menu');
     const categoryButtons = Array.from(categoryMenu.querySelectorAll('button[data-category]'));
-    const categoryLabels = { group: 'Group sessions', private: 'Private sessions', class: 'Classes' };
 
     function serviceCategory(service) {
         if (service.service_type === 'class') return 'class';
@@ -81,7 +81,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const visibleServices = services.filter(service => serviceCategory(service) === activeCategory);
         categoryMenu.hidden = false;
         categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory)));
-        document.getElementById('catalogue-heading').textContent = categoryLabels[activeCategory];
         const signature = JSON.stringify([services, selectedService && selectedService.id, activeCategory]);
         if (signature !== catalogueSignature) {
             serviceList.innerHTML = '';
@@ -154,10 +153,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             catalogueSignature = signature;
         }
         catalogueEl.hidden = false;
-        document.getElementById('catalogue-message').textContent = visibleServices.length
-            ? (requestedServiceId ? 'This service is no longer listed. Please choose another.' : 'Choose a service to see what is included.')
-            : services.length ? 'No services are listed in this category yet.'
-            : 'Services will be listed here soon. You can view available times below.';
         calendarEl.hidden = services.length > 0 && !selectedService;
         document.getElementById('calendar-service').hidden = !selectedService;
         if (selectedService) {
@@ -217,6 +212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 availabilityLoaded = false;
                 updateBookButton();
                 nameEl.textContent = "Not Found";
+                statusEl.hidden = false;
                 statusEl.textContent = "We couldn't find this calendar.";
                 gridEl.innerHTML = '<div class="empty-state">This business does not exist or is inactive.</div>';
                 return;
@@ -224,7 +220,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // 4. Update the UI with the business data
             nameEl.textContent = data.name || "Booking Calendar";
-            statusEl.textContent = "Select an available time to continue."; 
+            statusEl.textContent = '';
+            statusEl.hidden = true;
             
             // Logo and PWA injection
             if (data.name) {
@@ -418,6 +415,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Only show error state if we don't already have slots loaded on the screen
             if (gridEl.innerHTML.includes('skeleton') || gridEl.innerHTML.trim() === '') {
                 nameEl.textContent = "Error";
+                statusEl.hidden = false;
                 statusEl.textContent = "Could not load calendar.";
                 gridEl.innerHTML = '<div class="empty-state">Something went wrong. Please check your connection.</div>';
             }

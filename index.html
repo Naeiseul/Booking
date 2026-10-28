@@ -37,7 +37,7 @@
             
             <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                 <h1 id="biz-title-text" style="color: var(--text); font-weight: 700; font-size: 24px; margin: 0; padding-bottom: 4px; width: 100%;"><span class="skeleton-text" style="display:inline-block;"></span></h1>
-                <p class="muted-text" id="business-status" style="margin: 0;"><span class="skeleton-text" style="display:inline-block; height: 14px; width: 120px;"></span></p>
+                <p class="muted-text" id="business-status" style="margin: 0;" hidden></p>
                 
                 <!-- Social Links -->
                 <div id="social-links" style="display: flex; gap: 16px; margin-top: 4px; justify-content: center;">
@@ -68,9 +68,7 @@
                 <button type="button" data-category="class" aria-pressed="false">Classes</button>
             </nav>
             <div class="catalogue-content">
-            <section id="service-catalogue" class="client-catalogue" aria-labelledby="catalogue-heading" hidden>
-                <h2 id="catalogue-heading" class="client-section-heading" tabindex="-1">Our services</h2>
-                <p id="catalogue-message" class="muted-text catalogue-message" role="status"></p>
+            <section id="service-catalogue" class="client-catalogue" aria-label="Services" hidden>
                 <div id="client-services" class="client-service-list"></div>
             </section>
             <section id="client-calendar" aria-labelledby="calendar-heading">
