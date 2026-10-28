@@ -198,7 +198,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 tiktokEl.style.display = 'none';
                 tiktokEl.removeAttribute('href');
                 try {
-                    const tiktokUrl = new URL(data.tiktok_url);
+                    const rawTikTok = typeof data.tiktok_url === 'string' ? data.tiktok_url.trim() : '';
+                    const tiktokUrl = new URL(/^(?:[a-z0-9-]+\.)*tiktok\.com\//i.test(rawTikTok)
+                        ? 'https://' + rawTikTok : rawTikTok);
                     if (tiktokUrl.protocol === 'https:' &&
                         (tiktokUrl.hostname === 'tiktok.com' || tiktokUrl.hostname.endsWith('.tiktok.com'))) {
                         tiktokEl.href = tiktokUrl.href;

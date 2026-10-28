@@ -108,3 +108,12 @@ Keep the real Paystack page. Selected-service payment stays disabled until the c
 The owner confirmed whatsapp_number is the business phone number and supplied phone.png. The client header now displays that handset image next to social links when a valid business number is returned. It opens tel: with formatting removed. Polling updates the destination and hides/clears the icon when the number is removed or invalid. No separate number field or schema change was needed. The footer's existing platform contact remains separate.
 
 Validation: JavaScript syntax and isolated DOM checks passed for international/local formatted numbers, empty/missing/invalid values and removal after display. Browser rendering and an actual device dialler remain unverified. Step 3 still awaits agreement; no scheduling, reservations or payments changed. The TikTok issue was diagnosed separately: the saved URL lacked https://; it has not been changed.
+
+
+## Admin contact parity — 2026-10-28
+
+The owner reported phone/TikTok missing from admin. Admin previously rendered only Instagram/Facebook, and get_admin_page omits phone/TikTok fields. Added the same phone.png and TikTok markup to admin with a separate admin-contacts.js script that reads the public get_public_page response and refreshes every three seconds. It never changes admin calendar state or sends the admin key to the public RPC. Contact failures are isolated from scheduling/services. No database changes.
+
+Client and admin TikTok validation now accepts a scheme-less TikTok domain by adding https://, while still rejecting non-TikTok and non-HTTPS destinations. The saved tiktok.com/@logtraq value therefore works without editing business data. Phone uses whatsapp_number, confirmed by the owner as the business contact.
+
+Validation: JavaScript syntax checks passed; contact rendering checked with a mocked URL parser and DOM. Actual browser URL parsing/rendering/dialler testing remains outstanding. Catalogue review/step 3 remains pending.
