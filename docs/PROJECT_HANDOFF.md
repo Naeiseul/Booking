@@ -135,3 +135,12 @@ Authorized client-only edit: service cards with a neutral photo placeholder abov
 Backend: existing get_public_page published service fields supply text. Photo uploads, Storage configuration, image fields and cart behaviour remain future agreed steps. No schema or payment changes. The owner wants concise updates (about 100 words per step) explaining frontend, backend and the next small step. Prioritize the client skeleton before scheduling.
 
 Validation: JavaScript syntax and isolated card rendering checks; live deployment/assets checked at release. Actual browser rendering and the full Node suite remain unverified because local command execution is unavailable.
+
+
+## Frontend presale shell — 2026-10-28
+
+The owner explicitly requested postponing Supabase/backend work and building the frontend shell for preselling. A separate /demo route now provides a polished sample catalogue, persistent desktop category menu and mobile row, service photo placeholders, add-to-cart feedback, quantities, totals/removal and an accessible native cart dialog. Mobile has a persistent View cart bar after adding. Cart data is in memory only and clears on reload. Sample service names/prices are clearly labelled as examples; they are not Logtraq offerings or database records.
+
+No Supabase/network booking/payment calls occur in the demo. Booking/checkout is visibly disabled with an explanation. Existing live client/admin and real Paystack flow remain separate and unchanged. Future work should stay on the client shell in small agreed steps; backend connection, scheduling, reservations and actual checkout follow later. Communication preference: about 100 words per step, explain frontend/backend and one next action.
+
+Validation: JavaScript syntax and isolated category/cart interaction checks; production assets checked on release. Actual desktop/mobile browser rendering remains outstanding. No live transactions or invented business offerings were inserted.

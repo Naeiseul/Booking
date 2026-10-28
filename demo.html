@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logtraq · Booking demo</title>
+<link rel="icon" href="/logtraq-favicon.svg?v=1" type="image/svg+xml">
+<link rel="stylesheet" href="/demo.css">
+<script src="/demo.js" defer></script>
+</head>
+<body>
+<div class="demo-banner">INTERACTIVE PREVIEW <span>Sample services · No bookings or payments</span></div>
+<header class="business-header">
+<a class="brand" href="/demo" aria-label="Demo home"><span class="brand-mark">L</span> Logtraq<span class="brand-note">BOOKING</span></a>
+<div class="business-intro"><span class="eyebrow">YOUR BUSINESS, YOUR SPACE</span><h1>Make time for yourself.</h1><p>Explore sessions, find your fit, and build your visit.</p></div>
+<button class="cart-trigger" id="open-cart" type="button" aria-haspopup="dialog">Your cart <span id="cart-count">0</span></button>
+</header>
+<main class="catalogue">
+<nav class="category-menu" aria-label="Service categories">
+<span class="menu-label">EXPLORE</span>
+<button data-category="all" aria-pressed="true" type="button">All sessions <span>↗</span></button>
+<button data-category="group" aria-pressed="false" type="button">Group sessions</button>
+<button data-category="private" aria-pressed="false" type="button">Private sessions</button>
+<button data-category="class" aria-pressed="false" type="button">Classes</button>
+<div class="menu-note">A little space.<br>A little time.<br>All yours.</div>
+</nav>
+<section class="services" aria-labelledby="category-heading">
+<div class="section-heading"><div><span class="eyebrow">FIND YOUR NEXT SESSION</span><h2 id="category-heading">All sessions</h2></div><span id="service-count"></span></div>
+<p class="preview-note">These example cards show how your catalogue could look. Your own services and photographs will go here.</p>
+<div class="service-grid" id="service-grid"></div>
+</section>
+</main>
+<footer><span>Powered by <strong>Logtraq</strong></span><span>Booking, made personal.</span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="mobile-cart" id="mobile-cart" type="button" aria-haspopup="dialog" hidden><span>View cart · <span id="mobile-count">0</span> items</span><strong id="mobile-total">R0</strong></button>
+<dialog id="cart-dialog" aria-labelledby="cart-title">
+<div class="cart-heading"><div><span class="eyebrow">YOUR SELECTION</span><h2 id="cart-title">Your cart</h2></div><button class="close-cart" type="button" id="close-cart" aria-label="Close cart">×</button></div>
+<div id="cart-items"></div>
+<div class="cart-summary"><span>Example total</span><strong id="cart-total"></strong></div>
+<p class="cart-notice">This is a browsing preview. Times, reservations and checkout will be connected later. Nothing added here is booked or charged.</p>
+<button class="checkout-disabled" type="button" disabled>Booking coming soon</button>
+<button class="keep-browsing" id="keep-browsing" type="button">Keep browsing</button>
+</dialog>
+</body></html>
