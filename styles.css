@@ -26,17 +26,17 @@ html, body {
 
 body { padding: 6vh 16px 40px 16px; }
 
-/* The "Mobile Phone" floating card look */
+/* Page content sits directly on the existing background gradient. */
 .container-public, .container-owner {
   width: 100%;
-  min-height: 550px; /* Forces a tall mobile app shape */
+  min-height: 550px;
   display: flex;
   flex-direction: column;
-  background-color: var(--surface);
-  border-radius: 32px; /* Very round, like an modern iPhone */
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15); /* Deep, soft shadow */
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
   padding: 40px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 0;
 }
 .container-public { max-width: 420px; } /* Typical mobile width */
 .container-owner { max-width: 520px; }

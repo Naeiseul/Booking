@@ -16,9 +16,9 @@
     flex-direction: column;
     gap: 6px;
     padding: 8px;
-    border: 1px solid #E2E8F0;
+    border: 0;
     border-radius: 16px;
-    background: var(--surface);
+    background: transparent;
 }
 .catalogue-menu button {
     min-height: 44px;
@@ -48,7 +48,7 @@
         gap: 4px;
         margin-bottom: 24px;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+        box-shadow: none;
         scrollbar-width: thin;
     }
     .catalogue-menu button { flex: 0 0 auto; white-space: nowrap; padding: 10px 12px; }

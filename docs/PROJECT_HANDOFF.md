@@ -149,3 +149,8 @@ Validation: JavaScript syntax and isolated category/cart interaction checks; pro
 ## Discarded sales demo — 2026-10-28
 
 The owner explicitly rejected the standalone sales demo and instructed us to discard it and prevent accidental future pushes. demo.html, demo.css, demo.js and the /demo rewrite have been removed. Do not restore, reuse, or republish that design unless explicitly requested by the owner. The earlier client catalogue/category menu and card skeleton remain. No replacement design is currently authorized. Stop and agree on the next small client edit before building anything further.
+
+
+## Transparent page panels — 2026-10-28
+
+The owner requested removing the white background from both client and admin, retaining the existing background colour. The shared client/admin outer page panels now have transparent backgrounds, no borders and no shadows. Admin sidebar and client category-menu panels are transparent too. Existing gradient, spacing, controls, service cards and backend behaviour are preserved. CSS-only change; no database work or rejected demo restoration. Actual visual browser verification remains outstanding; affected live styles checked at release.

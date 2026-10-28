@@ -7,7 +7,7 @@
 }
 .admin-content { max-width: none; min-width: 0; }
 .admin-sidebar {
-    background: var(--surface); border: 1px solid #E2E8F0; border-radius: 24px;
+    background: transparent; border: 0; border-radius: 24px;
     padding: 24px 16px; position: sticky; top: 24px;
 }
 .admin-sidebar-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
