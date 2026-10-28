@@ -2,56 +2,80 @@
 .catalogue-page .container-public { max-width: 920px; }
 .catalogue-layout {
     display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
-    gap: 28px;
+    grid-template-columns: 144px minmax(0, 1fr);
+    gap: 0;
     margin-top: 24px;
     flex: 1;
     align-items: start;
 }
-.catalogue-content { min-width: 0; }
+.catalogue-content { min-width: 0; padding-inline-start: 24px; }
 .catalogue-menu {
     position: sticky;
     top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 8px;
+    gap: 0;
+    padding: 0 12px 0 0;
     border: 0;
-    border-radius: 16px;
+    border-inline-end: 1px solid #CBD5E1;
+    border-radius: 0;
     background: transparent;
 }
 .catalogue-menu button {
-    min-height: 44px;
-    padding: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 10px;
     border: 0;
-    border-radius: 10px;
+    border-inline-start: 3px solid transparent;
+    border-block-end: 1px solid #DCE3EB;
+    border-radius: 0;
     background: transparent;
     color: var(--muted);
     font: inherit;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.4;
     font-weight: 600;
-    text-align: left;
+    text-align: start;
     cursor: pointer;
 }
 .catalogue-menu button:hover { background: var(--taken-bg); color: var(--text); }
-.catalogue-menu button[aria-pressed="true"] { background: var(--brand); color: white; }
-.catalogue-menu button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
-@media (max-width: 640px) {
+.catalogue-menu button[aria-pressed="true"] {
+    background: var(--brand-light);
+    color: var(--brand);
+    border-inline-start-color: var(--brand);
+}
+.catalogue-menu button:focus-visible { outline: 3px solid var(--brand); outline-offset: -3px; }
+@media (max-width: 700px) {
     .catalogue-page { padding-top: 24px; }
-    .catalogue-page .container-public { padding: 32px 16px; }
-    .catalogue-layout { display: block; }
+    .catalogue-page .container-public { padding: 24px 0; }
+    .catalogue-layout { grid-template-columns: minmax(0, 1fr); }
+    .catalogue-content { padding-inline-start: 0; }
     .catalogue-menu {
         top: 0;
         z-index: 2;
         flex-direction: row;
+        min-width: 0;
+        max-width: 100%;
         overflow-x: auto;
-        gap: 4px;
-        margin-bottom: 24px;
-        border-radius: 12px;
-        box-shadow: none;
+        gap: 0;
+        padding: 6px 0;
+        margin-bottom: 20px;
+        border-inline-end: 0;
+        border-block-end: 1px solid #CBD5E1;
+        background: var(--bg-gradient);
         scrollbar-width: thin;
+        scroll-padding-inline: 8px;
     }
-    .catalogue-menu button { flex: 0 0 auto; white-space: nowrap; padding: 10px 12px; }
+    .catalogue-menu button {
+        flex: 0 0 auto;
+        width: auto;
+        min-height: 48px;
+        white-space: nowrap;
+        padding: 10px 12px;
+        border-inline-start: 0;
+        border-block-end: 3px solid transparent;
+    }
+    .catalogue-menu button[aria-pressed="true"] { border-block-end-color: var(--brand); }
 }
 
 /* Service cards: real service text, with space reserved for future photos. */

@@ -159,3 +159,12 @@ The owner requested removing the white background from both client and admin, re
 ## Transparent phone icon — 2026-10-28
 
 Removed the white background from the supplied handset image using image editing with transparent output. Replaced shared phone.png and changed both client/admin image URLs to /phone.png?v=2 to refresh cached copies. Phone number logic and backend are unchanged. Production icon/page assets checked on release; actual browser rendering remains outstanding.
+
+
+## Compact client sidebar — 2026-10-28
+
+The owner confirmed client-only work, referenced a kiosk menu catalogue and authorized fixing the sidebar first with mobile support. Client category navigation now uses a narrow 144px desktop column attached to the content with a subtle divider, compact category rows and an accent edge for selection. At 700px and below it becomes a sticky horizontal scroll row with 48px touch targets and an active underline. The mobile wrapper has no extra inner side padding, preserving useful catalogue width; overflow is contained to the menu. The existing background remains. Client pinch zoom is enabled. Category filtering/cards are unchanged; no admin/backend work and no rejected demo reuse.
+
+Current preference: concise updates around 100 words, frontend/backend distinction, one small agreed change at a time. Next: review the sidebar before changing cards toward the compact picture-led kiosk grid. Supabase enhancements remain postponed. No new cart/scheduling/payment work is authorized.
+
+Verification: static CSS/viewport checks and live release asset comparison. Actual desktop/mobile browser rendering remains outstanding because no browser automation tool is available in this session.
