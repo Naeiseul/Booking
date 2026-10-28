@@ -117,3 +117,12 @@ The owner reported phone/TikTok missing from admin. Admin previously rendered on
 Client and admin TikTok validation now accepts a scheme-less TikTok domain by adding https://, while still rejecting non-TikTok and non-HTTPS destinations. The saved tiktok.com/@logtraq value therefore works without editing business data. Phone uses whatsapp_number, confirmed by the owner as the business contact.
 
 Validation: JavaScript syntax checks passed; contact rendering checked with a mocked URL parser and DOM. Actual browser URL parsing/rendering/dialler testing remains outstanding. Catalogue review/step 3 remains pending.
+
+
+## Client catalogue menu — 2026-10-28
+
+The owner explicitly paused availability planning to design intuitive client browsing first. Authorized small edit: a narrow persistent desktop category sidebar and a sticky, horizontally scrollable mobile category row, with an active highlight. Categories: All, Group sessions, Private sessions, Classes. Cart behaviour was discussed but is not implemented or authorized as part of this edit. Continue designing the client experience in small agreed edits before returning to duration-aware availability; do not advance to reservations or payments.
+
+Categories use existing published service fields: class maps to Classes; private services for more than one participant map to Group sessions; other private services map to Private sessions. No invented offerings or database changes. Empty categories display an honest message. All preserves the existing empty-catalogue slot-only demo; choosing an empty category does not show unrelated legacy times. Category changes preserve an existing service/time selection. Availability polling preserves the category and does not replace unchanged service buttons. Client-only catalogue.css isolates layout changes from admin/details pages.
+
+Verification: JavaScript syntax and isolated catalogue rendering checks performed. Local shell/Node execution is rejected by the environment policy, so the existing Node regression suite and desktop/mobile browser checks could not run here. Verify production release and affected live assets before reporting deployment complete.

@@ -24,8 +24,9 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/catalogue.css">
 </head>
-<body>
+<body class="catalogue-page">
     <div class="container-public">
         <header style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 32px;">
             <!-- Avatar Bubble -->
@@ -60,7 +61,14 @@
             </div>
         </header>
 
-        <main style="margin-top: 24px;">
+        <main class="catalogue-layout">
+            <nav class="catalogue-menu" aria-label="Service categories" hidden>
+                <button type="button" data-category="all" aria-pressed="true">All</button>
+                <button type="button" data-category="group" aria-pressed="false">Group sessions</button>
+                <button type="button" data-category="private" aria-pressed="false">Private sessions</button>
+                <button type="button" data-category="class" aria-pressed="false">Classes</button>
+            </nav>
+            <div class="catalogue-content">
             <section id="service-catalogue" class="client-catalogue" aria-labelledby="catalogue-heading" hidden>
                 <h2 id="catalogue-heading" class="client-section-heading" tabindex="-1">Our services</h2>
                 <p id="catalogue-message" class="muted-text catalogue-message" role="status"></p>
@@ -87,6 +95,7 @@
             </div>
             <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Select a time to book</button>
             </section>
+            </div>
         </main>
 
         <footer style="margin-top: auto; text-align: center;">

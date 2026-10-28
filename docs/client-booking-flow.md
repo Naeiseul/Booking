@@ -73,3 +73,12 @@ This step does not implement service-specific availability, scheduled class capa
 Migration: supabase/migrations/20261027142033_publish_client_service_catalogue.sql.
 
 Verification: the expanded client booking suite, catalogue database integration tests and existing admin-service database tests passed. Fixtures were rolled back. Desktop/mobile browser rendering and browser-to-REST interactions remain unverified in this environment.
+
+
+## Client catalogue menu — 2026-10-28
+
+The owner explicitly paused availability planning to design intuitive client browsing first. Authorized small edit: a narrow persistent desktop category sidebar and a sticky, horizontally scrollable mobile category row, with an active highlight. Categories: All, Group sessions, Private sessions, Classes. Cart behaviour was discussed but is not implemented or authorized as part of this edit. Continue designing the client experience in small agreed edits before returning to duration-aware availability; do not advance to reservations or payments.
+
+Categories use existing published service fields: class maps to Classes; private services for more than one participant map to Group sessions; other private services map to Private sessions. No invented offerings or database changes. Empty categories display an honest message. All preserves the existing empty-catalogue slot-only demo; choosing an empty category does not show unrelated legacy times. Category changes preserve an existing service/time selection. Availability polling preserves the category and does not replace unchanged service buttons. Client-only catalogue.css isolates layout changes from admin/details pages.
+
+Verification: JavaScript syntax and isolated catalogue rendering checks performed. Local shell/Node execution is rejected by the environment policy, so the existing Node regression suite and desktop/mobile browser checks could not run here. Verify production release and affected live assets before reporting deployment complete.
