@@ -22,6 +22,82 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     let categoryDraftId = null;
     let categoryExpectedUpdatedAt = null;
     let ready = false;
+    let photoPath = '', selectedPhotoFile = null, photoUploadId = null, uploadedFilePath = null, previewObjectUrl = null;
+    let photoLibrary = [];
+    const photoInput = get('service-photo');
+    const photoPreview = get('service-photo-preview');
+    function photoUrl(path) {
+        return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path || '')
+            ? SUPABASE_URL + '/storage/v1/object/public/service-photos/' + path : '';
+    }
+    function clearPreviewObject() {
+        if (previewObjectUrl) { URL.revokeObjectURL(previewObjectUrl); previewObjectUrl = null; }
+    }
+    function renderPhoto() {
+        const src = previewObjectUrl || photoUrl(photoPath);
+        photoPreview.hidden = !src;
+        if (src) photoPreview.src = src;
+        else photoPreview.removeAttribute('src');
+        get('remove-service-photo').hidden = !src;
+        const gallery = get('service-photo-library');
+        gallery.replaceChildren();
+        photoLibrary.forEach((photo,index) => {
+            const src = photoUrl(photo.path);
+            if (!src) return;
+            const button = document.createElement('button');
+            button.type='button'; button.className='photo-choice';
+            button.setAttribute('aria-label','Choose uploaded photo ' + (index+1));
+            button.setAttribute('aria-pressed',String(!selectedPhotoFile && photoPath === photo.path));
+            const image=document.createElement('img');
+            image.src=src; image.alt=''; image.loading='lazy';
+            button.appendChild(image);
+            button.addEventListener('click',()=>{
+                clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null;
+                photoUploadId=null; uploadedFilePath=null; photoPath=photo.path; renderPhoto();
+            });
+            gallery.appendChild(button);
+        });
+    }
+    async function loadPhotoLibrary() {
+        get('photo-library-error').hidden=true;
+        try {
+            const data=await rpc('get_admin_service_photos',{});
+            if (!Array.isArray(data)) throw Error('Invalid library');
+            photoLibrary=data;
+            if (!form.hidden) renderPhoto();
+        } catch (_) { get('photo-library-error').hidden=false; }
+    }
+    photoInput.addEventListener('change',()=>{
+        const file=photoInput.files && photoInput.files[0];
+        if (!file) return;
+        if (file.size>5242880 || (file.type && !['image/jpeg','image/png','image/webp'].includes(file.type))) {
+            photoInput.value=''; showError(formError,'Choose a JPG, PNG or WebP photo up to 5 MB.'); return;
+        }
+        clearPreviewObject(); selectedPhotoFile=file; photoUploadId=crypto.randomUUID(); uploadedFilePath=null;
+        previewObjectUrl=URL.createObjectURL(file); renderPhoto();
+    });
+    get('remove-service-photo').addEventListener('click',()=>{
+        clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null; photoUploadId=null; uploadedFilePath=null; photoPath=''; renderPhoto();
+    });
+    async function uploadPhoto() {
+        if (!selectedPhotoFile || uploadedFilePath) return;
+        const body=new FormData();
+        body.append('slug',bizSlug); body.append('key',adminKey);
+        body.append('upload_id',photoUploadId); body.append('file',selectedPhotoFile);
+        const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),60000);
+        try {
+            save.textContent='Uploading photo…';
+            const response=await fetch(SUPABASE_URL+'/functions/v1/service-photo-upload',{
+                method:'POST',body,signal:controller.signal
+            });
+            const data=await response.json();
+            if(!response.ok || !photoUrl(data.photo_path)) {
+                const failure=Error('Photo upload failed');
+                failure.userMessage=data.error || 'Photo upload failed. Please try again.'; throw failure;
+            }
+            photoPath=data.photo_path; uploadedFilePath=photoPath;
+        } finally { clearTimeout(timeout); }
+    }
     let services = [];
     let draftId = null;
     let expectedUpdatedAt = null;
@@ -58,6 +134,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
 
     function requestError(failure, action, noun = 'service') {
+        if (failure.userMessage) return failure.userMessage;
         const plural = noun === 'category' ? 'categories' : 'services';
         const reloadLabel = noun === 'category' ? 'Reload categories' : 'Reload services';
         if (failure.code === '28000') return 'We could not verify your dashboard link. Please reopen your admin link.';
@@ -144,6 +221,8 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     function openForm(service) {
         if (saving || !ready || !categoryForm.hidden) return;
         form.reset();
+        clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null; photoUploadId=null; uploadedFilePath=null;
+        photoPath=service ? service.photo_path || '' : ''; renderPhoto(); loadPhotoLibrary();
         draftId = service ? service.id : crypto.randomUUID();
         expectedUpdatedAt = service ? service.updated_at : null;
         get('service-name').value = service ? service.name : '';
@@ -172,6 +251,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
 
     function closeForm() {
+        clearPreviewObject();
         form.hidden = true;
         draftId = null;
         expectedUpdatedAt = null;
@@ -425,6 +505,8 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         fields.disabled = true;
         save.textContent = 'Saving…';
         try {
+            if (selectedPhotoFile && !uploadedFilePath) await uploadPhoto();
+            save.textContent = 'Saving…';
             const saved = await rpc('save_admin_service', {
                 p_id: draftId,
                 p_name: get('service-name').value,
@@ -437,6 +519,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
                 p_is_published: get('service-published').checked,
                 p_category_id: get('service-category').value || null,
                 p_is_active: get('service-active').checked,
+                p_photo_path: photoPath,
                 p_expected_updated_at: expectedUpdatedAt
             });
             if (!saved || saved.id !== draftId || !saved.updated_at) throw new Error('Invalid save response');

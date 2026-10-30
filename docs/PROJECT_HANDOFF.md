@@ -2,6 +2,21 @@
 
 Updated 2026-10-30.
 
+## Photos, automatic slot expiry and Checkout cleanup — 2026-10-30 (read first)
+
+The owner explicitly requested five image prompts, service photo uploads/storage, saving every supplied service image to GitHub AND Supabase, automatic removal of elapsed customer times, mobile/iPad compatibility, Checkout wording cleanup and a committed work summary.
+
+All five original supplied PNGs are saved in assets/service-photos/ and the owned Supabase service-photos bucket. See [work summary](WORK_SUMMARY_2026-10-30.md) and [photo manifest](../assets/service-photos/manifest.json). No service, category, price or capacity records were invented. The owner must configure real offerings before the catalogue can show them.
+
+Implemented admin library picker/upload/preview/removal, safe service photo references and customer card/booking-summary images. Three applied migrations and the deployed credential-checked Edge Function are saved with source. Native Node and database checks passed, including actual multipart upload/exact-byte retrieval/invalid-key rejection.
+
+Elapsed times are omitted using South African time, including stale client/details checks. Historical records remain intact. Checkout goes to the real details page; internal placeholder essays and duplicate summary copy were removed. Paystack's supplied destination stays real. Service-specific payments remain disabled until correct amounts/reservations/server verification are built. Order summary remains PAUSED.
+
+Actual Chromium responsive browser checks now passed at 320–1440px (phone/tablet/iPad-sized/desktop), covering images/date selection/Checkout/overflow, plus phone admin photo library/preview. These used in-memory service fixtures and actual supplied photo URLs; physical iOS/Safari remains untested. Earlier notes saying no browser could be run are superseded by the isolated Vercel Sandbox verification.
+
+Read WORK_SUMMARY_2026-10-30.md before continuing. Next: owner reviews release and adds actual categories/services; agree subsequent small steps. Preserve the existing admin sidebar/categories work, date/time-only slot contract and immediate same-browser admin/client refresh. Scheduling/capacity → reservations → verified payments keeps its order.
+
+
 ## Availability refresh reliability fix — 2026-10-30 (read first)
 
 The owner reported that client availability no longer appeared to follow admin slot edits immediately. Investigated current deployed scripts, Supabase public data/function and recent RPC logs before changing code.

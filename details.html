@@ -6,15 +6,15 @@
     <meta name="referrer" content="no-referrer">
     <title>Your details | Booking</title>
     <link rel="icon" type="image/svg+xml" href="/logtraq-favicon.svg?v=1">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css?v=3">
     <script src="/config.js" defer></script>
-    <script src="/details.js" defer></script>
+    <script src="/details.js?v=2" defer></script>
 </head>
-<body>
+<body class="details-page">
     <main class="container-public">
         <a id="back-to-calendar" class="booking-back" href="/">Back to calendar</a>
         <header class="booking-heading">
-            <h1>Your details</h1>
+            <h1>Checkout</h1>
             <p id="booking-business" class="muted-text"></p>
         </header>
         <section class="booking-summary" aria-label="Selected appointment">
@@ -22,11 +22,12 @@
             <span id="selected-time"></span>
         </section>
         <section id="details-service" class="booking-summary catalogue-selection" aria-label="Selected service" hidden>
+            <img id="details-service-photo" class="booking-summary-photo" alt="" width="72" height="72" hidden>
             <strong id="details-service-name"></strong>
             <p id="details-service-info" class="muted-text"></p>
             <p id="details-service-price"></p>
         </section>
-        <p id="service-payment-note" class="muted-text catalogue-stage-note" hidden>Online payment for this service is not available yet. No appointment has been reserved.</p>
+        <p id="service-payment-note" class="muted-text catalogue-stage-note" hidden>Online booking is currently unavailable for this service.</p>
         <p id="booking-error" class="booking-error" role="alert" hidden></p>
         <form id="booking-form" class="booking-form" hidden>
             <div class="booking-field">

@@ -23,8 +23,8 @@
             document.head.appendChild(link);
         })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=2">
-    <link rel="stylesheet" href="/catalogue.css?v=14">
+    <link rel="stylesheet" href="/styles.css?v=3">
+    <link rel="stylesheet" href="/catalogue.css?v=15">
 </head>
 <body class="catalogue-page">
     <div class="container-public">
@@ -78,15 +78,16 @@
             </section>
             <section id="client-checkout" aria-labelledby="checkout-heading" hidden>
                 <h2 id="checkout-heading" class="client-section-heading" tabindex="-1">Checkout</h2>
-                <p class="muted-text">Checkout is not connected yet.</p>
+                
             </section>
             </div>
             </div>
             <aside id="booking-summary" class="booking-summary" aria-labelledby="booking-summary-heading" hidden>
                 <h2 id="booking-summary-heading">Your booking</h2>
                 <div class="booking-summary-content" aria-live="polite" aria-atomic="true">
-                    <p id="booking-summary-empty" class="muted-text">Choose a session</p>
+                    <p id="booking-summary-empty" class="muted-text">Choose a service</p>
                     <div id="booking-summary-service" hidden>
+                        <img id="booking-summary-photo" class="booking-summary-photo" alt="" width="72" height="72" hidden>
                         <h3 id="booking-summary-name"></h3>
                         <p id="booking-summary-details" class="muted-text"></p>
                         <p id="booking-summary-price" class="booking-summary-price"></p>
@@ -97,7 +98,7 @@
                 <div id="calendar-service" class="catalogue-selection" hidden>
                     <strong id="calendar-service-name"></strong>
                     <p id="calendar-service-details" class="muted-text"></p>
-                    <p class="muted-text catalogue-stage-note">Times shown are general availability. Online booking for this service is not available yet.</p>
+                    
                 </div>
             <div class="month-header">
                 <h3>Select a date</h3>
@@ -127,7 +128,7 @@
                 <div class="skeleton-chip"></div>
             </div>
             </section>
-            <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Select a time to book</button>
+            <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Continue to checkout</button>
             </aside>
         </main>
 
@@ -148,6 +149,6 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the logic -->
-    <script src="/app.js?v=7"></script>
+    <script src="/app.js?v=8"></script>
 </body>
 </html>

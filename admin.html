@@ -17,8 +17,8 @@
             document.head.appendChild(link);
         })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=2">
-    <link rel="stylesheet" href="/admin.css?v=5">
+    <link rel="stylesheet" href="/styles.css?v=3">
+    <link rel="stylesheet" href="/admin.css?v=6">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
@@ -125,12 +125,21 @@
                             <label for="service-description">Description (optional)</label>
                             <textarea id="service-description" name="description" maxlength="2000"></textarea>
                         </div>
+                        <div class="booking-field service-photo-field">
+                            <label for="service-photo">Photo (optional)</label>
+                            <input id="service-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                            <p class="service-hint">JPG, PNG or WebP · Up to 5 MB.</p>
+                            <img id="service-photo-preview" class="service-photo-preview" alt="Selected service photo" hidden>
+                            <button id="remove-service-photo" class="service-secondary-button" type="button" hidden>Remove photo</button>
+                            <p id="photo-library-error" class="booking-error" role="status" hidden>Could not load saved photos. You can still upload a photo.</p>
+                            <div id="service-photo-library" class="service-photo-library" aria-label="Saved photos"></div>
+                        </div>
                         <div class="booking-field">
                             <label for="service-category">Category</label>
                             <select id="service-category" name="category_id">
                                 <option value="">Unassigned</option>
                             </select>
-                            <p class="service-hint">Choose a category before publishing. Category controls browsing; booking type controls scheduling.</p>
+                            <p class="service-hint">Choose a category to publish this service.</p>
                         </div>
                         <div class="booking-field">
                             <label for="service-type">Booking type</label>
@@ -270,7 +279,7 @@
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
     <script src="/admin-navigation.js?v=2"></script>
-    <script src="/admin-services.js?v=3"></script>
+    <script src="/admin-services.js?v=4"></script>
     <script src="/admin.js?v=3"></script>
     <script src="/admin-contacts.js"></script>
 </body>

@@ -37,7 +37,7 @@ class Params {
     toString() { return Object.entries(this.values).map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value)).join('&'); }
 }
 class ClockDate extends Date {
-    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 12])); }
+    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 0])); }
 }
 const service = (id, category_id, extra = {}) => ({
     id, category_id, name: 'Service ' + id, description: 'Configured description', service_type: 'private',
@@ -147,7 +147,7 @@ p.state.data.services = p.state.data.services.filter(item => item.category_id !=
 await p.poll();
 assert(p.category('style').attrs['aria-pressed'] === 'true' && !p.get('book-selected-slot').disabled, 'Removed browse category falls back without clearing a different valid service/time');
 p.steps[2].listeners.click();
-assert(p.get('category-navigation').hidden && p.layout.attrs['data-has-categories'] === 'false', 'Checkout hides category navigation without an empty desktop column');
+assert(p.window.location.href.includes('/details?'), 'Checkout opens the actual details flow');
 p.steps[0].listeners.click();
 assert(!p.get('category-navigation').hidden && !p.get('book-selected-slot').disabled, 'Step navigation restores categories and preserves booking');
 p.state.offline = true; await p.poll();

@@ -23,6 +23,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // Booking availability uses South African time, independently of device timezone.
+    const bookingClock = new Intl.DateTimeFormat('en-CA', {
+        timeZone:'Africa/Johannesburg', year:'numeric', month:'2-digit', day:'2-digit',
+        hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'
+    });
+    function slotIsFuture(slot) {
+        if (!slot || !/^\d{4}-\d{2}-\d{2}$/.test(slot.date || '') || !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(slot.time || '')) return false;
+        const parts=Object.fromEntries(bookingClock.formatToParts(new Date()).map(part=>[part.type,part.value]));
+        const now=parts.year+'-'+parts.month+'-'+parts.day+'T'+parts.hour+':'+parts.minute+':'+parts.second;
+        return slot.date+'T'+slot.time.slice(0,5)+':'+(slot.time.slice(6,8)||'00') > now;
+    }
+    function servicePhotoUrl(path) {
+        return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path || '')
+            ? SUPABASE_URL+'/storage/v1/object/public/service-photos/'+path : '';
+    }
+
     let activeDateString = null;
     let viewedMonth = null;
     let slotsByDate = {};
@@ -52,6 +68,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const checkoutEl = document.getElementById('client-checkout');
 
     function showStep(step, moveFocus = false) {
+        if (step === 'checkout') {
+            updateBookButton();
+            if (!bookButton.disabled) goToDetails();
+            else showStep('schedule', true);
+            return;
+        }
         activeStep = step;
         catalogueEl.hidden = step === 'checkout';
         categoryNavigation.hidden = step === 'checkout' || categories.length === 0;
@@ -98,6 +120,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         summary.hidden = false;
         empty.hidden = Boolean(selectedService);
         selected.hidden = !selectedService;
+        const photo=document.getElementById('booking-summary-photo');
+        const source=selectedService ? servicePhotoUrl(selectedService.photo_path) : '';
+        photo.hidden=!source;
+        if(source && photo.src!==source) photo.src=source;
         const fields = {
             'booking-summary-name': selectedService ? selectedService.name : '',
             'booking-summary-details': selectedService ? serviceDetails(selectedService) : '',
@@ -181,6 +207,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const isSelected = Boolean(selectedService && selectedService.id === service.id);
                 card.className = 'client-service-card' + (isSelected ? ' is-selected' : '');
                 card.dataset.serviceId = service.id;
+                const photo=servicePhotoUrl(service.photo_path);
+                if(photo) {
+                    const image=document.createElement('img');
+                    image.className='service-photo'; image.src=photo; image.alt=''; image.loading='lazy'; image.width=600; image.height=400;
+                    image.addEventListener('error',()=>{ image.hidden=true; });
+                    card.appendChild(image);
+                }
                 const body = document.createElement('div');
                 body.className = 'service-card-body';
                 const title = document.createElement('h3');
@@ -210,7 +243,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 choose.type = 'button';
                 choose.className = 'catalogue-service-button';
                 choose.disabled = service.service_type === 'class';
-                choose.textContent = choose.disabled ? 'Class times not available yet' : isSelected ? 'Selected' : 'View available times';
+                choose.textContent = choose.disabled ? 'Booking unavailable' : isSelected ? 'Selected' : 'View available times';
                 choose.setAttribute('aria-pressed', String(isSelected));
                 choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'View available times for ') + service.name);
                 choose.addEventListener('click', () => {
@@ -246,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         renderBookingSummary();
         showStep(activeStep);
-        document.getElementById('calendar-service').hidden = !selectedService;
+        document.getElementById('calendar-service').hidden = true;
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
             document.getElementById('calendar-service-details').textContent = serviceDetails(selectedService) + ' · ' +
@@ -255,24 +288,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function updateBookButton() {
+        if (selectedSlot && !slotIsFuture(selectedSlot)) selectedSlot=null;
         bookButton.disabled = !selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService);
-        if (!selectedSlot) {
-            bookButton.textContent = 'Select a time to book';
-            return;
-        }
-        const date = new Date(selectedSlot.date + 'T12:00:00');
-        const label = date.toLocaleDateString('en-ZA', {
-            weekday: 'long', day: 'numeric', month: 'long'
-        });
-        bookButton.textContent = 'Book ' + label + ' at ' + selectedSlot.time;
+        bookButton.textContent = 'Continue to checkout';
+        const checkoutButton=stepButtons.find(button=>button.dataset.step==='checkout');
+        if(checkoutButton) checkoutButton.disabled=bookButton.disabled;
     }
 
-    bookButton.addEventListener('click', () => {
-        if (!selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService)) return;
+    function goToDetails() {
+        updateBookButton();
+        if (bookButton.disabled) return;
         const query = new URLSearchParams(selectedSlot);
         if (selectedService) query.set('service', selectedService.id);
         window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
-    });
+    }
+    bookButton.addEventListener('click', goToDetails);
 
     function localDateString(day) {
         return day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' +
@@ -299,7 +329,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         const days = new Date(month.getFullYear(), month.getMonth() + 1, 0, 12).getDate();
         const openings = Object.keys(slotsByDate).filter(date => date.startsWith(viewedMonth) &&
-            slotsByDate[date].some(slot => slot.status === undefined || slot.status === 'open')).sort();
+            slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot))).sort();
         const signature = JSON.stringify([viewedMonth, activeDateString, today, openings]);
         if (signature === monthSignature) return;
         const focusedDate = focusDate || (document.activeElement && document.activeElement.dataset &&
@@ -372,7 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         daySlots.forEach(slot => {
             const chip = document.createElement('button');
             // The public API already filters to open slots and omits status.
-            const isOpen = slot.status === undefined || slot.status === 'open';
+            const isOpen = (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot);
             const time = slot.time ? slot.time.substring(0, 5) : "";
 
             chip.type = 'button';
@@ -386,6 +416,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             chip.setAttribute('aria-label', `${slot.date} at ${time}${isOpen ? '' : ', unavailable'}`);
             if (isOpen) {
                 chip.addEventListener('click', () => {
+                    if(!slotIsFuture(slot)) { selectedSlot=null; updateBookButton(); loadData(); return; }
                     selectedSlot = { date: slot.date, time };
                     updateBookButton();
                     renderSlots(daySlots);
@@ -546,7 +577,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 activeCategoryId = selectedService ? selectedService.category_id : categories.length ? categories[0].id : null;
             }
             renderCatalogue();
-            const slots = data.slots || [];
+            const slots = (data.slots || []).filter(slotIsFuture);
             availabilityLoaded = true;
             if (selectedSlot && !slots.some(slot =>
                 slot.date === selectedSlot.date && slot.time &&

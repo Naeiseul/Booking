@@ -10,7 +10,7 @@ const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'admin.html'), 'utf
 function assert(value, message) { if (!value) throw new Error(message); }
 const flush = async () => { for (let i = 0; i < 24; i++) await Promise.resolve(); };
 class ClockDate extends Date {
-    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 12])); }
+    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 0])); }
 }
 class Params {
     constructor(value) {

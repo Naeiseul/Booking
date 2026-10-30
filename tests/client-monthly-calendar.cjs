@@ -42,7 +42,7 @@ const document = {
 };
 const window = { location: { search: '', pathname: '/logtraq' }, addEventListener() {} };
 class ClockDate extends Date {
-    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 12])); }
+    constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 0])); }
 }
 class Params {
     constructor(value) { this.value = value || {}; }

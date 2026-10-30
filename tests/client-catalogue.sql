@@ -36,7 +36,7 @@ begin
  if (page->'services'->0->>'duration_minutes')::int<>90 or (page->'services'->0->>'price_amount')::int<>12050 then raise exception 'Service values changed'; end if;
  foreach item in array array(select jsonb_array_elements(page->'services')) loop
   if item ?| array['business_id','admin_key','is_published','created_at','updated_at','sort_order'] then raise exception 'Internal fields exposed'; end if;
-  if (select count(*) from jsonb_object_keys(item))<>10 then raise exception 'Public field whitelist changed'; end if;
+  if (select count(*) from jsonb_object_keys(item))<>11 then raise exception 'Public field whitelist changed'; end if;
  end loop;
  other:=public.get_public_page(ctx.slug2)::jsonb;
  if exists(select 1 from jsonb_array_elements(page->'services') a join jsonb_array_elements(other->'services') b on a->>'id'=b->>'id') then raise exception 'Cross-business service leak'; end if;

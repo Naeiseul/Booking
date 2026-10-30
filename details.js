@@ -5,6 +5,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const date = query.get('date') || '';
     const time = query.get('time') || '';
     const serviceId = query.get('service') || '';
+    // Booking availability uses South African time, independently of device timezone.
+    const bookingClock = new Intl.DateTimeFormat('en-CA', {
+        timeZone:'Africa/Johannesburg', year:'numeric', month:'2-digit', day:'2-digit',
+        hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'
+    });
+    function slotIsFuture(slot) {
+        if (!slot || !/^\d{4}-\d{2}-\d{2}$/.test(slot.date || '') || !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(slot.time || '')) return false;
+        const parts=Object.fromEntries(bookingClock.formatToParts(new Date()).map(part=>[part.type,part.value]));
+        const now=parts.year+'-'+parts.month+'-'+parts.day+'T'+parts.hour+':'+parts.minute+':'+parts.second;
+        return slot.date+'T'+slot.time.slice(0,5)+':'+(slot.time.slice(6,8)||'00') > now;
+    }
+    function servicePhotoUrl(path) {
+        return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path || '')
+            ? SUPABASE_URL+'/storage/v1/object/public/service-photos/'+path : '';
+    }
+
     let selectedService = null;
     const form = document.getElementById('booking-form');
     const errorEl = document.getElementById('booking-error');
@@ -56,6 +72,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!selectedService) return false;
                 document.getElementById('details-service').hidden = false;
                 document.getElementById('details-service-name').textContent = selectedService.name;
+                const photo=document.getElementById('details-service-photo'), source=servicePhotoUrl(selectedService.photo_path);
+                photo.hidden=!source; if(source) photo.src=source;
                 const hours = Math.floor(selectedService.duration_minutes / 60);
                 const minutes = selectedService.duration_minutes % 60;
                 document.getElementById('details-service-info').textContent =
@@ -69,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         return Boolean(data && (data.slots || []).some(slot =>
-            slot.date === date && slot.time && slot.time.substring(0, 5) === time &&
+            slot.date === date && slot.time && slot.time.substring(0, 5) === time && slotIsFuture(slot) &&
             (slot.status === undefined || slot.status === 'open')
         ));
     }

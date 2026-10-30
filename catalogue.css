@@ -277,3 +277,7 @@
     .category-icon { flex-basis: 24px; }
     .category-icon svg { width: 24px; height: 24px; }
 }
+
+.service-photo { display:block; width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; }
+.booking-summary-photo { display:block; width:72px; height:72px; object-fit:cover; border-radius:10px; margin-bottom:12px; }
+.catalogue-menu button:disabled { cursor:not-allowed; opacity:.6; }

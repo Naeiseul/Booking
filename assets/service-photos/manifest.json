@@ -1,0 +1,52 @@
+[
+  {
+    "label": "Personal training",
+    "original": "personal training.png",
+    "path": "assets/service-photos/personal-training.png",
+    "sha": "3aa62a9b9f00826c35fc87a929d88b97b4a92190",
+    "bytes": 2303660,
+    "upload_id": "3c51cc91-fd73-4a7c-bf85-a0baabbb9cc4",
+    "photo_path": "c4a5daca-ad2d-4d58-be31-e5aa27984622/3c51cc91-fd73-4a7c-bf85-a0baabbb9cc4.png",
+    "url": "https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/3c51cc91-fd73-4a7c-bf85-a0baabbb9cc4.png"
+  },
+  {
+    "label": "Group training",
+    "original": "Energetic Kettlebell Group Workout.png",
+    "path": "assets/service-photos/group-training.png",
+    "bytes": 2275400,
+    "upload_id": "53ddc989-ef8a-4504-bdca-959245dce4aa",
+    "sha": "e5269559e8971693c64e8e2dd1e3a86716b0292a",
+    "photo_path": "c4a5daca-ad2d-4d58-be31-e5aa27984622/53ddc989-ef8a-4504-bdca-959245dce4aa.png",
+    "url": "https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/53ddc989-ef8a-4504-bdca-959245dce4aa.png"
+  },
+  {
+    "label": "Strength coaching",
+    "original": "Kettlebell Coaching in a Modern Gym.png",
+    "path": "assets/service-photos/strength-coaching.png",
+    "bytes": 2521875,
+    "upload_id": "907b463a-c1e3-407c-80fb-27b81faf2e0a",
+    "sha": "6a85c6a449f1ffce8d18a8af74f8df2c3cae2ea2",
+    "photo_path": "c4a5daca-ad2d-4d58-be31-e5aa27984622/907b463a-c1e3-407c-80fb-27b81faf2e0a.png",
+    "url": "https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/907b463a-c1e3-407c-80fb-27b81faf2e0a.png"
+  },
+  {
+    "label": "Mobility and recovery",
+    "original": "Guided Mobility Session in a Modern Gym.png",
+    "path": "assets/service-photos/mobility-recovery.png",
+    "bytes": 2313079,
+    "upload_id": "4cd129aa-ddd2-46fd-8e50-786f34562188",
+    "sha": "fde10967d6a556ab2e7ca9f9323e615a526e6efe",
+    "photo_path": "c4a5daca-ad2d-4d58-be31-e5aa27984622/4cd129aa-ddd2-46fd-8e50-786f34562188.png",
+    "url": "https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/4cd129aa-ddd2-46fd-8e50-786f34562188.png"
+  },
+  {
+    "label": "Fitness assessment",
+    "original": "Single-Leg Balance Assessment.png",
+    "path": "assets/service-photos/fitness-assessment.png",
+    "upload_id": "bf70ed19-cc1e-420b-aa66-df6b94e706fb",
+    "bytes": 2426728,
+    "sha": "5aadd8b50b64c451e7a1e3ffe67a61c90dc0136e",
+    "photo_path": "c4a5daca-ad2d-4d58-be31-e5aa27984622/bf70ed19-cc1e-420b-aa66-df6b94e706fb.png",
+    "url": "https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/bf70ed19-cc1e-420b-aa66-df6b94e706fb.png"
+  }
+]

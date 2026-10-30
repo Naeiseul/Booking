@@ -16,6 +16,7 @@ class Element {
     appendChild(child) { this.children.push(child); }
     replaceChildren(...children) { this.children = children; }
     setAttribute(name, value) { this.attributes[name] = value; }
+    removeAttribute(name) { delete this.attributes[name]; }
     focus() { this.focused = true; }
 }
 function backend() {
@@ -29,6 +30,7 @@ function backend() {
         if (state.pause) await state.pause;
         if (state.offline) throw Error('offline');
         if (url.endsWith('/get_admin_services')) return { ok: true, json: async () => [...records.values()] };
+        if (url.endsWith('/get_admin_service_photos')) return { ok: true, json: async () => [] };
         if (url.endsWith('/get_admin_categories')) return { ok: true, json: async () => [...categories.values()] };
         if (state.conflict) return { ok: false, json: async () => ({ code: '40001' }) };
         if (url.endsWith('/save_admin_category')) {
@@ -294,6 +296,6 @@ function fill(p, values = {}) {
     const ids = [...html.matchAll(/id="([^"]+)"/g)].map(m => m[1]);
     assert.equal(ids.length, new Set(ids).size, 'IDs are unique');
     for (const match of html.matchAll(/for="([^"]+)"/g)) assert(ids.includes(match[1]));
-    assert(html.indexOf('src="/admin-services.js?v=3"') < html.indexOf('src="/admin.js?v=3"'));
+    assert(html.indexOf('src="/admin-services.js?v=4"') < html.indexOf('src="/admin.js?v=3"'));
     console.log('PASS: dedicated category table/order/status/counts; category feedback/reload/error recovery; cross-section editing notices; category create/edit/reload/order/enable; one assignment; independent active/publication/type; category validation/stale edits/lost-response retry/duplicate-submit safety;  service create/edit/reload; 90-minute durations; exact cents; visibility; class fields; validation; preserved input; lost-response retry; duplicate-submit prevention; stale edits; network recovery; safe text rendering; form labels and script order.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

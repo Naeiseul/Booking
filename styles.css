@@ -193,3 +193,11 @@ h1 {
 .admin-page .day-tab:focus-visible {
   outline: 3px solid var(--ui-focus); outline-offset: 3px;
 }
+
+/* Customer checkout keeps the same neutral controls and comfortable mobile widths. */
+.details-page { padding-top:32px; }
+.details-page .container-public { max-width:560px; padding:24px 8px; }
+.details-page .booking-button { background:#000; color:#FFF; border-radius:12px; min-height:48px; }
+.details-page .booking-back { color:#1E293B; }
+.details-page .booking-field input:focus, .details-page .booking-field textarea:focus { outline-color:#64748B; }
+.details-page .booking-summary-photo { width:72px; height:72px; object-fit:cover; border-radius:10px; margin-bottom:12px; }
