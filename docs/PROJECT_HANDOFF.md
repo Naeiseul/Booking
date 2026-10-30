@@ -1,8 +1,8 @@
 # Booking project handoff
 
-Updated 2026-10-28.
+Updated 2026-10-30.
 
-## Latest resume state — 2026-10-28 (read before older notes)
+## Latest resume state — 2026-10-30 (read before older notes)
 
 ### Current working agreement
 
@@ -19,7 +19,7 @@ Updated 2026-10-28.
 - Sidebar now represents booking STEPS, not categories: Choose a session; Choose date & Time; Checkout. The capital T in Time was explicitly requested. All/group/private/class category tabs were replaced, not retained as hidden filters.
 - Desktop: narrow 144px sidebar close to content. Mobile (700px and below): sticky horizontal scrolling row, separated buttons with bold borders and useful touch targets. Client pinch zoom is enabled.
 - ALL three step boxes stay black with white text, even on hover. The selected step has a muted silver border and Current step label. The label is centred, small italic Georgia/serif in muted silver. aria-current=step follows the active panel. No animated shine.
-- Choose a session: existing published service cards with neutral photo areas and service details. Empty catalogue has an honest non-interactive No services added yet card. No real service records or business photos were added. Photo upload remains future work.
+- Choose a session: text-only published service cards with service details. The owner requested removing catalogue picture placeholders on 2026-10-30. Empty catalogue has an honest non-interactive No services added yet card. No real service records or business photos were added. Photo upload remains future work.
 - Choose date & Time: existing calendar/selection logic, now always showing the next seven LOCAL dates even with no openings, plus any further dates provided by real availability. Empty days say No available times for this date. No bookable times are fabricated. Selection persists across steps/polling; changing days clears the time.
 - The black/white Select a time to book button stays below the panels and visible across all steps. Do not remove or hide it when styling/navigation changes. It stays disabled until a valid real selection and updates its label when a time is selected; its existing details navigation is retained.
 - Checkout: explicitly unconnected placeholder. No cart/multi-service checkout implemented in the retained client. The owner discussed adding multiple services without leaving the catalogue, but a new implementation must be agreed separately.
@@ -42,7 +42,7 @@ Updated 2026-10-28.
 
 ### Start tomorrow
 
-Read AGENTS.md, this latest section and docs/client-booking-flow.md on current main. Confirm the client state and preserve all owner preferences above. The owner should review the latest client shell first; discuss the next small edit before changing code. Likely topic is the compact picture-led kiosk card grid, but it is not automatically authorized. Do not jump to admin, Supabase, duration scheduling, reservations, cart or payments. Browser verification remains pending.
+Read AGENTS.md, this latest section and docs/client-booking-flow.md on current main. Confirm the client state and preserve all owner preferences above. The owner should review the latest client shell first; discuss the next small edit before changing code. The latest authorized edit removed the catalogue picture placeholders. Agree on the next small client edit before changing anything. Do not jump to admin, Supabase, duration scheduling, reservations, cart or payments. Browser verification remains pending.
 
 ## Working agreement and persistent project memory
 
@@ -259,3 +259,10 @@ Validation: syntax plus mocked-DOM flow checks for empty dates, refresh preserva
 ## Current-step label typography — 2026-10-28
 
 Centred the client Current step label and changed it to a small italic Georgia/serif font, distinct from the main button text. Existing muted silver colour and active visibility remain. Client HTML/CSS cache version only; no backend/admin changes. Live assets verified after deployment; browser visual check remains outstanding.
+
+
+## Remove catalogue picture placeholders — 2026-10-30
+
+At the owner's request, removed the picture area, image icon and No photo yet label from client service cards and the empty catalogue card. Service text, selection controls and the bottom booking button are retained. Client-only app.js/catalogue.css edit with index.html cache-version updates. No admin, backend or business-data changes. Continue reviewing the client shell one small agreed edit at a time; duration/class scheduling remains pending.
+
+Validation: reviewed the removal and checked JavaScript syntax and preserved card/selection code. Production deployment and live asset checks are required for this release. Actual desktop/mobile browser rendering remains outstanding: the local browser could not create a profile because filesystem access was denied.

@@ -77,16 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking');
     }
 
-    function createPhotoPlaceholder() {
-        const photo = document.createElement('div');
-        photo.className = 'service-photo-placeholder';
-        photo.setAttribute('aria-hidden', 'true');
-        const label = document.createElement('span');
-        label.textContent = 'No photo yet';
-        photo.appendChild(label);
-        return photo;
-    }
-
     function renderCatalogue() {
         const visibleServices = services;
         categoryMenu.hidden = false;
@@ -96,7 +86,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             visibleServices.forEach(service => {
                 const card = document.createElement('article');
                 card.className = 'client-service-card';
-                card.appendChild(createPhotoPlaceholder());
                 const body = document.createElement('div');
                 body.className = 'service-card-body';
                 const title = document.createElement('h3');
@@ -146,7 +135,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!visibleServices.length) {
                 const empty = document.createElement('article');
                 empty.className = 'client-service-card service-card-empty';
-                empty.appendChild(createPhotoPlaceholder());
                 const body = document.createElement('div');
                 body.className = 'service-card-body';
                 const title = document.createElement('h3');
