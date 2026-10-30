@@ -24,7 +24,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/catalogue.css?v=9">
+    <link rel="stylesheet" href="/catalogue.css?v=10">
 </head>
 <body class="catalogue-page">
     <div class="container-public">
@@ -62,6 +62,7 @@
         </header>
 
         <main class="catalogue-layout">
+            <div class="catalogue-main">
             <nav class="catalogue-menu" aria-label="Booking steps" hidden>
                 <button type="button" data-step="sessions" aria-controls="service-catalogue" aria-pressed="true" aria-current="step"><span class="step-number" aria-hidden="true">1</span><span class="step-label">Choose a session</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
                 <button type="button" data-step="schedule" aria-controls="client-calendar" aria-pressed="false"><span class="step-number" aria-hidden="true">2</span><span class="step-label">Choose date &amp; Time</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
@@ -97,6 +98,18 @@
             </section>
             <button id="book-selected-slot" class="booking-button calendar-book-button" type="button" disabled>Select a time to book</button>
             </div>
+            </div>
+            <aside id="booking-summary" class="booking-summary" aria-labelledby="booking-summary-heading" hidden>
+                <h2 id="booking-summary-heading">Your booking</h2>
+                <div class="booking-summary-content" aria-live="polite" aria-atomic="true">
+                    <p id="booking-summary-empty" class="muted-text">Choose a session</p>
+                    <div id="booking-summary-service" hidden>
+                        <h3 id="booking-summary-name"></h3>
+                        <p id="booking-summary-details" class="muted-text"></p>
+                        <p id="booking-summary-price" class="booking-summary-price"></p>
+                    </div>
+                </div>
+            </aside>
         </main>
 
         <footer style="margin-top: auto; text-align: center;">
@@ -116,6 +129,6 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the logic -->
-    <script src="/app.js?v=2"></script>
+    <script src="/app.js?v=3"></script>
 </body>
 </html>

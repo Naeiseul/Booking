@@ -77,6 +77,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking');
     }
 
+    function renderBookingSummary() {
+        const summary = document.getElementById('booking-summary');
+        const empty = document.getElementById('booking-summary-empty');
+        const selected = document.getElementById('booking-summary-service');
+        summary.hidden = false;
+        empty.hidden = Boolean(selectedService);
+        selected.hidden = !selectedService;
+        const fields = {
+            'booking-summary-name': selectedService ? selectedService.name : '',
+            'booking-summary-details': selectedService ? serviceDetails(selectedService) : '',
+            'booking-summary-price': selectedService ? servicePrice(selectedService, true) + ' per booking' : ''
+        };
+        Object.entries(fields).forEach(([id, text]) => {
+            const element = document.getElementById(id);
+            if (element.textContent !== text) element.textContent = text;
+        });
+    }
+
     function renderCatalogue() {
         const visibleServices = services;
         categoryMenu.hidden = false;
@@ -149,6 +167,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             catalogueSignature = signature;
         }
+        renderBookingSummary();
         showStep(activeStep);
         document.getElementById('calendar-service').hidden = !selectedService;
         if (selectedService) {
@@ -201,6 +220,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!data) {
                 selectedSlot = null;
                 selectedService = null;
+                renderBookingSummary();
+                document.getElementById('booking-summary').hidden = true;
                 services = [];
                 catalogueEl.hidden = true;
                 categoryMenu.hidden = true;
