@@ -2,7 +2,26 @@
 
 Updated 2026-10-30.
 
-## Latest resume state — 2026-10-30 (read before older notes)
+## Latest catalogue direction — end of session 2026-10-30 (read first)
+
+The owner is ending the session and requested saving memory. Catalogue redesign is the next topic. The proposed Order summary row is PAUSED. This section supersedes conflicting older visual/next-step notes below.
+
+Read [docs/catalogue-redesign.md](catalogue-redesign.md) for the durable brief, reference descriptions, inspected schema, gaps and proposed stages.
+
+- The first booking-page screenshot stays the overall design direction. The second screenshot changes the catalogue only: floating category panel left, filtered service cards centre, existing booking/calendar panel right. Preserve header, contact icons, typography, colours and three-step tracker. No full-site/dashboard redesign.
+- CRITICAL: category organises browsing; service is the offering purchased; booking type controls scheduling. Keep them independent. Do not infer booking rules from category labels.
+- Categories must eventually be business-configured, enabled/ordered, and shown only when containing published active services. The four personal-training categories are examples, not permanent hardcoded categories. Do not insert example services/prices.
+- Supplied service photographs are now requested; the earlier removal of empty picture placeholders still stands.
+- This redesign is not implemented yet. Current schema has no categories, service category assignments or photograph field. Private/class service types exist; packages, class scheduling/capacity, reservations and verified service payments remain unfinished.
+- Start next session by reviewing current main and explaining the category component/data contract and gaps. Agree the smallest stage before changing code. Category storage/admin settings need an explicit small scope extension from the existing client-only work; do not silently implement all future administration or scheduling features.
+- Proposed stages: agree category contract/layout; saved category configuration/assignments; client filtering/highlighting/supplied photos; then return to the existing scheduling/reservation/payment sequence.
+- Last read-only check: zero saved Logtraq services and zero public slots. Recheck when relevant.
+- Latest functional release: 573f84c54b3040166d2022c0216da2dca7dab204, monthly calendar, Vercel dpl_HkbR4WFrP4uQAdF5BKsT4Pzys8Wt READY on production. Live HTML/app.js?v=5/catalogue.css?v=12 matched saved code.
+- Existing client now includes numbered progress circles, text-only service cards, right booking summary, date/time controls inside it, and a monthly calendar with real availability markers. Monthly calendar regressions passed in the session JavaScript runtime and are saved as tests/client-monthly-calendar.cjs.
+- Actual desktop/mobile browser rendering remains outstanding: local browser launch hit access-denied errors. Do not claim browser/end-to-end verification.
+- Preserve date/time-only slot acceptance, real Paystack destination and disabled service-specific payments until pricing is connected. No backend/business-data changes were made during the redesign review.
+
+## Earlier resume state — 2026-10-30 (superseded where noted above)
 
 ### Current working agreement
 
