@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let selectedSlot = null;
     let availabilityLoaded = false;
+    let loadingData = false;
+    let refreshQueued = false;
     let services = [];
     let categories = [];
     let activeCategoryId = null;
@@ -396,10 +398,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     async function loadData() {
+        // Keep requests ordered; a save/focus signal during a read queues one fresh read.
+        if (loadingData) {
+            refreshQueued = true;
+            return;
+        }
+        loadingData = true;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
         try {
             // 2. Knock on the "public door" in Supabase
             const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_page`, {
                 method: 'POST',
+                signal: controller.signal,
                 cache: 'no-store', // Force browser to always fetch fresh data
                 headers: {
                     'Content-Type': 'application/json',
@@ -567,9 +578,44 @@ document.addEventListener("DOMContentLoaded", async () => {
                 statusEl.hidden = false;
                 statusEl.textContent = "Could not load calendar.";
                 gridEl.innerHTML = '<div class="empty-state">Something went wrong. Please check your connection.</div>';
+            } else {
+                statusEl.hidden = false;
+                statusEl.textContent = 'Could not refresh availability. Please check your connection.';
+            }
+        } finally {
+            clearTimeout(timeout);
+            loadingData = false;
+            if (refreshQueued) {
+                refreshQueued = false;
+                loadData();
             }
         }
     }
+
+    // Cross-tab hints contain no credentials or slots: always fetch current public data.
+    const updateKey = 'booking-availability:' + bizSlug;
+    let lastUpdateId = null;
+    function availabilityChanged(message) {
+        if (!message || message.type !== 'availability-changed' ||
+            typeof message.id !== 'string' || message.id === lastUpdateId) return;
+        lastUpdateId = message.id;
+        loadData();
+    }
+    try {
+        if (typeof window.BroadcastChannel === 'function') {
+            const channel = new window.BroadcastChannel(updateKey);
+            channel.addEventListener('message', event => availabilityChanged(event.data));
+        }
+    } catch (_) { /* Polling/storage/focus refresh remain available. */ }
+    window.addEventListener('storage', event => {
+        if (event.key !== updateKey || !event.newValue) return;
+        try { availabilityChanged(JSON.parse(event.newValue)); } catch (_) {}
+    });
+    window.addEventListener('focus', () => loadData());
+    window.addEventListener('pageshow', event => { if (event.persisted) loadData(); });
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') loadData();
+    });
 
     // Initial load
     await loadData();

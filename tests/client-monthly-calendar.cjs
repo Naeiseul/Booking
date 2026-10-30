@@ -38,9 +38,9 @@ const document = {
     createElement: () => new E(),
     querySelector: selector => selector === '.catalogue-menu' ? menu : null,
     querySelectorAll: () => [],
-    addEventListener: (_, callback) => { task = callback; }
+    addEventListener: (event, callback) => { if (event === 'DOMContentLoaded') task = callback; }
 };
-const window = { location: { search: '', pathname: '/logtraq' } };
+const window = { location: { search: '', pathname: '/logtraq' }, addEventListener() {} };
 class ClockDate extends Date {
     constructor(...args) { super(...(args.length ? args : [2026, 9, 30, 12])); }
 }
@@ -51,10 +51,10 @@ class Params {
     toString() { return Object.entries(this.value).map(([key, value]) => key + '=' + value).join('&'); }
 }
 new Function('document', 'window', 'fetch', 'setInterval', 'URLSearchParams', 'Date',
-    'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'console', app)(
+    'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'console', 'AbortController', 'setTimeout', 'clearTimeout', app)(
     document, window,
     async () => { if (offline) throw new Error('Offline'); return { ok: true, json: async () => data }; },
-    callback => { poll = callback; }, Params, ClockDate, 'https://test.invalid', 'test', { error() {} }
+    callback => { poll = callback; }, Params, ClockDate, 'https://test.invalid', 'test', { error() {} }, class { constructor() { this.signal = {}; } abort() {} }, () => 0, () => {}
 );
 function assert(value, message) { if (!value) throw new Error(message); }
 const days = () => ids['day-tabs'].children.filter(day => day.dataset.date);

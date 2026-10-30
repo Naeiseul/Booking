@@ -63,7 +63,7 @@ async function ui(data = initial(), search = '') {
     const document = {
         activeElement: null, getElementById: id => nodes[id] || null,
         createElement: () => new Element(document),
-        addEventListener: (_, callback) => { start = callback; },
+        addEventListener: (event, callback) => { if (event === 'DOMContentLoaded') start = callback; },
         querySelector: selector => selector === '.catalogue-menu' ? menu : selector === '.catalogue-layout' ? layout : null
     };
     for (const match of html.matchAll(/id="([^"]+)"/g)) nodes[match[1]] = new Element(document);
@@ -72,15 +72,15 @@ async function ui(data = initial(), search = '') {
         const button = new Element(document); button.dataset.step = step; return button;
     });
     menu.querySelectorAll = () => steps;
-    const window = { location: { pathname: '/fixture', search } };
+    const window = { location: { pathname: '/fixture', search }, addEventListener() {} };
     new Function('document', 'window', 'fetch', 'setInterval', 'URLSearchParams', 'Date',
-        'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'console', source)(
+        'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'console', 'AbortController', 'setTimeout', 'clearTimeout', source)(
         document, window, async (url, request) => {
             state.calls.push({ url, body: JSON.parse(request.body) });
             if (state.offline) throw new Error('Offline fixture');
             return { ok: true, json: async () => JSON.parse(JSON.stringify(state.data)) };
         }, callback => { poll = callback; }, Params, ClockDate,
-        'https://fixture.invalid', 'test', { error() {} }
+        'https://fixture.invalid', 'test', { error() {} }, class { constructor() { this.signal = {}; } abort() {} }, () => 0, () => {}
     );
     await start();
     return {

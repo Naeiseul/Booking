@@ -294,6 +294,6 @@ function fill(p, values = {}) {
     const ids = [...html.matchAll(/id="([^"]+)"/g)].map(m => m[1]);
     assert.equal(ids.length, new Set(ids).size, 'IDs are unique');
     for (const match of html.matchAll(/for="([^"]+)"/g)) assert(ids.includes(match[1]));
-    assert(html.indexOf('src="/admin-services.js?v=3"') < html.indexOf('src="/admin.js?v=2"'));
+    assert(html.indexOf('src="/admin-services.js?v=3"') < html.indexOf('src="/admin.js?v=3"'));
     console.log('PASS: dedicated category table/order/status/counts; category feedback/reload/error recovery; cross-section editing notices; category create/edit/reload/order/enable; one assignment; independent active/publication/type; category validation/stale edits/lost-response retry/duplicate-submit safety;  service create/edit/reload; 90-minute durations; exact cents; visibility; class fields; validation; preserved input; lost-response retry; duplicate-submit prevention; stale edits; network recovery; safe text rendering; form labels and script order.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

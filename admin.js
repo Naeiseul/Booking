@@ -91,6 +91,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateEl.textContent = `Last updated: ${updatedTime}`;
         }
 
+        const updateKey = 'booking-availability:' + bizSlug;
+        let availabilityChannel = null;
+        try {
+            if (typeof window.BroadcastChannel === 'function') availabilityChannel = new window.BroadcastChannel(updateKey);
+        } catch (_) { /* Storage and the client's polling/focus refresh are fallbacks. */ }
+        function announceAvailabilityChange() {
+            const message = {
+                type: 'availability-changed',
+                id: Date.now() + ':' + Math.random().toString(36).slice(2)
+            };
+            try { if (availabilityChannel) availabilityChannel.postMessage(message); } catch (_) {}
+            try { window.localStorage.setItem(updateKey, JSON.stringify(message)); } catch (_) {}
+        }
+
         const dbSlots = data.slots || [];
         
         // Map database slots for easy lookup
@@ -200,6 +214,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         });
                         
                         if (!res.ok) throw new Error("Failed to save slot");
+                        announceAvailabilityChange();
                     } catch (err) {
                         console.error(err);
                         alert("Failed to save slot. Please check your connection.");

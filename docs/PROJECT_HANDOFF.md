@@ -2,6 +2,21 @@
 
 Updated 2026-10-30.
 
+## Availability refresh reliability fix — 2026-10-30 (read first)
+
+The owner reported that client availability no longer appeared to follow admin slot edits immediately. Investigated current deployed scripts, Supabase public data/function and recent RPC logs before changing code.
+
+- Live HTML/app.js/admin.js matched current main. Supabase received successful set_slot writes (204/200) and get_public_page reads (200); no failed persistence/read boundary was found. At inspection public slots were 1 November 07:00–10:00, while the client initially views today, 30 October; an async clarification about matching dates was asked but not answered before this fix. The client's existing three-second poll passed regression checks. Do not claim the owner's exact browser failure was reproduced.
+- Found no immediate post-save cross-tab refresh path, no focus/visibility refresh, and no guard against overlapping/out-of-order or hung reads. Added business-scoped BroadcastChannel and storage-event hints after SUCCESSFUL admin saves. Client treats hints only as a trigger to call get_public_page; messages contain a type and random ID, no admin key, customer information, date/time/slot payload or trusted booking state. Duplicate BroadcastChannel/storage hints are suppressed.
+- Client also refreshes on focus, becoming visible and back-forward restored pages. Existing three-second polling remains for other browsers/devices and when local browser APIs are blocked. This is same-origin browser-tab notification, not Supabase Realtime or cross-device server push. Both currently open pages need one refresh to load app.js?v=7/admin.js?v=3.
+- Serialized public reads with one queued refresh after a save/focus event during an in-flight request. Added a 15-second abort timeout so stalled reads cannot block updates permanently. Failed refreshes disable continuing and show an honest refresh error; recovery clears the warning.
+- Selected date/viewed month, category/service browsing and valid selected time are preserved; removed/unavailable times still clear selection. The page does not jump to a different date just because an admin changed it—compare the same date in admin and client.
+- No backend/schema/RPC/payment changes or business test writes. Keep date/time-only slots, real Paystack and disabled service payments. Unrelated admin/category styling and the paused Order summary remain.
+- Added tests/availability-sync.cjs: simulated admin save → shared data → immediate client read, success-only notifications, deduplication, business scoping/no credential payload, polling/focus/visibility/pageshow fallbacks, selected-date preservation, one in-flight request/queued latest result, timeout/error/recovery, blocked-channel/storage fallback and failed saves. Passed in session JavaScript with lightweight filesystem adapters.
+- Existing client monthly-calendar, client-categories and admin-navigation checks also passed with updated browser-event/abort fixtures; admin-services script-order fixture updated for the cache version. Actual desktop/mobile browser-to-REST rendering remains unverified due to the known browser startup denial. No live customer/admin slot fixture was inserted.
+- Verify the commit-matched deployment and live client/admin HTML and scripts before reporting release. Owner should refresh both pages once and compare a matching date. Resume the agreed small admin design stages after this bug review.
+
+
 ## Admin calendar contrast corrected — 2026-10-30 (read first)
 
 The owner reported the transparent-looking admin calendar made selected/available states hard to distinguish and explicitly requested solid neutral fills: selected/available white with black text, unavailable black with white struck-through text.
