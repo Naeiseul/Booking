@@ -24,7 +24,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/catalogue.css?v=11">
+    <link rel="stylesheet" href="/catalogue.css?v=12">
 </head>
 <body class="catalogue-page">
     <div class="container-public">
@@ -89,14 +89,29 @@
                     </div>
                 </div>
             <section id="client-calendar" aria-labelledby="calendar-heading" hidden>
-                <h2 id="calendar-heading" class="client-section-heading" tabindex="-1">Available times</h2>
+                <h2 id="calendar-heading" class="client-section-heading" tabindex="-1">Choose date &amp; Time</h2>
                 <div id="calendar-service" class="catalogue-selection" hidden>
                     <strong id="calendar-service-name"></strong>
                     <p id="calendar-service-details" class="muted-text"></p>
                     <p class="muted-text catalogue-stage-note">Times shown are general availability. Online booking for this service is not available yet.</p>
                 </div>
-            <!-- Day selector tabs will be injected here by JavaScript -->
-            <div class="day-tab-list" id="day-tabs"></div>
+            <div class="month-header">
+                <h3>Select a date</h3>
+                <div class="month-navigation">
+                    <span id="calendar-month" aria-live="polite"></span>
+                    <button id="previous-month" type="button" aria-label="Previous month" disabled>&lsaquo;</button>
+                    <button id="next-month" type="button" aria-label="Next month" disabled>&rsaquo;</button>
+                </div>
+            </div>
+            <div class="month-weekdays" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+            <div class="month-days" id="day-tabs" role="group" aria-labelledby="calendar-month"></div>
+            <p class="calendar-legend muted-text">A dot marks dates with available times.</p>
+            <div class="available-times-heading">
+                <h3>Available times</h3>
+                <span id="selected-calendar-date" class="muted-text"></span>
+            </div>
 
             <!-- Time slot chips will be injected here by JavaScript -->
             <div class="time-chip-grid" id="time-grid">
@@ -129,6 +144,6 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the logic -->
-    <script src="/app.js?v=4"></script>
+    <script src="/app.js?v=5"></script>
 </body>
 </html>

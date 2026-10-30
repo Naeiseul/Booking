@@ -23,7 +23,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    let activeDateString = null; // Track which day the user is looking at
+    let activeDateString = null;
+    let viewedMonth = null;
+    let slotsByDate = {};
+    let monthSignature = null;
 
     let selectedSlot = null;
     let availabilityLoaded = false;
@@ -197,6 +200,129 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = `/${encodeURIComponent(bizSlug)}/details?${query}`;
     });
 
+    function localDateString(day) {
+        return day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' +
+            String(day.getDate()).padStart(2, '0');
+    }
+
+    function renderMonth(focusDate = null) {
+        const today = localDateString(new Date());
+        if (!activeDateString || activeDateString < today) {
+            activeDateString = today;
+            selectedSlot = null;
+            updateBookButton();
+        }
+        if (!viewedMonth) viewedMonth = activeDateString.slice(0, 7);
+        const month = new Date(viewedMonth + '-01T12:00:00');
+        const monthLabel = month.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
+        const monthHeading = document.getElementById('calendar-month');
+        if (monthHeading.textContent !== monthLabel) monthHeading.textContent = monthLabel;
+        document.getElementById('previous-month').disabled = viewedMonth <= today.slice(0, 7);
+        document.getElementById('next-month').disabled = false;
+        document.getElementById('selected-calendar-date').textContent =
+            new Date(activeDateString + 'T12:00:00').toLocaleDateString('en-ZA', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+            });
+        const days = new Date(month.getFullYear(), month.getMonth() + 1, 0, 12).getDate();
+        const openings = Object.keys(slotsByDate).filter(date => date.startsWith(viewedMonth) &&
+            slotsByDate[date].some(slot => slot.status === undefined || slot.status === 'open')).sort();
+        const signature = JSON.stringify([viewedMonth, activeDateString, today, openings]);
+        if (signature === monthSignature) return;
+        const focusedDate = focusDate || (document.activeElement && document.activeElement.dataset &&
+            document.activeElement.dataset.date);
+        tabsEl.innerHTML = '';
+        // Monday is the first column.
+        const offset = (month.getDay() + 6) % 7;
+        for (let index = 0; index < offset; index++) {
+            const blank = document.createElement('span');
+            blank.setAttribute('aria-hidden', 'true');
+            tabsEl.appendChild(blank);
+        }
+        for (let number = 1; number <= days; number++) {
+            const day = new Date(month.getFullYear(), month.getMonth(), number, 12);
+            const date = localDateString(day);
+            const past = date < today;
+            const available = !past && openings.includes(date);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.date = date;
+            button.className = 'month-day' + (available ? ' has-times' : ' no-times');
+            button.textContent = String(number);
+            button.disabled = past;
+            button.setAttribute('aria-pressed', String(date === activeDateString));
+            if (date === today) button.setAttribute('aria-current', 'date');
+            button.setAttribute('aria-label', day.toLocaleDateString('en-ZA', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            }) + (past ? ', past date' : available ? ', available times' : ', no available times'));
+            button.addEventListener('click', () => {
+                if (button.disabled) return;
+                if (activeDateString !== date) selectedSlot = null;
+                activeDateString = date;
+                updateBookButton();
+                renderMonth(date);
+                renderSlots(slotsByDate[date] || []);
+            });
+            tabsEl.appendChild(button);
+        }
+        monthSignature = signature;
+        if (focusedDate) {
+            const target = Array.from(tabsEl.children).find(button => button.dataset && button.dataset.date === focusedDate);
+            if (target && !target.disabled) target.focus({ preventScroll: true });
+        }
+    }
+
+    function changeMonth(offset) {
+        if (!availabilityLoaded || !viewedMonth) return;
+        const day = new Date(viewedMonth + '-01T12:00:00');
+        day.setMonth(day.getMonth() + offset);
+        const next = localDateString(day).slice(0, 7);
+        if (next < localDateString(new Date()).slice(0, 7)) return;
+        viewedMonth = next;
+        renderMonth();
+    }
+    document.getElementById('previous-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+
+    // 7. Draw the Time Grid for the selected day
+    function renderSlots(daySlots) {
+        if (!daySlots || daySlots.length === 0) {
+            gridEl.innerHTML = `
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    No available times for this date.
+                </div>`;
+            return;
+        }
+        
+        gridEl.innerHTML = '';
+        daySlots.forEach(slot => {
+            const chip = document.createElement('button');
+            // The public API already filters to open slots and omits status.
+            const isOpen = slot.status === undefined || slot.status === 'open';
+            const time = slot.time ? slot.time.substring(0, 5) : "";
+
+            chip.type = 'button';
+            chip.disabled = !isOpen;
+            chip.className = `time-chip ${isOpen ? 'open' : 'taken'}`;
+            const isSelected = Boolean(isOpen && selectedSlot &&
+                selectedSlot.date === slot.date && selectedSlot.time === time);
+            if (isSelected) chip.classList.add('selected');
+            chip.setAttribute('aria-pressed', String(isSelected));
+            chip.textContent = time;
+            chip.setAttribute('aria-label', `${slot.date} at ${time}${isOpen ? '' : ', unavailable'}`);
+            if (isOpen) {
+                chip.addEventListener('click', () => {
+                    selectedSlot = { date: slot.date, time };
+                    updateBookButton();
+                    renderSlots(daySlots);
+                });
+            }
+
+            gridEl.appendChild(chip);
+        });
+    }
+
+
     async function loadData() {
         try {
             // 2. Knock on the "public door" in Supabase
@@ -331,102 +457,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             updateBookButton();
             // 5. Group ONLY the slots returned by the database
-            const slotsByDate = {};
+            slotsByDate = {};
             slots.forEach(slot => {
                 if (!slotsByDate[slot.date]) slotsByDate[slot.date] = [];
                 slotsByDate[slot.date].push(slot);
             });
 
-            // Always show a usable date picker, even when no openings are published.
-            // Dates are navigation only; bookable times still come solely from the API.
-            const dateChoices = new Set(Object.keys(slotsByDate));
-            const today = new Date();
-            today.setHours(12, 0, 0, 0);
-            for (let offset = 0; offset < 7; offset++) {
-                const day = new Date(today);
-                day.setDate(today.getDate() + offset);
-                const dateString = day.getFullYear() + '-' +
-                    String(day.getMonth() + 1).padStart(2, '0') + '-' +
-                    String(day.getDate()).padStart(2, '0');
-                dateChoices.add(dateString);
-            }
-            const uniqueDates = Array.from(dateChoices).sort();
-            if (!uniqueDates.includes(activeDateString)) activeDateString = uniqueDates[0];
-
-            // 6. Draw the Day Tabs
-            tabsEl.innerHTML = '';
-            uniqueDates.forEach(dateString => {
-                const dateObj = new Date(dateString + 'T12:00:00');
-                const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' }); 
-                const dayNum = dateObj.getDate();
-                
-                const tab = document.createElement('button');
-                tab.type = 'button';
-                const isActive = activeDateString === dateString;
-                tab.setAttribute('aria-pressed', String(isActive));
-                tab.setAttribute('aria-label', dateObj.toLocaleDateString('en-ZA', {
-                    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-                }));
-                
-                tab.className = `day-tab ${isActive ? 'active' : ''}`;
-                tab.textContent = `${dayName} ${dayNum}`;
-                
-                tab.addEventListener('click', () => {
-                    if (activeDateString !== dateString) {
-                        selectedSlot = null;
-                        updateBookButton();
-                    }
-                    activeDateString = dateString;
-                    document.querySelectorAll('.day-tab').forEach(t => {
-                        t.classList.remove('active');
-                        t.setAttribute('aria-pressed', 'false');
-                    });
-                    tab.classList.add('active');
-                    tab.setAttribute('aria-pressed', 'true');
-                    renderSlots(slotsByDate[dateString]);
-                });
-                
-                tabsEl.appendChild(tab);
-            });
-
-            // 7. Draw the Time Grid for the selected day
-            function renderSlots(daySlots) {
-                if (!daySlots || daySlots.length === 0) {
-                    gridEl.innerHTML = `
-                        <div class="empty-state">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            No available times for this date.
-                        </div>`;
-                    return;
-                }
-                
-                gridEl.innerHTML = '';
-                daySlots.forEach(slot => {
-                    const chip = document.createElement('button');
-                    // The public API already filters to open slots and omits status.
-                    const isOpen = slot.status === undefined || slot.status === 'open';
-                    const time = slot.time ? slot.time.substring(0, 5) : "";
-
-                    chip.type = 'button';
-                    chip.disabled = !isOpen;
-                    chip.className = `time-chip ${isOpen ? 'open' : 'taken'}`;
-                    const isSelected = Boolean(isOpen && selectedSlot &&
-                        selectedSlot.date === slot.date && selectedSlot.time === time);
-                    if (isSelected) chip.classList.add('selected');
-                    chip.setAttribute('aria-pressed', String(isSelected));
-                    chip.textContent = time;
-                    chip.setAttribute('aria-label', `${slot.date} at ${time}${isOpen ? '' : ', unavailable'}`);
-                    if (isOpen) {
-                        chip.addEventListener('click', () => {
-                            selectedSlot = { date: slot.date, time };
-                            updateBookButton();
-                            renderSlots(daySlots);
-                        });
-                    }
-
-                    gridEl.appendChild(chip);
-                });
-            }
+            renderMonth();
 
             // Keep an empty selected date visible through availability refreshes.
             renderSlots(slotsByDate[activeDateString] || []);

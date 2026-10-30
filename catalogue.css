@@ -165,3 +165,42 @@
     grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
 }
 .booking-summary .calendar-book-button { width: 100%; }
+
+/* Client monthly date picker; admin date controls are unchanged. */
+.month-header, .month-navigation, .available-times-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.month-header { margin-bottom: 16px; }
+.month-navigation { margin-left: auto; }
+#calendar-month { font-size: 13px; color: var(--muted); }
+.month-navigation button {
+    width: 36px; min-height: 44px; border: 1px solid #E2E8F0;
+    border-radius: 8px; background: #F8FAFC; color: var(--text);
+    font: inherit; font-size: 24px; cursor: pointer;
+}
+.month-navigation button:disabled { opacity: .4; cursor: default; }
+.month-weekdays, .month-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.month-weekdays { margin-bottom: 6px; color: var(--muted); font-size: 11px; text-align: center; }
+.month-day {
+    position: relative; min-width: 0; min-height: 44px; padding: 4px 0 10px;
+    border: 0; border-radius: 50%; background: transparent; color: var(--text);
+    font: inherit; font-size: 13px; cursor: pointer;
+}
+.month-day.no-times { color: #64748B; }
+.month-day:disabled { color: #CBD5E1; cursor: default; }
+.month-day.has-times::after {
+    content: ''; position: absolute; bottom: 6px; left: calc(50% - 2px);
+    width: 4px; height: 4px; border-radius: 50%; background: #007C9B;
+}
+.month-day[aria-current="date"] { box-shadow: inset 0 0 0 1px #94A3B8; }
+.month-day[aria-pressed="true"] { background: linear-gradient(135deg, #007C9B, #00BDB1); color: #FFF; }
+.month-day[aria-pressed="true"]::after { background: #FFF; }
+.month-day:not(:disabled):hover { box-shadow: inset 0 0 0 1px #007C9B; }
+.month-day:focus-visible, .month-navigation button:focus-visible { outline: 2px solid #007C9B; outline-offset: -2px; }
+.booking-summary .calendar-legend { margin-top: 8px; font-size: 12px; }
+.available-times-heading { margin: 24px 0 12px; }
+.available-times-heading .muted-text { font-size: 12px; }
