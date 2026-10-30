@@ -24,7 +24,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=2">
-    <link rel="stylesheet" href="/catalogue.css?v=13">
+    <link rel="stylesheet" href="/catalogue.css?v=14">
 </head>
 <body class="catalogue-page">
     <div class="container-public">
@@ -62,14 +62,18 @@
         </header>
 
         <main class="catalogue-layout">
-            <div class="catalogue-main">
             <nav class="catalogue-menu" aria-label="Booking steps" hidden>
                 <button type="button" data-step="sessions" aria-controls="service-catalogue" aria-pressed="true" aria-current="step"><span class="step-number" aria-hidden="true">1</span><span class="step-label">Choose a session</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
                 <button type="button" data-step="schedule" aria-controls="client-calendar" aria-pressed="false"><span class="step-number" aria-hidden="true">2</span><span class="step-label">Choose date &amp; Time</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
                 <button type="button" data-step="checkout" aria-controls="client-checkout" aria-pressed="false"><span class="step-number" aria-hidden="true">3</span><span class="step-label">Checkout</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
             </nav>
+            <nav id="category-navigation" class="catalogue-categories" aria-label="Service categories" hidden>
+                <div id="category-buttons" class="category-buttons"></div>
+            </nav>
+            <div class="catalogue-main">
             <div class="catalogue-content">
             <section id="service-catalogue" class="client-catalogue" aria-label="Services" tabindex="-1" hidden>
+                <h2 id="active-category-heading" class="active-category-heading" aria-live="polite" aria-atomic="true" hidden></h2>
                 <div id="client-services" class="client-service-list"></div>
             </section>
             <section id="client-checkout" aria-labelledby="checkout-heading" hidden>
@@ -144,6 +148,6 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the logic -->
-    <script src="/app.js?v=5"></script>
+    <script src="/app.js?v=6"></script>
 </body>
 </html>

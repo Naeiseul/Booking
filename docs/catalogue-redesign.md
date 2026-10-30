@@ -2,6 +2,15 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Client browsing stage implemented — 2026-10-30
+
+The owner approved and implemented business-configured category navigation, in-page filtering and selected-card highlighting. The existing public RPC supplies eligible category/service records; client browsing state activeCategoryId is separate from selectedService and booking rules. Desktop shows floating category navigation left, cards centre (at most two columns where they fit) and existing booking/calendar right. At 1100px and below categories become a horizontal row above cards and booking stacks below.
+
+Category browsing, category label edits and unchanged polling preserve valid service/date/time and focus. Removed/disabled categories and hidden/deactivated services follow the existing public eligibility/revalidation rules. Back links restore the selected service's category. Classes remain unbookable until scheduling. No placeholder photos, invented data, new tags, scheduling, cart or payment work was added.
+
+Logtraq currently has no configured categories/services, so its menu is hidden and the honest empty state remains. Configure actual offerings through Admin > Services to populate this layout. Supplied-photo storage/reference/display remains a separate explicit decision. Order summary stays paused. See the newest handoff section for verification and remaining browser limitations. Earlier “not implemented” navigation notes below are historical.
+
+
 ## Saved final visual plan — 2026-10-30
 
 The owner supplied the consolidated final customer/admin visual plan and explicitly requested saving it to GitHub so future work can refer to it.

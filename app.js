@@ -31,12 +31,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selectedSlot = null;
     let availabilityLoaded = false;
     let services = [];
+    let categories = [];
+    let activeCategoryId = null;
+    let categorySignature = null;
+    const categoryButtons = new Map();
     let selectedService = null;
     let requestedServiceId = urlParams.get('service') || '';
     let catalogueSignature = null;
     let activeStep = 'sessions';
-    const categoryMenu = document.querySelector('.catalogue-menu');
-    const stepButtons = Array.from(categoryMenu.querySelectorAll('button[data-step]'));
+    const stepMenu = document.querySelector('.catalogue-menu');
+    const stepButtons = Array.from(stepMenu.querySelectorAll('button[data-step]'));
+    const categoryNavigation = document.getElementById('category-navigation');
+    const categoryList = document.getElementById('category-buttons');
+    const catalogueLayout = document.querySelector('.catalogue-layout');
     const catalogueEl = document.getElementById('service-catalogue');
     const serviceList = document.getElementById('client-services');
     const calendarEl = document.getElementById('client-calendar');
@@ -45,6 +52,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     function showStep(step, moveFocus = false) {
         activeStep = step;
         catalogueEl.hidden = step === 'checkout';
+        categoryNavigation.hidden = step === 'checkout' || categories.length === 0;
+        if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(step !== 'checkout' && categories.length > 0));
         calendarEl.hidden = step === 'checkout';
         checkoutEl.hidden = step !== 'checkout';
         stepButtons.forEach(button => {
@@ -98,15 +107,78 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+
+    // Fixed icon artwork, independent of business category names and booking rules.
+    const categoryIcons = {
+        grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+        person: '<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2Z"/>',
+        people: '<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3ZM16 4a3 3 0 0 1 0 6M19 14a5 5 0 0 1 3 4v3"/>',
+        calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+        book: '<path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/>',
+        star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>'
+    };
+
+    function renderCategoryNavigation() {
+        const signature = JSON.stringify(categories);
+        if (signature !== categorySignature) {
+            const focusedId = document.activeElement && document.activeElement.dataset &&
+                document.activeElement.dataset.categoryId;
+            categoryList.innerHTML = '';
+            categoryButtons.clear();
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'category-button';
+                button.dataset.categoryId = category.id;
+                button.setAttribute('aria-controls', 'client-services');
+                const icon = document.createElement('span');
+                icon.className = 'category-icon';
+                icon.setAttribute('aria-hidden', 'true');
+                // The SVG body is allowlisted artwork, never business-supplied markup.
+                const artwork = Object.hasOwn(categoryIcons, category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
+                icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">' + artwork + '</svg>';
+                const label = document.createElement('span');
+                label.className = 'category-label';
+                label.textContent = category.label;
+                button.appendChild(icon);
+                button.appendChild(label);
+                button.addEventListener('click', () => {
+                    if (activeCategoryId === category.id) return;
+                    activeCategoryId = category.id;
+                    renderCatalogue();
+                });
+                categoryList.appendChild(button);
+                categoryButtons.set(category.id, button);
+            });
+            categorySignature = signature;
+            if (focusedId) {
+                const target = categoryButtons.get(focusedId) || categoryButtons.get(activeCategoryId);
+                if (target) target.focus({ preventScroll: true });
+            }
+        }
+        categoryButtons.forEach((button, id) => {
+            button.setAttribute('aria-pressed', String(id === activeCategoryId));
+        });
+        if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(categories.length > 0));
+        const heading = document.getElementById('active-category-heading');
+        const category = categories.find(item => item.id === activeCategoryId);
+        const label = category ? category.label : '';
+        if (heading.textContent !== label) heading.textContent = label;
+        heading.hidden = !category;
+    }
+
     function renderCatalogue() {
-        const visibleServices = services;
-        categoryMenu.hidden = false;
-        const signature = JSON.stringify([services, selectedService && selectedService.id]);
+        const visibleServices = services.filter(service => service.category_id === activeCategoryId);
+        stepMenu.hidden = false;
+        renderCategoryNavigation();
+        const signature = JSON.stringify([activeCategoryId, visibleServices, selectedService && selectedService.id]);
         if (signature !== catalogueSignature) {
             serviceList.innerHTML = '';
             visibleServices.forEach(service => {
                 const card = document.createElement('article');
-                card.className = 'client-service-card';
+                const isSelected = Boolean(selectedService && selectedService.id === service.id);
+                card.className = 'client-service-card' + (isSelected ? ' is-selected' : '');
+                card.dataset.serviceId = service.id;
                 const body = document.createElement('div');
                 body.className = 'service-card-body';
                 const title = document.createElement('h3');
@@ -136,17 +208,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 choose.type = 'button';
                 choose.className = 'catalogue-service-button';
                 choose.disabled = service.service_type === 'class';
-                const isSelected = Boolean(selectedService && selectedService.id === service.id);
                 choose.textContent = choose.disabled ? 'Class times not available yet' : isSelected ? 'Selected' : 'View available times';
                 choose.setAttribute('aria-pressed', String(isSelected));
                 choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'View available times for ') + service.name);
                 choose.addEventListener('click', () => {
                     if (choose.disabled) return;
+                    if (!selectedService || selectedService.id !== service.id) selectedSlot = null;
                     selectedService = service;
                     requestedServiceId = '';
-                    selectedSlot = null;
                     renderCatalogue();
                     updateBookButton();
+                    renderSlots(slotsByDate[activeDateString] || []);
                     showStep('schedule', true);
                 });
                 body.appendChild(choose);
@@ -350,7 +422,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById('booking-summary').hidden = true;
                 services = [];
                 catalogueEl.hidden = true;
-                categoryMenu.hidden = true;
+                categories = [];
+                activeCategoryId = null;
+                stepMenu.hidden = true;
+                categoryNavigation.hidden = true;
+                if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', 'false');
                 checkoutEl.hidden = true;
                 calendarEl.hidden = false;
                 availabilityLoaded = false;
@@ -432,6 +508,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const nextServices = data.services || [];
+            const publicCategories = data.categories || [];
+            // The RPC enforces published + active + enabled, scoped to this business.
+            // Fail closed on an inconsistent response rather than expose the slot-only fallback.
+            if (!Array.isArray(nextServices) || !Array.isArray(publicCategories) ||
+                nextServices.some(service => !publicCategories.some(category => category.id === service.category_id))) {
+                throw new Error('Invalid catalogue category response');
+            }
+            categories = publicCategories.filter(category =>
+                nextServices.some(service => service.category_id === category.id));
             if (selectedService) {
                 const fresh = nextServices.find(service => service.id === selectedService.id && service.service_type === 'private');
                 if (!fresh || JSON.stringify(fresh) !== JSON.stringify(selectedService)) selectedSlot = null;
@@ -442,8 +527,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
                 if (selectedService) {
                     activeStep = 'schedule';
+                    activeCategoryId = selectedService.category_id;
                     requestedServiceId = '';
                 }
+            }
+            if (!categories.some(category => category.id === activeCategoryId)) {
+                activeCategoryId = selectedService ? selectedService.category_id : categories.length ? categories[0].id : null;
             }
             renderCatalogue();
             const slots = data.slots || [];
