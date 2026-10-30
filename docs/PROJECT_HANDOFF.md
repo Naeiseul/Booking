@@ -10,14 +10,14 @@ Updated 2026-10-30.
 - Focus on the client shell for preselling, one small agreed edit at a time. The owner thinks visually and wants concise explanations (about 100 words per step), saying what changes in the frontend, what the backend needs, and one clear next action.
 - Discuss the next small edit before changing anything. Questions are exploration, not permission to expand/reorder work. Complete authorized changes, save to GitHub, deploy to production, and verify affected live assets.
 - The owner rejected the separate sales demo. Its files/route were removed in commit 73fc7a2b3fb274679e819fd5b2d3d15af0c9b6e6. Never restore/reuse/republish it unless explicitly requested.
-- Visual reference: a McDonald's kiosk catalogue with narrow sidebar and compact picture-led menu cards. Adapt the structure to booking, not its branding. Do not invent actual business offerings.
+- Latest visual reference: the owner's booking-page screenshot shared on 2026-10-30, with a horizontal step tracker, service cards on the left and a booking summary/date-time panel on the right. Build toward it one agreed client edit at a time. Catalogue pictures remain removed at the owner's request. Do not invent business offerings.
 
 ### Current client UI
 
 - Live client: https://booking.logtraq.co.za/logtraq
 - Existing background gradient shows through; no large white page panel. Phone icon has a transparent background. Phone and TikTok links use saved business data; scheme-less TikTok domains are normalized to HTTPS.
-- Sidebar now represents booking STEPS, not categories: Choose a session; Choose date & Time; Checkout. The capital T in Time was explicitly requested. All/group/private/class category tabs were replaced, not retained as hidden filters.
-- Desktop: narrow 144px sidebar close to content. Mobile (700px and below): sticky horizontal scrolling row, separated buttons with bold borders and useful touch targets. Client pinch zoom is enabled.
+- A horizontal tracker above the catalogue now represents booking STEPS, not categories: Choose a session; Choose date & Time; Checkout. The capital T in Time was explicitly requested. All/group/private/class category tabs were replaced, not retained as hidden filters.
+- Desktop: three equal-width booking-step buttons in a horizontal row above the catalogue. Mobile (700px and below): sticky horizontal scrolling row, separated buttons with bold borders and useful touch targets. Client pinch zoom is enabled.
 - ALL three step boxes stay black with white text, even on hover. The selected step has a muted silver border and Current step label. The label is centred, small italic Georgia/serif in muted silver. aria-current=step follows the active panel. No animated shine.
 - Choose a session: text-only published service cards with service details. The owner requested removing catalogue picture placeholders on 2026-10-30. Empty catalogue has an honest non-interactive No services added yet card. No real service records or business photos were added. Photo upload remains future work.
 - Choose date & Time: existing calendar/selection logic, now always showing the next seven LOCAL dates even with no openings, plus any further dates provided by real availability. Empty days say No available times for this date. No bookable times are fabricated. Selection persists across steps/polling; changing days clears the time.
@@ -42,7 +42,7 @@ Updated 2026-10-30.
 
 ### Start tomorrow
 
-Read AGENTS.md, this latest section and docs/client-booking-flow.md on current main. Confirm the client state and preserve all owner preferences above. The owner should review the latest client shell first; discuss the next small edit before changing code. The latest authorized edit removed the catalogue picture placeholders. Agree on the next small client edit before changing anything. Do not jump to admin, Supabase, duration scheduling, reservations, cart or payments. Browser verification remains pending.
+Read AGENTS.md, this latest section and docs/client-booking-flow.md on current main. Confirm the client state and preserve all owner preferences above. The owner should review the latest client shell first; discuss the next small edit before changing code. The latest authorized edit moved the existing booking steps into a horizontal tracker above the catalogue. Agree on the next small client edit before changing anything. Do not jump to admin, Supabase, duration scheduling, reservations, cart or payments. Browser verification remains pending.
 
 ## Working agreement and persistent project memory
 
@@ -266,3 +266,10 @@ Centred the client Current step label and changed it to a small italic Georgia/s
 At the owner's request, removed the picture area, image icon and No photo yet label from client service cards and the empty catalogue card. Service text, selection controls and the bottom booking button are retained. Client-only app.js/catalogue.css edit with index.html cache-version updates. No admin, backend or business-data changes. Continue reviewing the client shell one small agreed edit at a time; duration/class scheduling remains pending.
 
 Validation: reviewed the removal and checked JavaScript syntax and preserved card/selection code. Production deployment and live asset checks are required for this release. Actual desktop/mobile browser rendering remains outstanding: the local browser could not create a profile because filesystem access was denied.
+
+
+## Horizontal client booking tracker — 2026-10-30
+
+The owner approved moving the existing three booking-step buttons above the catalogue as the next small change toward their supplied visual reference. Desktop now uses a single content column with three equal-width buttons above the panels. The sticky horizontal scrolling mobile row remains. Existing labels (including Choose date & Time), black/white styling, silver current-step border, centred italic Current step label, aria-current updates and navigation remain. Catalogue picture placeholders stay removed; the bottom booking action remains below the panels. No admin, backend or business-data changes.
+
+Validation: checked the CSS/HTML changes against the existing navigation selectors and preserved mobile touch targets. Actual desktop/mobile browser rendering remains outstanding because local browser profile creation is denied. Save and verify this production release and its changed assets. Next: owner reviews the horizontal tracker before another small client edit; no booking-summary panel or scheduling work is authorized by this change.
