@@ -2,6 +2,17 @@
 
 Updated 2026-10-30.
 
+## Admin calendar contrast corrected — 2026-10-30 (read first)
+
+The owner reported the transparent-looking admin calendar made selected/available states hard to distinguish and explicitly requested solid neutral fills: selected/available white with black text, unavailable black with white struck-through text.
+
+- Admin Calendar now has a light neutral filled panel. Selected day is white/black with a clear black border; other date tabs are black/white without strikethrough (they are other days, not unavailable dates).
+- Available time chips are solid white with black text and black borders. Unavailable time chips are solid black with white struck-through text. Both retain clear fills at full opacity and minimum 44px height. The legend matches those states and helper text identifies the selected day.
+- Admin-only CSS/legend/cache-version change. Existing slot availability/toggling, client calendar, brand settings, categories/services, real Paystack and service-payment guards are unchanged.
+- The owner also asked what Unassigned means in the service category selector. Explained: it allows an unfinished draft without a category; publishing requires an actual category, and Unassigned is never a customer category. No selector behaviour change was requested or made.
+- Validation: scoped selector/contrast and HTML control-ID checks; verify deployment and changed live assets when releasing. Actual browser rendering remains outstanding. Current next admin stage remains owner review before agreeing further changes.
+
+
 ## Admin Categories screen and cleaner workspace implemented — 2026-10-30 (read first)
 
 The owner explicitly changed priority to the ADMIN dashboard and approved a dedicated Categories screen plus sidebar/layout cleanup using docs/references/admin-interface-reference.png. This supersedes earlier notes that the next priority must be photos or client-only work.

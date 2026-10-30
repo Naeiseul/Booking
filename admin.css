@@ -144,3 +144,35 @@
     .admin-section-title { font-size: 24px; }
     .admin-workspace-header { margin-bottom: 24px; }
 }
+
+/* Admin availability: white/open, black/struck-through unavailable. */
+.admin-page #calendar-panel {
+    padding: 24px; border: 1px solid #D7DCE3; border-radius: 20px;
+    background: #F1F3F5;
+}
+.admin-page #calendar-panel .day-tab {
+    min-width: 64px; min-height: 64px; border: 2px solid #000; border-radius: 12px;
+    background: #000; color: #FFF; box-shadow: none; transform: none;
+    transition: background-color .15s ease, color .15s ease;
+}
+.admin-page #calendar-panel .day-tab.active {
+    background: #FFF; color: #000; box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+}
+.admin-page #calendar-panel .time-chip {
+    min-height: 44px; border: 1px solid #000; opacity: 1;
+}
+.admin-page #calendar-panel .time-chip.open {
+    background: #FFF; color: #000; text-decoration: none;
+}
+.admin-page #calendar-panel .time-chip.taken {
+    background: #000; color: #FFF; text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+.admin-calendar-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; color: #1E293B; font-size: 13px; }
+.admin-calendar-legend > span { display: inline-flex; align-items: center; gap: 8px; }
+.admin-calendar-key { width: 18px; height: 18px; border: 1px solid #000; border-radius: 5px; background: #FFF; }
+.admin-calendar-key.is-unavailable { background: #000; }
+.admin-calendar-day-help { color: #475569; font-size: 13px; margin-bottom: 16px; }
+@media (max-width: 420px) {
+    .admin-page #calendar-panel { padding: 16px 12px; }
+}

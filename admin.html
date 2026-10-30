@@ -18,7 +18,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=2">
-    <link rel="stylesheet" href="/admin.css?v=4">
+    <link rel="stylesheet" href="/admin.css?v=5">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
@@ -76,13 +76,10 @@
             <!-- Day selector tabs will be injected here -->
             <div class="day-tab-list" id="day-tabs"></div>
 
-            <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; font-size: 14px; font-weight: 500; color: var(--muted);">
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: var(--ui-ink);"></span> Available
-                </span>
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: var(--taken);"></span> Unavailable
-                </span>
+            <p class="admin-calendar-day-help">The selected day is white. Tap a time to change its availability.</p>
+            <div class="admin-calendar-legend">
+                <span><span class="admin-calendar-key" aria-hidden="true"></span>Available</span>
+                <span><span class="admin-calendar-key is-unavailable" aria-hidden="true"></span>Unavailable · crossed out</span>
             </div>
 
             <!-- Time slot chips will be injected here -->
