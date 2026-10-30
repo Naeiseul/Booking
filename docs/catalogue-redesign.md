@@ -2,6 +2,19 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Saved final visual plan — 2026-10-30
+
+The owner supplied the consolidated final customer/admin visual plan and explicitly requested saving it to GitHub so future work can refer to it.
+
+![Final neutral customer and admin visual plan](references/final-visual-plan.png)
+
+Original supplied file: final visual.png. The PNG is preserved without resizing or editing.
+
+Use this as the latest visual target: neutral black/white/grey interface, floating business-configured categories left, photographed service cards centre and booking/calendar panel right. The lower admin Services view is a visual target for future separately agreed admin work. Its pictured dashboard sections, filters, search, table controls and bulk actions do not imply that those features exist or are authorized for immediate implementation.
+
+Keep category, service and booking type separate. Screenshot offerings, prices, photos, Popular badges, class spaces and tag chips are examples, not saved business data. Use actual business configuration and supplied service photos when that stage is agreed. The pictured Order summary remains paused; saving this reference does not restart it. Retain real Paystack, disabled service-specific payments and date/time-only slot acceptance, and keep scheduling/capacity → reservations → verified payments in their agreed order. Continue one small agreed step at a time.
+
+
 ## Interface colour update — 2026-10-30
 
 After reviewing the live client/admin, the owner requested neutral interface controls independent of business brand colours. This supersedes earlier teal active-control instructions: client tracker, selected dates/times and action controls use black/white with pale neutral inactive states; admin management actions use consistent black/white buttons; admin current sidebar section uses soft grey/dark text with a black edge. Business branding variables, logos and header/social colours remain separate. The calendar also stacks earlier in split-screen and keeps circular date highlights. This does not change which screenshot guides the overall site versus the catalogue, or authorize later catalogue/data/scheduling features.

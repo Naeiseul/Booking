@@ -2,6 +2,17 @@
 
 Updated 2026-10-30.
 
+## Final visual reference saved — 2026-10-30 (read first)
+
+The owner supplied a consolidated final visual plan and asked that the actual image be saved to GitHub. It is now tracked at [docs/references/final-visual-plan.png](references/final-visual-plan.png), with an inline preview and interpretation in [docs/catalogue-redesign.md](catalogue-redesign.md). Original filename: final visual.png; original PNG bytes preserved.
+
+This is the latest customer/admin visual reference: neutral black/white/grey controls, floating configured categories left, service cards/photos centre, existing booking/calendar right, plus a future admin Services layout reference. Saving it is documentation/reference work only; no new customer/admin features were implemented. Earlier notes saying all screenshot bytes are unavailable/untracked no longer apply to this final reference.
+
+The screenshot's Order summary stays PAUSED. Example offerings/prices/photos, spaces-left counts, Popular badges, tags, additional admin sections/search/bulk controls are illustrative and do not authorize new capabilities or sample records. Categories remain business-configured and independent of services and booking types. Preserve real Paystack, disabled service-specific payments, date/time-only slots and the scheduling/capacity → reservations → verified payments sequence.
+
+Latest functional release remains 405fd29 (neutral controls/calendar proportions), production dpl_3v7fdQMgM5Dk5tfqSLXF5bJnpEKL READY with live HTML/CSS matched. Browser rendering remains outstanding. Next implementation step still requires agreement: client category navigation/filtering using the saved category foundation.
+
+
 ## Neutral interface controls and calendar proportions — 2026-10-30 (read first)
 
 The owner explicitly requested this small styling step before continuing client catalogue navigation: remove green interface selections, use consistent filled black admin action buttons, fix oval-looking calendar controls, and keep business branding separate.
