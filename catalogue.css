@@ -2,7 +2,7 @@
 .catalogue-page .container-public { max-width: 1200px; }
 .catalogue-layout {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(370px, 1fr);
     gap: 24px;
     margin-top: 24px;
     flex: 1;
@@ -23,7 +23,7 @@
 .booking-summary .muted-text { line-height: 1.5; }
 #booking-summary-details { margin-top: 8px; }
 .booking-summary-price { margin-top: 12px; font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .catalogue-layout { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 700px) {
@@ -85,9 +85,9 @@
 }
 .catalogue-menu button:hover { color: var(--text); }
 .catalogue-menu button:hover .step-number { box-shadow: 0 0 0 3px #CBD5E1; }
-.catalogue-menu button[aria-pressed="true"] { color: #075985; }
+.catalogue-menu button[aria-pressed="true"] { color: var(--ui-action); }
 .catalogue-menu button[aria-pressed="true"] .step-number {
-    background: linear-gradient(135deg, #007C9B, #00BDB1);
+    background: var(--ui-action);
     color: #FFF;
     box-shadow: 0 0 0 3px #FFF;
 }
@@ -104,7 +104,7 @@
     visibility: hidden;
 }
 .catalogue-menu button[aria-pressed="true"] .step-indicator { visibility: visible; }
-.catalogue-menu button:focus-visible { outline: 2px solid #007C9B; outline-offset: -2px; }
+.catalogue-menu button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
 @media (max-width: 700px) {
     .catalogue-page { padding-top: 24px; }
     .catalogue-page .container-public { padding: 24px 0; }
@@ -150,7 +150,10 @@
 .catalogue-page .calendar-book-button:disabled { opacity: 1; }
 .catalogue-page .calendar-book-button:focus-visible { outline-color: #64748B; }
 
-.catalogue-page .calendar-book-button { margin-top: 24px; }
+.catalogue-page .calendar-book-button {
+    margin-top: 24px; min-height: 48px; padding: 12px 16px; border-radius: 12px;
+    white-space: normal; overflow-wrap: anywhere;
+}
 
 /* Existing date/time controls now live beneath the booking summary. */
 .booking-summary #client-calendar {
@@ -178,29 +181,48 @@
 .month-navigation { margin-left: auto; }
 #calendar-month { font-size: 13px; color: var(--muted); }
 .month-navigation button {
-    width: 36px; min-height: 44px; border: 1px solid #E2E8F0;
-    border-radius: 8px; background: #F8FAFC; color: var(--text);
+    width: 44px; height: 44px; min-height: 44px; flex-shrink: 0; border: 1px solid #E2E8F0;
+    border-radius: 10px; background: var(--ui-action); color: var(--ui-action-text);
     font: inherit; font-size: 24px; cursor: pointer;
 }
 .month-navigation button:disabled { opacity: .4; cursor: default; }
 .month-weekdays, .month-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .month-weekdays { margin-bottom: 6px; color: var(--muted); font-size: 11px; text-align: center; }
 .month-day {
-    position: relative; min-width: 0; min-height: 44px; padding: 4px 0 10px;
-    border: 0; border-radius: 50%; background: transparent; color: var(--text);
+    position: relative; isolation: isolate; display: grid; place-items: center;
+    width: 100%; min-width: 0; min-height: 44px; padding: 0;
+    border: 0; background: transparent; color: var(--text);
     font: inherit; font-size: 13px; cursor: pointer;
+}
+/* The visual circle stays square inside a full-height date hit area. */
+.month-day::before {
+    content: ''; position: absolute; z-index: -1;
+    width: min(100%, 44px); aspect-ratio: 1; border-radius: 50%;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
 .month-day.no-times { color: #64748B; }
 .month-day:disabled { color: #CBD5E1; cursor: default; }
 .month-day.has-times::after {
     content: ''; position: absolute; bottom: 6px; left: calc(50% - 2px);
-    width: 4px; height: 4px; border-radius: 50%; background: #007C9B;
+    width: 4px; height: 4px; border-radius: 50%; background: var(--ui-action);
 }
-.month-day[aria-current="date"] { box-shadow: inset 0 0 0 1px #94A3B8; }
-.month-day[aria-pressed="true"] { background: linear-gradient(135deg, #007C9B, #00BDB1); color: #FFF; }
-.month-day[aria-pressed="true"]::after { background: #FFF; }
-.month-day:not(:disabled):hover { box-shadow: inset 0 0 0 1px #007C9B; }
-.month-day:focus-visible, .month-navigation button:focus-visible { outline: 2px solid #007C9B; outline-offset: -2px; }
+.month-day[aria-current="date"]::before { box-shadow: inset 0 0 0 1px #94A3B8; }
+.month-day[aria-pressed="true"] { color: var(--ui-action-text); }
+.month-day[aria-pressed="true"]::before { background: var(--ui-action); }
+.month-day[aria-pressed="true"]::after { background: var(--ui-action-text); }
+.month-day:not(:disabled):hover::before { box-shadow: inset 0 0 0 1px var(--ui-action); }
+.month-day:focus-visible, .month-navigation button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
 .booking-summary .calendar-legend { margin-top: 8px; font-size: 12px; }
 .available-times-heading { margin: 24px 0 12px; }
 .available-times-heading .muted-text { font-size: 12px; }
+
+.catalogue-page .catalogue-service-button {
+    background: var(--ui-soft); color: var(--ui-ink);
+}
+.catalogue-page .catalogue-service-button[aria-pressed="true"] {
+    background: var(--ui-action); color: var(--ui-action-text);
+}
+.catalogue-page .catalogue-service-button:disabled {
+    background: var(--ui-soft); color: var(--muted);
+}
+.catalogue-page .catalogue-service-button:focus-visible { outline-color: var(--ui-focus); }

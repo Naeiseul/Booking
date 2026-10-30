@@ -18,9 +18,9 @@
     text-decoration: none; font-size: 15px; font-weight: 600;
 }
 .admin-navigation a:hover { background: var(--taken-bg); color: var(--text); }
-.admin-navigation a[aria-current="page"] { background: var(--brand-light); color: var(--brand); }
+.admin-navigation a[aria-current="page"] { background: var(--ui-soft); color: var(--ui-ink); box-shadow: inset 3px 0 0 var(--ui-action); }
 .admin-navigation a:focus-visible, .admin-add-service:focus-visible {
-    outline: 3px solid var(--brand); outline-offset: 3px;
+    outline: 3px solid var(--ui-focus); outline-offset: 3px;
 }
 .admin-main { margin-top: 0; margin-bottom: 32px; }
 .admin-section-title { font-size: 22px; font-weight: 700; margin: 0 0 24px; }
@@ -29,7 +29,7 @@
 .admin-section-heading .admin-section-title { margin-bottom: 0; }
 .admin-section-description { margin: 12px 0 24px; line-height: 1.5; }
 .admin-add-service {
-    border: 0; border-radius: 12px; background: var(--brand); color: white;
+    border: 0; border-radius: 12px; background: var(--ui-action); color: var(--ui-action-text);
     font: inherit; font-size: 14px; font-weight: 600; padding: 12px 16px; min-height: 44px;
 }
 .admin-add-service:disabled { opacity: .55; cursor: not-allowed; }
@@ -53,7 +53,7 @@
 
 /* Service management */
 .service-list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; min-height: 36px; }
-.service-text-button { color: var(--brand); background: transparent; border: 0; font: inherit; font-size: 14px; text-decoration: underline; padding: 8px 0; cursor: pointer; }
+.service-text-button { color: var(--ui-ink); background: transparent; border: 0; font: inherit; font-size: 14px; text-decoration: underline; padding: 8px 0; cursor: pointer; }
 .service-text-button:disabled { color: var(--muted); cursor: not-allowed; }
 .services-list { display: grid; gap: 12px; }
 .service-card { border: 1px solid #E2E8F0; border-radius: 16px; padding: 18px; overflow-wrap: anywhere; }
@@ -62,7 +62,7 @@
 .service-card p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-top: 8px; white-space: pre-wrap; }
 .service-card .service-price { color: var(--text); font-weight: 600; }
 .service-badge { display: inline-block; border-radius: 8px; padding: 4px 8px; background: var(--taken-bg); color: var(--muted); font-size: 12px; }
-.service-badge.is-visible { color: var(--brand); background: var(--brand-light); }
+.service-badge.is-visible { color: var(--ui-ink); background: var(--ui-soft); }
 .service-card-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
 .service-form { margin-top: 24px; padding: 24px; border: 1px solid #CBD5E1; border-radius: 20px; }
 .service-form h3 { font-size: 20px; margin-bottom: 24px; }
@@ -73,11 +73,11 @@
 .service-field-label { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .service-hint { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 8px; }
 .service-checkbox { display: flex; align-items: center; gap: 10px; font-size: 14px; line-height: 1.5; cursor: pointer; }
-.service-checkbox input { width: 20px; height: 20px; accent-color: var(--brand); flex-shrink: 0; }
+.service-checkbox input { width: 20px; height: 20px; accent-color: var(--ui-action); flex-shrink: 0; }
 .service-form-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .service-secondary-button { border: 1px solid #CBD5E1; border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; padding: 12px 16px; min-height: 44px; cursor: pointer; }
-.service-feedback { color: var(--brand); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
-.service-form :focus-visible, .service-card button:focus-visible, .service-text-button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.service-feedback { color: var(--ui-ink); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+.service-form :focus-visible, .service-card button:focus-visible, .service-text-button:focus-visible { outline: 3px solid var(--ui-focus); outline-offset: 3px; }
 @media (max-width: 420px) {
     .service-form { padding: 18px 14px; }
     .service-form-columns { grid-template-columns: minmax(0, 1fr); gap: 16px; }
@@ -90,3 +90,25 @@
 .category-manager .service-card h4 { margin: 0; font-size: 16px; }
 .category-manager .service-form { margin-top: 16px; }
 .service-card-footer { flex-wrap: wrap; }
+
+/* All catalogue management actions share one shape, size and neutral colour. */
+.admin-page .admin-add-service,
+.admin-page .service-secondary-button,
+.admin-page .service-text-button {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 144px; max-width: 100%; min-height: 44px; flex-shrink: 0;
+    padding: 12px 16px; border: 1px solid var(--ui-action); border-radius: 12px;
+    background: var(--ui-action); color: var(--ui-action-text);
+    font: inherit; font-size: 14px; font-weight: 600; line-height: 1.3;
+    text-align: center; text-decoration: none; cursor: pointer;
+}
+.admin-page .admin-add-service:hover:not(:disabled),
+.admin-page .service-secondary-button:hover:not(:disabled),
+.admin-page .service-text-button:hover:not(:disabled) { background: var(--ui-hover); }
+.admin-page .admin-add-service:disabled,
+.admin-page .service-secondary-button:disabled,
+.admin-page .service-text-button:disabled { opacity: .55; cursor: not-allowed; }
+.admin-page .admin-navigation a { min-height: 48px; }
+.admin-page .admin-navigation a[aria-current="page"]:hover { background: #E2E8F0; }
+.admin-page .admin-section-heading, .admin-page .service-list-toolbar { flex-wrap: wrap; }
+.admin-page .booking-field input:focus, .admin-page .booking-field textarea:focus { outline-color: var(--ui-focus); }

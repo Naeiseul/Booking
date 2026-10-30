@@ -166,3 +166,30 @@ h1 {
 .catalogue-selection p { line-height: 1.6; margin-top: 8px; }
 .catalogue-stage-note { font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
 .catalogue-selection .catalogue-stage-note { margin-bottom: 0; }
+
+/* Interface controls use neutral colours independently of business branding. */
+.catalogue-page, .admin-page {
+  --ui-action: #000;
+  --ui-action-text: #FFF;
+  --ui-hover: #1E293B;
+  --ui-soft: #F1F5F9;
+  --ui-ink: #1E293B;
+  --ui-focus: #64748B;
+}
+.catalogue-page .time-chip.open, .admin-page .time-chip.open {
+  background: var(--ui-soft); color: var(--ui-ink);
+  border: 1px solid #CBD5E1;
+}
+.catalogue-page .time-chip.open.selected {
+  background: var(--ui-action); color: var(--ui-action-text);
+  border-color: var(--ui-action);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ui-action);
+}
+.admin-page .day-tab.active {
+  background: var(--ui-action); color: var(--ui-action-text);
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, .3);
+}
+.catalogue-page .time-chip:focus-visible, .admin-page .time-chip:focus-visible,
+.admin-page .day-tab:focus-visible {
+  outline: 3px solid var(--ui-focus); outline-offset: 3px;
+}

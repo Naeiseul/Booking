@@ -2,6 +2,11 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Interface colour update — 2026-10-30
+
+After reviewing the live client/admin, the owner requested neutral interface controls independent of business brand colours. This supersedes earlier teal active-control instructions: client tracker, selected dates/times and action controls use black/white with pale neutral inactive states; admin management actions use consistent black/white buttons; admin current sidebar section uses soft grey/dark text with a black edge. Business branding variables, logos and header/social colours remain separate. The calendar also stacks earlier in split-screen and keeps circular date highlights. This does not change which screenshot guides the overall site versus the catalogue, or authorize later catalogue/data/scheduling features.
+
+
 ## Implementation update — 2026-10-30
 
 The owner approved one category per service initially and the minimal category admin/backend foundation. It is now implemented: service_categories stores id/business_id/label/icon/enabled/sort_order and timestamps; services adds category_id and is_active (default true). Draft services may be unassigned; publishing via the admin RPC requires a business-owned category. Public catalogue eligibility is published + active + enabled owned category. Empty/disabled categories are omitted. get_public_page adds categories (id/label/icon/sort_order) and service category_id, preserving safe field whitelists and date/time-only slots.

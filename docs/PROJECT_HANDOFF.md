@@ -2,6 +2,20 @@
 
 Updated 2026-10-30.
 
+## Neutral interface controls and calendar proportions — 2026-10-30 (read first)
+
+The owner explicitly requested this small styling step before continuing client catalogue navigation: remove green interface selections, use consistent filled black admin action buttons, fix oval-looking calendar controls, and keep business branding separate.
+
+- Added scoped --ui-* control colours for client catalogue/admin only; existing --brand/--brand-light and business logos/header/social colours are unchanged. No new business-colour configuration or backend changes.
+- Client tracker active circle/label, selected calendar date and selected available time are black/white. Available unselected times use pale grey/dark text; date availability dots are black. Private-service selection actions also use neutral states, with disabled controls retained.
+- Calendar dates render a square-proportioned circular background inside each button, capped at 44px and shrinking evenly in very narrow columns while retaining at least 44px button height. Month arrows are 44px square, black/white. The bottom booking action uses 12px corners and wraps long labels.
+- Client booking panel now has a 370px desktop minimum and stacks below the catalogue at 1100px and below (previously 900px). This avoids a narrow seven-column calendar in split-screen.
+- Admin Add/Save/Cancel/Edit/Reload actions use the same black/white styling and 144px width/minimum 44px height, wrapping toolbar rows when necessary. Current sidebar section uses a soft grey background, dark text and a black edge; active admin date tabs are black/white, open times and availability legend are neutral. Focus, checkboxes and service visibility badges no longer depend on green branding.
+- Only CSS, stylesheet cache versions, the admin legend colour and these notes changed. All script IDs, admin/service logic, date/time-only selection, real Paystack destination and service-payment guards are preserved. Order summary remains paused.
+- Verification: CSS braces/selectors, unchanged branding variables and control IDs checked. Calculated client layouts at 320, 375, 700, 768, 960, 1024, 1100, 1101 and 1440px retain seven date columns without calendar width overflow; these are static calculations, not browser measurements. Existing admin-services and monthly-calendar checks passed in the session JavaScript runtime. Actual desktop/mobile browser rendering remains outstanding because browser startup is denied in this environment. Verify production and changed live assets when saving this release.
+- Next remains an agreed small client category-navigation/filtering stage using the saved category contract. This styling request does not authorize photos, invented offerings, scheduling, reservations or payment work.
+
+
 ## Category foundation implemented — 2026-10-30 (read first)
 
 The owner approved the minimal category contract and the limited admin/backend extension in this session. This supersedes earlier statements that category storage is unimplemented or that all admin/backend work is postponed.
