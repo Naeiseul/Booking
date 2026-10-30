@@ -2,6 +2,44 @@
 
 Updated 2026-10-30.
 
+## Session memory and important admin reference — 2026-10-30 (read first)
+
+The owner asked to save the detailed admin image and commit everything from this session to project memory. The actual original PNG is now tracked at [docs/references/admin-interface-reference.png](references/admin-interface-reference.png), described and previewed in [docs/admin-interface.md](admin-interface.md). Original filename: admin.png; original bytes preserved. This is the important future ADMIN visual target.
+
+### Visual direction and boundaries
+
+- Customer/combined final reference remains [docs/references/final-visual-plan.png](references/final-visual-plan.png). Customer direction: floating configured category navigation left, service cards centre and existing booking/calendar right. Preserve the existing header/social contacts/tracker and neutral interface controls; business branding is separate.
+- New admin reference: dark sidebar, Services table, search/category/publication filters, Add/Edit drawer and category-management table, with future Dashboard/Calendar/Bookings/Customers/Payments/Settings sketches. It supersedes older vague admin descriptions as the visual target, but those screens/table/search/drawer/bulk features are not implemented or automatically authorized by saving an image.
+- Category = browsing organisation; service = purchased offering; booking type = scheduling/fulfilment. Keep them independent. Package credits are not ordinary private appointments.
+- No invented offerings, prices, photos, participant counts, class spaces, customers, paid bookings or payment/account data. Screenshot examples are illustrative, not business records or a set of supplied service-photo assets.
+- Order summary remains PAUSED. Keep real Paystack https://paystack.shop/pay/o495iejvn3, disabled service-specific payment and date/time-only slot acceptance. Return to duration/class scheduling/capacity → reservations → verified service payments in that order after the currently agreed client stages.
+
+### Completed this session
+
+1. Verified GitHub push access, healthy Supabase Booking project and the correct Vercel project/team.
+2. Category foundation/admin controls: commit 9b5dd316f1d3928743947fbf5e9d480907c6bc95. Migration 20261030130402_add_business_catalogue_categories.sql is applied in Supabase and saved in GitHub. Business-scoped service_categories records have label/icon/enabled/order; services has one category assignment and independent is_active/publication settings. Public RPC returns only enabled nonempty categories with published active services. Ownership is enforced by RPC checks and a composite category/business FK, with RLS and revoked direct browser table grants.
+3. Neutral interface/calendar fixes: commit 405fd29b3c153a9356f1f575405a23f8f2f096e0. Black/white active controls, matching admin action sizes, soft grey admin active navigation, circular date highlights and earlier split-screen stacking. Existing business brand variables were preserved.
+4. Saved original final combined customer/admin visual image and linked it in the brief/handoff: commit cfc5194cbdbcd1c5da12a5ada42cecd09a155397.
+5. Client category browsing: commit 46ecfc0624854a71d01e2cb2217e548aaf2bd7b2. Independent activeCategoryId, configured icons/labels/order, in-page filtering, selected-card highlight, responsive left/centre/right layout and horizontal categories below the tracker on smaller screens. Valid booking selection survives category browsing and unchanged polling; server removals/changes revalidate selection. No photos or placeholders added.
+6. Explained all current Services controls to the owner: categories/name/icon/order/enable, service name/description/assignment/type/duration/ZAR price/price basis/private people, Active versus publication, Save/Cancel/Edit/Reload and validation. [docs/admin-interface.md](admin-interface.md) records the current field semantics and implementation gaps.
+7. This save adds the owner's original detailed admin image, a dedicated admin brief, links in AGENTS.md/catalogue brief, and this consolidated memory. It implements no further UI/backend features.
+
+### Runtime, verification and current data
+
+- Latest functional release: 46ecfc0, production deployment dpl_4PbCvDoi9wRtb7TWH71BW6ptqy3R READY. Live client HTML, app.js?v=6 and catalogue.css?v=14 returned 200 and matched saved files.
+- Category/admin service/public catalogue SQL suites passed on Supabase with fixtures rolled back. Extended admin service, client category and monthly-calendar JavaScript checks passed in the session V8 runtime with lightweight filesystem/Node-module adapters. No native Node executable was available.
+- CSS/HTML/syntax and static responsive width calculations were checked. Actual desktop/mobile browser rendering and browser-to-REST interactions remain outstanding: Edge startup fails with Access is denied. Do not call these browser or end-to-end passes.
+- Last read-only check this session: Logtraq had zero saved/public categories, zero services and zero public slots. Recheck when relevant; do not treat this observation as permanent. Consequently the category menu is honestly hidden until actual categories/services are saved.
+- Admin today still has Calendar/Services navigation, inline category controls, service cards and inline forms—not the pictured table/drawer/full sidebar. Photo uploads/storage, service-duration-aware availability, scheduled class capacity, reservations, service payment matching/verification, package credits and the extra admin modules remain unfinished.
+- No real business sample data or service photographs were inserted, and no payment transaction was performed.
+
+### Resume next session
+
+Read AGENTS.md, this newest handoff section, docs/catalogue-redesign.md and docs/admin-interface.md; inspect both saved PNG references when working on visuals. Verify access and use current main as authority. Work one small AGREED step at a time and save/deploy completed changes.
+
+The latest request only saves the admin reference and memory. Do not begin an admin redesign from this image alone. Current next action is to populate/review the client using the owner's real enabled categories and active published services through Admin > Services, then agree the small supplied-photo storage/upload/reference/display stage. The owner may choose an admin visual step instead, but that requires an explicit change of priority. Scheduling/capacity, reservations and verified payments keep the original sequence. Questions are discussion, not authorization to expand/reorder work.
+
+
 ## Client category navigation and filtering implemented — 2026-10-30 (read first)
 
 The owner explicitly approved executing the next client stage: floating configured category navigation, filtered service cards and selected-card highlighting. Photo support remains a separate stage.
