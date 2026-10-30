@@ -82,3 +82,11 @@
     .service-form { padding: 18px 14px; }
     .service-form-columns { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 }
+
+/* Categories live beside service settings, independent of booking type. */
+.category-manager { margin: 24px 0; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.category-manager > .service-hint { margin: 12px 0 16px; }
+.category-manager .service-card { padding: 14px 18px; }
+.category-manager .service-card h4 { margin: 0; font-size: 16px; }
+.category-manager .service-form { margin-top: 16px; }
+.service-card-footer { flex-wrap: wrap; }

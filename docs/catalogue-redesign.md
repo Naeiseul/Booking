@@ -2,6 +2,17 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Implementation update — 2026-10-30
+
+The owner approved one category per service initially and the minimal category admin/backend foundation. It is now implemented: service_categories stores id/business_id/label/icon/enabled/sort_order and timestamps; services adds category_id and is_active (default true). Draft services may be unassigned; publishing via the admin RPC requires a business-owned category. Public catalogue eligibility is published + active + enabled owned category. Empty/disabled categories are omitted. get_public_page adds categories (id/label/icon/sort_order) and service category_id, preserving safe field whitelists and date/time-only slots.
+
+Admin > Services provides category create/edit/enable/order/icon controls and service category/Active controls. This does not change private/class scheduling rules. No category/service examples or photos were inserted.
+
+The owner reattached the references: Image 2 (image 2.png) is the overall visual direction; Image 1 (4fae8e9a-a228-458b-8421-2d842930c91a.png) changes only the catalogue. Screenshot image bytes are not committed; written requirements remain authoritative.
+
+The customer category navigation, filtering, selected-card highlighting and supplied-photo integration are still the next staged work, subject to agreement. Photo storage/reference remains undecided. Order summary stays paused. See the newest PROJECT_HANDOFF.md section for verification and remaining limitations. Earlier “not implemented” inspection notes below describe the pre-foundation state.
+
+
 ## Scope and visual references
 
 The owner paused the proposed Order summary row to improve the catalogue first. Do not resume that row automatically.

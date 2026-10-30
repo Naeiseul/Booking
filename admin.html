@@ -18,7 +18,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/admin.css">
+    <link rel="stylesheet" href="/admin.css?v=2">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
@@ -100,6 +100,50 @@
                 <p class="muted-text admin-section-description">Manage what your business offers.</p>
                 <p class="service-feedback" id="services-message" role="status" hidden></p>
                 <p class="booking-error" id="services-error" role="alert" hidden></p>
+                <section class="category-manager" aria-labelledby="categories-heading">
+                    <div class="admin-section-heading">
+                        <h3 id="categories-heading">Categories</h3>
+                        <button class="admin-add-service" id="add-category" type="button" disabled>Add category</button>
+                    </div>
+                    <p class="service-hint">Organise browsing with your own categories. Lower order numbers appear first. Only enabled categories with published, active services appear to clients.</p>
+                    <div id="categories-list" class="services-list"></div>
+                    <p class="muted-text" id="categories-empty" hidden>No categories added yet.</p>
+                    <form class="service-form" id="category-form" aria-labelledby="category-form-heading" hidden>
+                        <h3 id="category-form-heading">Add category</h3>
+                        <fieldset id="category-fields">
+                            <div class="booking-field">
+                                <label for="category-label">Category name</label>
+                                <input id="category-label" name="label" maxlength="80" required>
+                            </div>
+                            <div class="service-form-columns">
+                                <div class="booking-field">
+                                    <label for="category-icon">Icon</label>
+                                    <select id="category-icon" name="icon">
+                                        <option value="grid">Grid</option>
+                                        <option value="person">Person</option>
+                                        <option value="people">People</option>
+                                        <option value="calendar">Calendar</option>
+                                        <option value="book">Book</option>
+                                        <option value="star">Star</option>
+                                    </select>
+                                </div>
+                                <div class="booking-field">
+                                    <label for="category-order">Display order</label>
+                                    <input id="category-order" name="sort_order" type="number" min="0" max="2147483647" step="1" value="0" required>
+                                </div>
+                            </div>
+                            <label class="service-checkbox" for="category-enabled">
+                                <input id="category-enabled" name="enabled" type="checkbox" checked>
+                                Enable category
+                            </label>
+                            <p class="booking-error" id="category-form-error" role="alert" hidden></p>
+                            <div class="service-form-actions">
+                                <button class="admin-add-service" id="save-category" type="submit">Save category</button>
+                                <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </section>
                 <div class="service-list-toolbar">
                     <p class="muted-text" id="services-loading" role="status">Loading services…</p>
                     <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
@@ -119,6 +163,13 @@
                         <div class="booking-field">
                             <label for="service-description">Description (optional)</label>
                             <textarea id="service-description" name="description" maxlength="2000"></textarea>
+                        </div>
+                        <div class="booking-field">
+                            <label for="service-category">Category</label>
+                            <select id="service-category" name="category_id">
+                                <option value="">Unassigned</option>
+                            </select>
+                            <p class="service-hint">Choose a category before publishing. Category controls browsing; booking type controls scheduling.</p>
                         </div>
                         <div class="booking-field">
                             <label for="service-type">Booking type</label>
@@ -159,6 +210,10 @@
                             <label for="service-participants">People included in one booking</label>
                             <input id="service-participants" name="participants" type="number" min="1" max="10000" step="1" value="1" required>
                         </div>
+                        <label class="service-checkbox" for="service-active">
+                            <input id="service-active" name="active" type="checkbox" checked>
+                            Active service
+                        </label>
                         <label class="service-checkbox" for="service-published">
                             <input id="service-published" name="published" type="checkbox">
                             Show in client catalogue
@@ -194,7 +249,7 @@
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
     <script src="/admin-navigation.js"></script>
-    <script src="/admin-services.js"></script>
+    <script src="/admin-services.js?v=2"></script>
     <script src="/admin.js"></script>
     <script src="/admin-contacts.js"></script>
 </body>

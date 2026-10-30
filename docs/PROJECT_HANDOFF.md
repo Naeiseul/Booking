@@ -2,6 +2,30 @@
 
 Updated 2026-10-30.
 
+## Category foundation implemented — 2026-10-30 (read first)
+
+The owner approved the minimal category contract and the limited admin/backend extension in this session. This supersedes earlier statements that category storage is unimplemented or that all admin/backend work is postponed.
+
+- Admin > Services now has category create/edit controls: business-defined name, icon identifier, enabled setting and numeric display order. No delete operation or seeded categories.
+- Each service has one category assignment and an independent Active checkbox, separate from Show in client catalogue and the existing private/class booking type. Drafts can be unassigned; publishing through the admin RPC requires an owned category. Disabled categories can retain assignments and published services, but those services are excluded publicly.
+- public.service_categories is business-scoped, RLS-enabled and has no direct anon/authenticated table grants. The services category foreign key includes business ownership. Public category RPCs are SECURITY INVOKER wrappers; private implementations reuse the existing active-business slug/admin-key model, pinned search_path, narrow grants, stale-edit protection and retry UUIDs.
+- get_public_page now returns categories with only id/label/icon/sort_order, ordered by configured order then creation/ID. Only enabled categories with a published active service appear. Public services require published + active + enabled owned category and add category_id to the previous nine safe fields. No admin credentials, internal timestamps or business IDs are exposed.
+- Existing slot objects remain date/time-only. Existing general availability and no-catalogue real-Paystack flow are preserved; service-specific payment stays disabled. No scheduling/capacity, reservation, package-credit or payment feature was added. Order summary remains paused.
+- Migration: supabase/migrations/20261030130402_add_business_catalogue_categories.sql, applied remotely and saved with the exact Supabase-recorded version. Local Supabase CLI is unavailable; MCP was used for this release.
+- Verified: extended tests/admin-services.cjs passed in the session JavaScript runtime with lightweight Node-module adapters; tests/client-monthly-calendar.cjs also passed there. Node itself is unavailable. All three database suites passed on the target database: tests/admin-categories.sql, tests/admin-services.sql and tests/client-catalogue.sql. Fixtures rolled back. Full tests/client-booking-flow.cjs was not run successfully in this runtime because it lacks native URL/URLSearchParams; client scripts are unchanged.
+- Security advisors add only the intentional RLS-without-policy informational notice for service_categories (access is through credential-checked RPCs; table grants are revoked). Existing admin calendar warnings predate this stage. Performance advisors returned no findings.
+- Final read-only business-data check after tests: Logtraq has zero saved categories, zero services and zero public slots. No example business data was inserted.
+- Actual desktop/mobile browser rendering and browser-to-REST interactions remain outstanding. A fresh Edge headless launch failed with Access is denied in browser process/channel/profile creation. Do not claim browser/end-to-end verification. Verify the commit-matched production deployment and affected live assets when releasing this stage.
+
+### Visual references clarified again in this session
+
+The owner reattached two screenshots: Image 2 (local attachment image 2.png) is the overall website visual direction; Image 1 (4fae8e9a-a228-458b-8421-2d842930c91a.png) guides the catalogue only: floating categories left and compact service cards centre, with the existing booking/calendar panel right. Preserve the existing header, contact icons, colours, typography and booking tracker. The screenshot bytes are not tracked in GitHub; these descriptions are durable. Screenshot example offerings, prices, photos, Popular badges, filter chips and spaces-left counts do not authorize invented business data or new capabilities.
+
+### Next small step — agree before coding
+
+The category foundation is complete. The client category navigation/filtering/card highlighting is not implemented by this release. Next, agree a small client layout/filtering step using the saved contract, with independent activeCategoryId and selectedService. Desktop: floating category navigation left, service cards centre, current booking panel right. Mobile: horizontal categories above cards. Category browsing must preserve valid service/date/time selection; server removal/hiding/deactivation/category disabling must revalidate it. Supplied-photo storage/reference still needs an explicit small decision before implementing photo support. Keep no-photo cards free of placeholders. Then resume duration/class scheduling, reservations and verified payments in their original sequence.
+
+
 ## Latest catalogue direction — end of session 2026-10-30 (read first)
 
 The owner is ending the session and requested saving memory. Catalogue redesign is the next topic. The proposed Order summary row is PAUSED. This section supersedes conflicting older visual/next-step notes below.

@@ -21,6 +21,7 @@ declare
     ctx record;
     service_id uuid := gen_random_uuid();
     class_id uuid := gen_random_uuid();
+    category_id uuid := gen_random_uuid();
     item jsonb;
     replay jsonb;
     listing jsonb;
@@ -75,7 +76,8 @@ begin
         raise exception 'Duration over 24 hours accepted';
     exception when check_violation then null; end;
 
-    item := public.save_admin_service(ctx.slug1,ctx.key1,service_id,'Edited service','Updated','private',95,12345,'per_person',3,true,old_version);
+    perform public.save_admin_category(ctx.slug1,ctx.key1,category_id,'Configured','grid',true,0,null);
+    item := public.save_admin_service(ctx.slug1,ctx.key1,service_id,'Edited service','Updated','private',95,12345,'per_person',3,true,old_version,category_id,true);
     listing := public.get_admin_services(ctx.slug1,ctx.key1);
     if listing->0->>'name' <> 'Edited service' or not (listing->0->>'is_published')::boolean or (listing->0->>'price_amount')::int <> 12345 then raise exception 'Edit/read/visibility failed'; end if;
     begin
