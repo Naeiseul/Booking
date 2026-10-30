@@ -41,8 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function showStep(step, moveFocus = false) {
         activeStep = step;
-        catalogueEl.hidden = step !== 'sessions';
-        calendarEl.hidden = step !== 'schedule';
+        catalogueEl.hidden = step === 'checkout';
+        calendarEl.hidden = step === 'checkout';
         checkoutEl.hidden = step !== 'checkout';
         stepButtons.forEach(button => {
             const isCurrent = button.dataset.step === step;

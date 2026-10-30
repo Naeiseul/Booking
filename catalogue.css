@@ -151,3 +151,17 @@
 .catalogue-page .calendar-book-button:focus-visible { outline-color: #64748B; }
 
 .catalogue-page .calendar-book-button { margin-top: 24px; }
+
+/* Existing date/time controls now live beneath the booking summary. */
+.booking-summary #client-calendar {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #E2E8F0;
+    min-width: 0;
+}
+.booking-summary #calendar-heading { font-size: 18px; margin-bottom: 16px; }
+.booking-summary .day-tab-list { max-width: 100%; }
+.booking-summary .time-chip-grid {
+    grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+}
+.booking-summary .calendar-book-button { width: 100%; }
