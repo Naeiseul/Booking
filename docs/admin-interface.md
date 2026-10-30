@@ -4,6 +4,14 @@ Saved 2026-10-30 from the owner's original admin.png attachment. This is the imp
 
 ![Admin interface visual reference](references/admin-interface-reference.png)
 
+## Implemented admin stage — 2026-10-30
+
+The owner approved a dedicated Categories screen and workspace/sidebar cleanup. Admin now has a dark sidebar with Calendar, Services and Categories, actual business identity, a safe public View business link, compact header/contact links and responsive navigation.
+
+Categories has an order/icon/name/service-count/status/Edit table with Add/Edit forms and dedicated save/loading/error/reload feedback, backed by the existing Supabase RPCs. Counts reflect actual saved service assignments, including unpublished/inactive offerings. Services keeps its existing cards and working form/category selector. Navigation preserves calendar state and drafts; notices explain edits open in another section.
+
+This stage does not implement the pictured Services table, search/filter chips, drawer, bulk/row menus or extra admin modules. No schema/business-data changes. Browser verification remains outstanding; see the newest handoff for tested behaviour and the next agreed step.
+
 ## What the image establishes
 
 - A dark left sidebar with the business identity, clear active-section highlight and readable icons/labels.
@@ -16,7 +24,7 @@ Saved 2026-10-30 from the owner's original admin.png attachment. This is the imp
 
 ## What works today
 
-Admin currently has Calendar and Services navigation. Services contains inline category management and a card-based service list with inline Add/Edit forms. It does not yet match the new table/drawer/sidebar structure pictured here.
+Admin currently has Calendar, Services and Categories navigation in the new sidebar. Categories has a dedicated management table and inline Add/Edit form; Services has a card-based service list and inline Add/Edit form. The pictured Services table/drawer and extra modules remain future work.
 
 Category settings are saved to public.service_categories in Supabase: business ownership, ID, label, allowlisted icon identifier, enabled flag, sort order and timestamps. Admin can create/edit categories; there is no category-delete action. Only enabled categories containing at least one published active service appear to customers.
 
@@ -46,7 +54,7 @@ The image includes example names, prices, photos, counts, publication indicators
 ## Still to agree and implement
 
 - Actual supplied service-photo storage, upload/reference and display.
-- Any admin table, search, category/publication filters, drawer, row menu, bulk selection/actions or dedicated Categories page.
+- The Services table, search, category/publication filters, drawer, row menu and bulk selection/actions. The dedicated Categories page/table is now implemented.
 - Any new Dashboard, Bookings, Customers, Payments, Settings or account/login/logout screen.
 - Duration-aware private availability and scheduled shared classes/capacity, then reservations and verified service-specific payments, in the established order.
 - Package credits/redemption and other future capabilities require separate design and authorization.

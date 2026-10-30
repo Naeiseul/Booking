@@ -10,7 +10,7 @@ class Element {
     constructor() {
         this.value = ''; this.checked = false; this.hidden = false; this.disabled = false;
         this.required = false; this.textContent = ''; this.children = []; this.listeners = {};
-        this.attributes = {}; this.focused = false;
+        this.attributes = {}; this.focused = false; this.dataset = {};
     }
     addEventListener(name, callback) { this.listeners[name] = callback; }
     appendChild(child) { this.children.push(child); }
@@ -200,16 +200,16 @@ function fill(p, values = {}) {
     assert.equal(api.calls.at(-1).body.p_id, categoryId);
     assert.equal(api.categories.size, 1);
     assert.equal(p.get('category-form').hidden, true);
-    assert.equal(p.get('services-message').textContent, 'Category saved.');
+    assert.equal(p.get('categories-message').textContent, 'Category saved.');
     p = await ui(api);
-    p.get('categories-list').children[0].children.at(-1).listeners.click();
+    p.get('categories-list').children[0].children.at(-1).children[0].listeners.click();
     assert.equal(p.get('category-icon').value, 'calendar');
     assert.equal(p.get('category-order').value, 3);
     assert.equal(p.get('category-enabled').checked, false);
     p.get('category-label').value = '<img src=x onerror=alert(1)>';
     p.get('category-enabled').checked = true;
     await submitCategory();
-    assert.equal(p.get('categories-list').children[0].children[0].textContent, '<img src=x onerror=alert(1)>');
+    assert.equal(p.get('categories-list').children[0].children[2].textContent, '<img src=x onerror=alert(1)>');
     assert(api.calls.at(-1).body.p_expected_updated_at);
     p.add(); fill(p);
     assert.equal(p.get('service-active').checked, true);
@@ -230,7 +230,7 @@ function fill(p, values = {}) {
     assert.equal(p.get('service-active').checked, false);
     assert.equal(p.get('service-published').checked, true);
     p.get('cancel-service').listeners.click();
-    p.get('categories-list').children[0].children.at(-1).listeners.click();
+    p.get('categories-list').children[0].children.at(-1).children[0].listeners.click();
     api.conflict = true;
     await submitCategory();
     assert.match(p.get('category-form-error').textContent, /category changed/);
@@ -254,11 +254,46 @@ function fill(p, values = {}) {
     assert.equal(api.calls.length, categorySubmits);
     assert.equal(p.get('category-fields').disabled, true);
     finishCategory(); await categoryPending; api.pause = null;
-    assert.equal(p.get('categories-list').children[0].children[0].textContent, 'Another');
+    assert.equal(p.get('categories-list').children[0].children[2].textContent, 'Another');
+
+
+    // The dedicated table shows real assigned-service counts, including hidden/inactive services.
+    const configuredRow = p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId);
+    assert.equal(configuredRow.children[0].textContent, '3');
+    assert.equal(configuredRow.children[3].textContent, '1');
+    assert.equal(configuredRow.children[4].children[0].textContent, 'Enabled');
+    assert.equal(p.get('categories-table').hidden, false);
+    p.add(); fill(p);
+    assert.equal(p.get('categories-editing-notice').hidden, false);
+    assert.equal(p.get('reload-categories').disabled, true);
+    p.get('service-category').value = categoryId;
+    p.get('service-active').checked = false;
+    await p.submit();
+    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[3].textContent, '2');
+    assert.equal(p.get('categories-editing-notice').hidden, true);
+    p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children.at(-1).children[0].listeners.click();
+    assert.equal(p.get('services-editing-notice').hidden, false);
+    p.get('category-enabled').checked = false;
+    await submitCategory();
+    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[4].children[0].textContent, 'Disabled');
+    assert.equal(p.get('services-editing-notice').hidden, true);
+    api.offline = true;
+    await p.get('reload-categories').listeners.click();
+    assert.equal(p.get('categories-error').hidden, false);
+    assert.match(p.get('categories-error').textContent, /Reload categories/);
+    assert.equal(p.get('categories-table').hidden, true, 'Failed load must not show trusted service counts');
+    assert.equal(p.get('add-category').disabled, true);
+    assert.equal(p.get('reload-categories').disabled, false);
+    api.offline = false;
+    await p.get('reload-categories').listeners.click();
+    assert.equal(p.get('categories-table').hidden, false);
+    assert.equal(p.get('categories-error').hidden, true);
+    assert.equal(p.get('categories-loading').hidden, true);
+    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[3].textContent, '2');
 
     const ids = [...html.matchAll(/id="([^"]+)"/g)].map(m => m[1]);
     assert.equal(ids.length, new Set(ids).size, 'IDs are unique');
     for (const match of html.matchAll(/for="([^"]+)"/g)) assert(ids.includes(match[1]));
-    assert(html.indexOf('src="/admin-services.js?v=2"') < html.indexOf('src="/admin.js"'));
-    console.log('PASS: category create/edit/reload/order/enable; one assignment; independent active/publication/type; category validation/stale edits/lost-response retry/duplicate-submit safety;  service create/edit/reload; 90-minute durations; exact cents; visibility; class fields; validation; preserved input; lost-response retry; duplicate-submit prevention; stale edits; network recovery; safe text rendering; form labels and script order.');
+    assert(html.indexOf('src="/admin-services.js?v=3"') < html.indexOf('src="/admin.js?v=2"'));
+    console.log('PASS: dedicated category table/order/status/counts; category feedback/reload/error recovery; cross-section editing notices; category create/edit/reload/order/enable; one assignment; independent active/publication/type; category validation/stale edits/lost-response retry/duplicate-submit safety;  service create/edit/reload; 90-minute durations; exact cents; visibility; class fields; validation; preserved input; lost-response retry; duplicate-submit prevention; stale edits; network recovery; safe text rendering; form labels and script order.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

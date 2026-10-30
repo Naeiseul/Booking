@@ -14,6 +14,10 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     const categoryForm = get('category-form');
     const categoryAdd = get('add-category');
     const categoryError = get('category-form-error');
+    const categoryReload = get('reload-categories');
+    const categoryLoading = get('categories-loading');
+    const categoryLoadError = get('categories-error');
+    const categoryMessage = get('categories-message');
     let categories = [];
     let categoryDraftId = null;
     let categoryExpectedUpdatedAt = null;
@@ -54,12 +58,14 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
 
     function requestError(failure, action, noun = 'service') {
+        const plural = noun === 'category' ? 'categories' : 'services';
+        const reloadLabel = noun === 'category' ? 'Reload categories' : 'Reload services';
         if (failure.code === '28000') return 'We could not verify your dashboard link. Please reopen your admin link.';
-        if (failure.code === '40001') return 'This ' + noun + ' changed or is no longer available. Cancel editing, reload services and try again.';
+        if (failure.code === '40001') return 'This ' + noun + ' changed or is no longer available. Cancel editing, reload ' + plural + ' and try again.';
         if (['23514', '23502', '22003', '22P02'].includes(failure.code)) return 'Please check the ' + noun + ' details and try again.';
         return action === 'save'
-            ? 'We could not confirm the save. Your details are still here. Check your connection and try again, or cancel and reload services to check.'
-            : 'We could not load your services. Check your connection and select Reload services.';
+            ? 'We could not confirm the save. Your details are still here. Check your connection and try again, or cancel and reload ' + plural + ' to check.'
+            : 'We could not load your ' + plural + '. Check your connection and select ' + reloadLabel + '.';
     }
 
     function durationLabel(minutes) {
@@ -69,6 +75,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
 
     function renderServices() {
+        get('services-editing-notice').hidden = categoryForm.hidden;
         list.replaceChildren();
         empty.hidden = !ready || services.length !== 0;
         services.forEach(service => {
@@ -157,6 +164,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         categoryAdd.disabled = true;
         add.disabled = true;
         reload.disabled = true;
+        categoryReload.disabled = true;
         renderCategories();
         updateType();
         renderServices();
@@ -170,6 +178,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         categoryAdd.disabled = false;
         add.disabled = false;
         reload.disabled = false;
+        categoryReload.disabled = false;
         renderCategories();
         renderServices();
         add.focus();
@@ -178,12 +187,16 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     async function loadServices() {
         if (saving || !form.hidden || !categoryForm.hidden) return;
         error.hidden = true;
+        categoryLoadError.hidden = true;
         message.hidden = true;
+        categoryMessage.hidden = true;
         loading.hidden = false;
+        categoryLoading.hidden = false;
         ready = false;
         categoryAdd.disabled = true;
         add.disabled = true;
         reload.disabled = true;
+        categoryReload.disabled = true;
         renderServices();
         renderCategories();
         try {
@@ -200,9 +213,12 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             add.disabled = false;
         } catch (failure) {
             showError(error, requestError(failure, 'load'));
+            showError(categoryLoadError, requestError(failure, 'load', 'category'));
         } finally {
             loading.hidden = true;
+            categoryLoading.hidden = true;
             reload.disabled = false;
+            categoryReload.disabled = false;
         }
     }
 
@@ -223,22 +239,50 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         select.value = selectedId || '';
     }
 
+
+    const categoryIcons = {
+        grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+        person: '<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2Z"/>',
+        people: '<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3ZM16 4a3 3 0 0 1 0 6M19 14a5 5 0 0 1 3 4v3"/>',
+        calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
+        book: '<path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/>',
+        star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>'
+    };
+
     function renderCategories() {
         const categoryList = get('categories-list');
         categoryList.replaceChildren();
+        get('categories-editing-notice').hidden = form.hidden;
         get('categories-empty').hidden = !ready || categories.length !== 0;
+        get('categories-table').hidden = !ready || categories.length === 0;
         categories.sort((a, b) => a.sort_order - b.sort_order ||
             String(a.created_at).localeCompare(String(b.created_at)) || a.id.localeCompare(b.id));
         categories.forEach(category => {
-            const card = document.createElement('article');
-            card.className = 'service-card';
-            const title = document.createElement('h4');
+            const row = document.createElement('tr');
+            row.dataset.categoryId = category.id;
+            const order = document.createElement('td');
+            order.textContent = String(category.sort_order);
+            row.appendChild(order);
+            const icon = document.createElement('td');
+            icon.className = 'admin-category-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            const artwork = Object.hasOwn(categoryIcons, category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
+            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">' + artwork + '</svg>';
+            row.appendChild(icon);
+            const title = document.createElement('th');
+            title.setAttribute('scope', 'row');
             title.textContent = category.label;
-            card.appendChild(title);
-            const description = document.createElement('p');
-            description.textContent = (category.enabled ? 'Enabled' : 'Disabled') +
-                ' · Order ' + category.sort_order + ' · Icon: ' + category.icon;
-            card.appendChild(description);
+            row.appendChild(title);
+            const count = document.createElement('td');
+            count.textContent = String(services.filter(service => service.category_id === category.id).length);
+            row.appendChild(count);
+            const status = document.createElement('td');
+            const badge = document.createElement('span');
+            badge.className = 'category-status' + (category.enabled ? ' is-enabled' : '');
+            badge.textContent = category.enabled ? 'Enabled' : 'Disabled';
+            status.appendChild(badge);
+            row.appendChild(status);
+            const actions = document.createElement('td');
             const edit = document.createElement('button');
             edit.type = 'button';
             edit.className = 'service-text-button';
@@ -246,8 +290,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             edit.setAttribute('aria-label', 'Edit category ' + category.label);
             edit.disabled = !ready || saving || !form.hidden || !categoryForm.hidden;
             edit.addEventListener('click', () => openCategoryForm(category));
-            card.appendChild(edit);
-            categoryList.appendChild(card);
+            actions.appendChild(edit);
+            row.appendChild(actions);
+            categoryList.appendChild(row);
         });
     }
 
@@ -262,11 +307,12 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         get('category-enabled').checked = category ? category.enabled : true;
         get('category-form-heading').textContent = category ? 'Edit category' : 'Add category';
         categoryError.hidden = true;
-        message.hidden = true;
+        categoryMessage.hidden = true;
         categoryForm.hidden = false;
         categoryAdd.disabled = true;
         add.disabled = true;
         reload.disabled = true;
+        categoryReload.disabled = true;
         renderCategories();
         renderServices();
         get('category-label').focus();
@@ -279,6 +325,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         categoryAdd.disabled = false;
         add.disabled = false;
         reload.disabled = false;
+        categoryReload.disabled = false;
         renderCategories();
         renderServices();
         categoryAdd.focus();
@@ -314,9 +361,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             if (index === -1) categories.push(saved);
             else categories[index] = saved;
             closeCategoryForm();
-            error.hidden = true;
-            message.textContent = 'Category saved.';
-            message.hidden = false;
+            categoryLoadError.hidden = true;
+            categoryMessage.textContent = 'Category saved.';
+            categoryMessage.hidden = false;
         } catch (failure) {
             showError(categoryError, requestError(failure, 'save', 'category'));
         } finally {
@@ -330,6 +377,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
 
     add.addEventListener('click', () => openForm(null));
     reload.addEventListener('click', loadServices);
+    categoryReload.addEventListener('click', loadServices);
     get('cancel-service').addEventListener('click', () => {
         if (!saving) closeForm();
     });

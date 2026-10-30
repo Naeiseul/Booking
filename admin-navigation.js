@@ -1,16 +1,22 @@
 // Navigation changes the visible section without reloading or changing the admin link.
-window.initializeAdminNavigation = function (businessName) {
+window.initializeAdminNavigation = function (businessName, bizSlug) {
     const shell = document.getElementById('admin-shell');
     const sidebar = document.getElementById('admin-sidebar');
     const status = document.getElementById('business-status');
-    const sections = ['calendar', 'services'];
+    const sections = ['calendar', 'services', 'categories'];
 
     document.getElementById('admin-business-name').textContent = businessName || 'Your business';
+    const viewBusiness = document.getElementById('admin-view-business');
+    if (bizSlug) {
+        viewBusiness.href = '/' + encodeURIComponent(bizSlug);
+        viewBusiness.hidden = false;
+    }
     sidebar.hidden = false;
     shell.classList.add('admin-ready');
 
     function showSection(moveFocus) {
-        const active = window.location.hash === '#services' ? 'services' : 'calendar';
+        const requested = window.location.hash.slice(1);
+        const active = sections.includes(requested) ? requested : 'calendar';
         sections.forEach(section => {
             document.getElementById(section + '-panel').hidden = section !== active;
             const link = document.getElementById('nav-' + section);
@@ -19,7 +25,7 @@ window.initializeAdminNavigation = function (businessName) {
         });
         status.textContent = active === 'calendar'
             ? 'Tap a slot to toggle its availability'
-            : 'Manage your service catalogue';
+            : active === 'categories' ? 'Manage your browsing categories' : 'Manage your service catalogue';
         if (moveFocus) document.getElementById(active + '-heading').focus();
     }
 

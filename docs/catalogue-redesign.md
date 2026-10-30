@@ -2,6 +2,10 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Admin Categories stage — 2026-10-30
+
+The owner explicitly chose the admin dashboard as the next priority and approved the Categories screen/sidebar cleanup. The dark responsive sidebar now links Calendar, Services and Categories. The dedicated category table and existing forms use saved Supabase categories and real service-assignment counts. Services still has working cards/forms and the category selector. See [admin-interface.md](admin-interface.md) and the newest handoff. Next admin visual work still needs a small agreed scope; photos and scheduling/payment stages remain separate.
+
 ## Detailed admin visual reference saved — 2026-10-30
 
 The owner supplied an important detailed admin layout and asked to save it with all session progress. See [admin-interface.md](admin-interface.md) and the original [admin interface PNG](references/admin-interface-reference.png). It guides future admin styling/layout; the existing [final combined customer visual](references/final-visual-plan.png) remains the customer reference. The new image does not authorize new admin modules, table/search/filter/drawer/bulk functionality, photo support, invented records or a change in the agreed implementation sequence. See the newest PROJECT_HANDOFF.md section for the consolidated session memory and next action.

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Owner Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="/logtraq-favicon.svg?v=1">
     <link rel="apple-touch-icon" href="/logo_square.png">
@@ -18,32 +18,39 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=2">
-    <link rel="stylesheet" href="/admin.css?v=3">
+    <link rel="stylesheet" href="/admin.css?v=4">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
         <aside class="admin-sidebar" id="admin-sidebar" hidden>
-            <p class="admin-sidebar-label">Your business</p>
-            <p class="admin-business-name" id="admin-business-name"></p>
-            <nav class="admin-navigation" aria-label="Dashboard">
-                <a href="#calendar" id="nav-calendar" aria-controls="calendar-panel" aria-current="page">Calendar</a>
-                <a href="#services" id="nav-services" aria-controls="services-panel">Services</a>
-            </nav>
-        </aside>
-    <div class="container-owner admin-content">
-        <header style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 32px;">
-            <!-- Avatar Bubble -->
-            <div id="biz-avatar-container" style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-light), #E0F2FE); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25); overflow: hidden;">
-                <svg id="biz-avatar-svg" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <div class="admin-sidebar-brand">
+            <div id="biz-avatar-container" class="admin-sidebar-avatar">
+                <svg id="biz-avatar-svg" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <img id="biz-avatar-img" src="" alt="Business Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
             </div>
-            
-            <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <h1 id="biz-title-text" style="color: var(--text); font-weight: 700; font-size: 24px; margin: 0; padding-bottom: 4px; width: 100%;"><span class="skeleton-text" style="display:inline-block;"></span></h1>
-                <p class="muted-text" id="business-status" style="margin: 0;"><span class="skeleton-text" style="display:inline-block; height: 14px; width: 120px;"></span></p>
-                
-                <!-- Social Links -->
-                <div id="social-links" style="display: flex; gap: 16px; margin-top: 4px; justify-content: center;">
+                <div class="admin-sidebar-identity">
+                    <p class="admin-business-name" id="admin-business-name"></p>
+                    <p class="admin-sidebar-caption">Admin workspace</p>
+                </div>
+            </div>
+            <nav class="admin-navigation" aria-label="Dashboard">
+                <a href="#calendar" id="nav-calendar" aria-controls="calendar-panel" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg><span>Calendar</span></a>
+                <a href="#services" id="nav-services" aria-controls="services-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3"/></svg><span>Services</span></a>
+                <a href="#categories" id="nav-categories" aria-controls="categories-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <a id="admin-view-business" target="_blank" rel="noopener noreferrer" hidden>
+                    <span>View business</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+                </a>
+            </div>
+        </aside>
+    <div class="container-owner admin-content">
+        <header class="admin-workspace-header">
+            <div class="admin-workspace-identity">
+                <h1 id="biz-title-text" class="admin-workspace-title"><span class="skeleton-text" style="display:inline-block;"></span></h1>
+                <p class="muted-text" id="business-status"><span class="skeleton-text" style="display:inline-block; height: 14px; width: 120px;"></span></p>
+            </div>
+                <div id="social-links" class="admin-contact-links">
                     <a id="business-phone-link" aria-label="Call business" style="display: none;">
                         <img src="/phone.png?v=2" width="24" height="24" alt="" aria-hidden="true" style="display: block;">
                     </a>
@@ -61,7 +68,6 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                     </a>
                 </div>
-            </div>
         </header>
 
         <main class="admin-main">
@@ -97,53 +103,11 @@
                     <h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
                     <button class="admin-add-service" id="add-service" type="button" disabled>Add service</button>
                 </div>
-                <p class="muted-text admin-section-description">Manage what your business offers.</p>
+                <p class="muted-text admin-section-description">Manage what your business offers. Assign browsing groups in <a href="#categories">Categories</a>.</p>
                 <p class="service-feedback" id="services-message" role="status" hidden></p>
                 <p class="booking-error" id="services-error" role="alert" hidden></p>
-                <section class="category-manager" aria-labelledby="categories-heading">
-                    <div class="admin-section-heading">
-                        <h3 id="categories-heading">Categories</h3>
-                        <button class="admin-add-service" id="add-category" type="button" disabled>Add category</button>
-                    </div>
-                    <p class="service-hint">Organise browsing with your own categories. Lower order numbers appear first. Only enabled categories with published, active services appear to clients.</p>
-                    <div id="categories-list" class="services-list"></div>
-                    <p class="muted-text" id="categories-empty" hidden>No categories added yet.</p>
-                    <form class="service-form" id="category-form" aria-labelledby="category-form-heading" hidden>
-                        <h3 id="category-form-heading">Add category</h3>
-                        <fieldset id="category-fields">
-                            <div class="booking-field">
-                                <label for="category-label">Category name</label>
-                                <input id="category-label" name="label" maxlength="80" required>
-                            </div>
-                            <div class="service-form-columns">
-                                <div class="booking-field">
-                                    <label for="category-icon">Icon</label>
-                                    <select id="category-icon" name="icon">
-                                        <option value="grid">Grid</option>
-                                        <option value="person">Person</option>
-                                        <option value="people">People</option>
-                                        <option value="calendar">Calendar</option>
-                                        <option value="book">Book</option>
-                                        <option value="star">Star</option>
-                                    </select>
-                                </div>
-                                <div class="booking-field">
-                                    <label for="category-order">Display order</label>
-                                    <input id="category-order" name="sort_order" type="number" min="0" max="2147483647" step="1" value="0" required>
-                                </div>
-                            </div>
-                            <label class="service-checkbox" for="category-enabled">
-                                <input id="category-enabled" name="enabled" type="checkbox" checked>
-                                Enable category
-                            </label>
-                            <p class="booking-error" id="category-form-error" role="alert" hidden></p>
-                            <div class="service-form-actions">
-                                <button class="admin-add-service" id="save-category" type="submit">Save category</button>
-                                <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
-                            </div>
-                        </fieldset>
-                    </form>
-                </section>
+                <p class="service-hint admin-editing-notice" id="services-editing-notice" hidden>Finish or cancel your open category edit in <a href="#categories">Categories</a> before editing a service.</p>
+
                 <div class="service-list-toolbar">
                     <p class="muted-text" id="services-loading" role="status">Loading services…</p>
                     <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
@@ -226,6 +190,66 @@
                     </fieldset>
                 </form>
             </section>
+                <section id="categories-panel" class="category-manager" aria-labelledby="categories-heading" hidden>
+                    <div class="admin-section-heading">
+                        <h2 class="admin-section-title" id="categories-heading" tabindex="-1">Categories</h2>
+                        <button class="admin-add-service" id="add-category" type="button" disabled>Add category</button>
+                    </div>
+                    <p class="muted-text admin-section-description">Create and order browsing categories for your services.</p>
+                    <p class="service-hint">Only enabled categories containing published, active services appear to clients. Lower order numbers appear first; service counts include all saved offerings assigned to each category.</p>
+                    <p class="service-feedback" id="categories-message" role="status" hidden></p>
+                    <p class="booking-error" id="categories-error" role="alert" hidden></p>
+                    <p class="service-hint admin-editing-notice" id="categories-editing-notice" hidden>Finish or cancel your open service edit in <a href="#services">Services</a> before editing a category.</p>
+                    <div class="service-list-toolbar">
+                        <p class="muted-text" id="categories-loading" role="status">Loading categories…</p>
+                        <button class="service-text-button" id="reload-categories" type="button" disabled>Reload categories</button>
+                    </div>
+                    <div id="categories-table" class="admin-table-scroll" role="region" aria-label="Category list" tabindex="0" hidden>
+                        <table class="admin-category-table">
+                            <caption class="admin-sr-only">Saved browsing categories and assigned service counts</caption>
+                            <thead>
+                                <tr><th scope="col">Order</th><th scope="col">Icon</th><th scope="col">Category name</th><th scope="col">Services</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
+                            </thead>
+                            <tbody id="categories-list"></tbody>
+                        </table>
+                    </div>
+                    <p class="muted-text" id="categories-empty" hidden>No categories added yet.</p>
+                    <form class="service-form" id="category-form" aria-labelledby="category-form-heading" hidden>
+                        <h3 id="category-form-heading" tabindex="-1">Add category</h3>
+                        <fieldset id="category-fields">
+                            <div class="booking-field">
+                                <label for="category-label">Category name</label>
+                                <input id="category-label" name="label" maxlength="80" required>
+                            </div>
+                            <div class="service-form-columns">
+                                <div class="booking-field">
+                                    <label for="category-icon">Icon</label>
+                                    <select id="category-icon" name="icon">
+                                        <option value="grid">Grid</option>
+                                        <option value="person">Person</option>
+                                        <option value="people">People</option>
+                                        <option value="calendar">Calendar</option>
+                                        <option value="book">Book</option>
+                                        <option value="star">Star</option>
+                                    </select>
+                                </div>
+                                <div class="booking-field">
+                                    <label for="category-order">Display order</label>
+                                    <input id="category-order" name="sort_order" type="number" min="0" max="2147483647" step="1" value="0" required>
+                                </div>
+                            </div>
+                            <label class="service-checkbox" for="category-enabled">
+                                <input id="category-enabled" name="enabled" type="checkbox" checked>
+                                Enable category
+                            </label>
+                            <p class="booking-error" id="category-form-error" role="alert" hidden></p>
+                            <div class="service-form-actions">
+                                <button class="admin-add-service" id="save-category" type="submit">Save category</button>
+                                <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </section>
         </main>
 
         <footer style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
@@ -248,9 +272,9 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
-    <script src="/admin-navigation.js"></script>
-    <script src="/admin-services.js?v=2"></script>
-    <script src="/admin.js"></script>
+    <script src="/admin-navigation.js?v=2"></script>
+    <script src="/admin-services.js?v=3"></script>
+    <script src="/admin.js?v=2"></script>
     <script src="/admin-contacts.js"></script>
 </body>
 </html>
