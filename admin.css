@@ -1,4 +1,8 @@
 /* Admin workspace: business identity and supported sections in a neutral sidebar. */
+.category-icon-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.category-icon-choice { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 8px; border: 1px solid #ccc; border-radius: 9px; background: #fff; color: #222; cursor: pointer; }
+.category-icon-choice[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }
+.category-icon-choice:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
 /* Once access is verified, the sidebar identifies the business and each page has its own heading. */
 .admin-ready .admin-workspace-identity { display: none; }
 .admin-ready .admin-contact-links { margin-left: auto; }

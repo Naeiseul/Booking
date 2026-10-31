@@ -163,6 +163,23 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + artwork + '</svg>';
         return icon;
     }
+    function renderIconPicker() {
+        const picker = get('category-icon-picker');
+        picker.innerHTML = '';
+        Object.keys(categoryIcons).forEach(name => {
+            const choice = document.createElement('button');
+            choice.type = 'button'; choice.className = 'category-icon-choice';
+            choice.setAttribute('aria-label', 'Use ' + name + ' icon');
+            choice.setAttribute('aria-pressed', String(get('category-icon').value === name));
+            choice.appendChild(iconElement(name));
+            choice.addEventListener('click', () => {
+                if (saving) return;
+                get('category-icon').value = name;
+                for (const item of picker.children) item.setAttribute('aria-pressed', String(item === choice));
+            });
+            picker.appendChild(choice);
+        });
+    }
     function button(label, action, className = 'service-text-button') {
         const item = document.createElement('button');
         item.type = 'button'; item.className = className; item.textContent = label;
@@ -279,9 +296,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     function updatePublication() {
         const category=categorySelection(), {published,active}=catalogueState();
         get('edit-service-category').hidden=!category;
-        let text=!active ? 'Paused — hidden from clients.' : !published ? 'Draft — hidden from clients.' : !category ? 'Choose or create a category to publish.' :
+        let text=!active ? 'Paused. Hidden from clients.' : !published ? 'Draft. Hidden from clients.' : !category ? 'Choose or create a category to publish.' :
             !category.enabled ? 'This category is disabled. Edit it here to enable it, or choose another.' :
-            get('service-type').value==='class' ? 'Shown in the catalogue. Not bookable yet — class scheduling is not ready.' :
+            get('service-type').value==='class' ? 'Shown in the catalogue. Not bookable yet. Class scheduling is not ready.' :
             'Shown in the catalogue. Payment checkout is not available yet.';
         get('service-publication-help').textContent=text;
         const raw=Number(get('service-price').value), people=Number(get('service-participants').value)||1;
@@ -298,7 +315,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         get('service-participants').required=!isClass;
         get('service-price-basis').disabled=isClass;
         if(isClass) get('service-price-basis').value='per_person';
-        get('service-type-help').textContent=isClass ? 'Not bookable yet — class scheduling and capacity are not ready.' : 'One appointment for the people included in the booking.';
+        get('service-type-help').textContent=isClass ? 'Not bookable yet. Class scheduling and capacity are not ready.' : 'One appointment for the people included in the booking.';
         updatePublication();
     }
     function renderCategoryOptions(selectedId) {
@@ -365,6 +382,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         categoryExpectedUpdatedAt=category ? category.updated_at : null;
         get('category-label').value=category ? category.label : '';
         get('category-icon').value=category ? category.icon : 'grid';
+        renderIconPicker();
         get('category-order').value=category ? category.sort_order : Math.min(2147483647,categories.reduce((max,item)=>Math.max(max,item.sort_order+1),0));
         get('category-enabled').checked=category ? category.enabled : true;
         get('category-form-heading').textContent=category ? 'Edit category' : 'Create category';
@@ -471,7 +489,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             const index=services.findIndex(item=>item.id===saved.id);
             if(index===-1) services.push(saved); else services[index]=saved;
             closeForm(); error.hidden=true;
-            message.textContent=!saved.is_active ? 'Service saved. Paused — hidden from clients.' : !saved.is_published ? 'Draft saved.' : category && category.enabled ? 'Service saved and published.' : 'Service saved. Category disabled — hidden from clients.';
+            message.textContent=!saved.is_active ? 'Service saved. Paused. Hidden from clients.' : !saved.is_published ? 'Draft saved.' : category && category.enabled ? 'Service saved and published.' : 'Service saved. Category disabled. Hidden from clients.';
             message.hidden=false;
         } catch(failure) {
             showError(formError,(createdInlineCategory?'Your category is saved. ':'')+requestError(failure,'save'));
@@ -480,3 +498,5 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     });
     return loadServices();
 };
+
+

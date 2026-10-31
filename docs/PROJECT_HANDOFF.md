@@ -2,6 +2,24 @@
 
 Updated 2026-10-31.
 
+## Category symbols and punctuation simplified — 2026-10-31 (read first)
+
+The owner saw the category Icon dropdown's “Star” and similar labels while editing PILATES & MOBILITY and mistook them for category names. Replaced the visible icon-name dropdown with six visual SVG symbol buttons labelled Category symbol. Accessible button names remain for assistive technology; existing icon identifiers, values, persistence and database records are retained. The hidden existing selector remains the form's value source. This is not a list of suggested category names.
+
+At the owner's request, Catalogue status uses Draft (hidden from clients), Published (show in catalogue), Paused (temporarily hidden). Dash-separated service/publication/helper messages now use ordinary sentences. No booking, pricing, publication or schema changes.
+
+Native Services/navigation tests and Chromium at 320/390/820/1440px passed, including selecting the visual People symbol, inline category creation, icon persistence, service status, photos, retries, modal behaviour and no overflow. Tests used intercepted fixtures and actual supplied storage URLs; no business writes.
+
+Previous heading cleanup aabd5bf62e765d223638cad96a03a7455e3bdb99 is deployed as dpl_CapHjnvfQXb8rsPpZvpLnHzNzEFK (READY; booking.logtraq.co.za). Live browser checks at 390/1440px confirmed sidebar identity retained, repeated page-level business name/helper copy hidden, section headings visible, no overflow and denied-access errors still visible.
+
+Read-only picture audit: all five supplied Supabase photos returned 200, matched stored byte sizes and image MIME. The existing upload endpoint rejected an invalid admin key (403) without creating an object. A new successful real branding upload is still unverified and remains part of the next careful picture-upload stage.
+
+Last business read: PILATES & MOBILITY is the existing active unpublished private service, 90 minutes, R250 per person for 2 people (R500 total), with its original mobility photo and no category. Logtraq has zero categories and zero public services. Do not silently create a category or publish it. Real owner-data admin/client preview testing was interrupted before completion; do not claim it passed. The earlier full Services/profile browser tests used isolated fixtures and did pass.
+
+Next: owner reviews this small live cleanup, then carefully verify picture uploading in Supabase and how actual services appear in Admin/client. Preserve real Paystack, disabled service payments/classes, date/time-only slots, paused Order summary and the later scheduling/capacity → reservations → verified payments sequence.
+
+
+
 ## Business Profile released; workspace headings simplified — 2026-10-31 (read first)
 
 Business Profile implementation d8ec0caebdf2a2b72234a53c326488081d6194a8 deployed as dpl_FVnY3qAPpg8KonJEqJZHtpSnJEY9 (READY, booking.logtraq.co.za). Live profile/admin/client HTML, JavaScript and CSS returned 200 and matched the candidate content (ignoring trailing newlines in unchanged local copies). Production Chromium at 320/390/820/1440px passed BOTH profile and integrated Services workflows with isolated intercepted RPC fixtures. Supplied service-photo URLs decoded correctly. Profile tests cover the admin past-time notification and no expired-slot writes; future-slot tests now await the actual save response before asserting. Separate actual Supabase profile-save/public-display verification and QA cleanup are recorded below.

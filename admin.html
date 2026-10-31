@@ -18,7 +18,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=3">
-    <link rel="stylesheet" href="/admin.css?v=9">
+    <link rel="stylesheet" href="/admin.css?v=10">
     <link rel="stylesheet" href="/profile.css?v=1">
 </head>
 <body class="admin-page">
@@ -174,9 +174,9 @@
                         <div class="booking-field">
                             <label for="service-status">Catalogue status</label>
                             <select id="service-status" name="catalogue_status" aria-describedby="service-publication-help">
-                                <option value="draft">Draft — hidden from clients</option>
-                                <option value="published">Published — show in catalogue</option>
-                                <option value="paused">Paused — temporarily hidden</option>
+                                <option value="draft">Draft (hidden from clients)</option>
+                                <option value="published">Published (show in catalogue)</option>
+                                <option value="paused">Paused (temporarily hidden)</option>
                             </select>
                             <p id="service-publication-help" class="service-hint" role="status"></p>
                         </div>
@@ -234,8 +234,9 @@
                         </div>
                         <div class="service-form-columns">
                             <div class="booking-field">
-                                <label for="category-icon">Icon</label>
-                                <select id="category-icon" name="icon">
+                                <span class="service-field-label" id="category-icon-label">Category symbol</span>
+                                <div id="category-icon-picker" class="category-icon-picker" role="group" aria-labelledby="category-icon-label"></div>
+                                <select id="category-icon" name="icon" hidden aria-hidden="true" tabindex="-1">
                                     <option value="grid">Grid</option><option value="person">Person</option>
                                     <option value="people">People</option><option value="calendar">Calendar</option>
                                     <option value="book">Book</option><option value="star">Star</option>
@@ -297,7 +298,7 @@
     <script src="/business-profile.js?v=1"></script>
     <script src="/admin-profile.js?v=1"></script>
     <script src="/admin-navigation.js?v=4"></script>
-    <script src="/admin-services.js?v=5"></script>
+    <script src="/admin-services.js?v=6"></script>
     <script src="/admin-slot-time.js?v=1"></script>
     <script src="/admin.js?v=4"></script>
     <script src="/admin-contacts.js?v=2"></script>

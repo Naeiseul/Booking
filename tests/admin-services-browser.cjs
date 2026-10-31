@@ -75,7 +75,7 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
    await page.locator('#service-category-error').waitFor();
    await page.locator('#service-category').selectOption('__create__');
    await page.locator('#category-label').fill('QA Training');
-   await page.locator('#category-icon').selectOption('people');
+   await page.getByRole('button',{name:'Use people icon',exact:true}).click();
    await page.locator('#category-order').fill('2');
    await check(page);await saveCategory(page);
    assert.equal(await page.locator('#service-name').inputValue(),'QA Workflow Service');
@@ -150,4 +150,5 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
   }
  } finally {await browser.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;});
+
 
