@@ -141,10 +141,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
         person: '<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2Z"/>',
         people: '<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v3ZM16 4a3 3 0 0 1 0 6M19 14a5 5 0 0 1 3 4v3"/>',
+        stretch: '<circle cx="14" cy="4" r="2"/><path d="m13 7-3 5 4 3 5 5M10 12l-6 2M14 15l-6 5M17 10l4 2"/>',
+        run: '<circle cx="15" cy="4" r="2"/><path d="m13 8-4 4 4 3 3 6M9 12l-6 2M13 15l-5 6M16 9l5 2"/>',
+        dumbbell: '<path d="m6.5 6.5 11 11M3 8l5-5M5 10l5-5M14 19l5-5M16 21l5-5"/>',
+        activity: '<path d="M2 12h4l3-7 5 14 3-7h5"/>',
         calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
         book: '<path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/>',
         star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>'
     };
+    function categoryArtwork(category) {
+        const name = (category.label || '').toLowerCase();
+        if (/mobility|stretch|flexib|pilates|yoga/.test(name)) return categoryIcons.stretch;
+        if (/cardio|running|run|hiit|aerobic|spin|cycling/.test(name)) return categoryIcons.run;
+        if (/strength|weight|lifting|gym|resistance/.test(name)) return categoryIcons.dumbbell;
+        if (/boxing|combat|conditioning/.test(name)) return categoryIcons.activity;
+        return Object.hasOwn(categoryIcons,category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
+    }
 
     function renderCategoryNavigation() {
         const signature = JSON.stringify(categories);
@@ -163,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 icon.className = 'category-icon';
                 icon.setAttribute('aria-hidden', 'true');
                 // The SVG body is allowlisted artwork, never business-supplied markup.
-                const artwork = Object.hasOwn(categoryIcons, category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
+                const artwork = categoryArtwork(category);
                 icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">' + artwork + '</svg>';
                 const label = document.createElement('span');
                 label.className = 'category-label';
@@ -225,27 +237,43 @@ document.addEventListener("DOMContentLoaded", async () => {
                     description.textContent = service.description;
                     body.appendChild(description);
                 }
-                const details = document.createElement('p');
-                details.className = 'muted-text';
-                details.textContent = serviceDetails(service);
-                body.appendChild(details);
-                const price = document.createElement('p');
+                const meta = document.createElement('div');
+                meta.className = 'service-card-meta';
+                const people = document.createElement('span');
+                people.textContent = service.service_type === 'class' ? '◉ Shared class' : '♙ ' + service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking';
+                const duration = document.createElement('span');
+                duration.textContent = '◷ ' + serviceDuration(service);
+                meta.append(people,duration);
+                body.appendChild(meta);
+                const purchase = document.createElement('div');
+                purchase.className = 'service-card-purchase';
+                const priceBlock = document.createElement('div');
+                priceBlock.className = 'service-card-price-block';
+                const priceCaption = document.createElement('span');
+                priceCaption.className = 'service-card-price-caption';
+                priceCaption.textContent = service.price_basis === 'per_person' ? 'PRICE PER PERSON' : 'PRICE PER BOOKING';
+                const price = document.createElement('strong');
                 price.className = 'client-service-price';
-                price.textContent = servicePrice(service) + (service.price_basis === 'per_person' ? ' per person' : ' per booking');
-                body.appendChild(price);
+                price.textContent = servicePrice(service);
+                priceBlock.append(priceCaption,price);
                 if (service.price_basis === 'per_person' && service.service_type === 'private' && service.participant_count > 1) {
-                    const total = document.createElement('p');
-                    total.className = 'muted-text';
+                    const total = document.createElement('span');
+                    total.className = 'service-card-total';
                     total.textContent = servicePrice(service, true) + ' total for ' + service.participant_count + ' people';
-                    body.appendChild(total);
+                    priceBlock.appendChild(total);
                 }
+                const dateHint = document.createElement('span');
+                dateHint.className = 'service-card-date-hint';
+                dateHint.textContent = 'Choose your date';
+                purchase.append(priceBlock,dateHint);
+                body.appendChild(purchase);
                 const choose = document.createElement('button');
                 choose.type = 'button';
                 choose.className = 'catalogue-service-button';
                 choose.disabled = service.service_type === 'class';
-                choose.textContent = choose.disabled ? 'Booking unavailable' : isSelected ? 'Selected' : 'View available times';
+                choose.textContent = choose.disabled ? 'Booking unavailable' : isSelected ? 'Selected · choose date & time →' : 'Choose date & time →';
                 choose.setAttribute('aria-pressed', String(isSelected));
-                choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'View available times for ') + service.name);
+                choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'Choose booking date and time for ') + service.name);
                 choose.addEventListener('click', () => {
                     if (choose.disabled) return;
                     if (!selectedService || selectedService.id !== service.id) selectedSlot = null;
