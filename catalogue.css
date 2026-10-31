@@ -281,3 +281,20 @@
 .service-photo { display:block; width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; }
 .booking-summary-photo { display:block; width:72px; height:72px; object-fit:cover; border-radius:10px; margin-bottom:12px; }
 .catalogue-menu button:disabled { cursor:not-allowed; opacity:.6; }
+
+/* Compact commercial service card: clear details, price and next action. */
+.catalogue-page .service-card-body { gap:12px; }
+.catalogue-page .service-card-body h3 { margin:0; }
+.catalogue-page .service-card-body .client-service-description { margin:0; }
+.service-card-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; color:#64748b; font-size:13px; line-height:1.5; }
+.service-card-purchase { display:flex; justify-content:space-between; align-items:end; gap:12px; border-top:1px solid #e5e7eb; padding-top:15px; margin-top:auto; }
+.service-card-price-block { display:flex; flex-direction:column; align-items:start; gap:4px; min-width:0; }
+.service-card-price-caption { color:#64748b; font-size:10px; font-weight:700; letter-spacing:.07em; }
+.catalogue-page .service-card-body .client-service-price { font-size:22px; line-height:1.25; margin:0; color:#111827; }
+.service-card-total { font-size:12px; color:#64748b; line-height:1.4; }
+.service-card-date-hint { font-size:12px; color:#64748b; text-align:right; flex-shrink:0; }
+.catalogue-page .service-card-body .catalogue-service-button { margin-top:4px; width:100%; min-height:48px; background:#111; color:#fff; border-radius:12px; }
+.catalogue-page .service-card-body .catalogue-service-button:disabled { background:#eef0f3; color:#64748b; }
+.catalogue-page .catalogue-menu .step-indicator { display:none; }
+.catalogue-page .catalogue-menu { padding-bottom:12px; }
+@media(max-width:480px) { .catalogue-page .service-card-body { padding:18px; } }
