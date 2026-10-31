@@ -46,6 +46,12 @@ window.BusinessProfile = (() => {
         const dial = phone(data.phone_number === undefined ? data.whatsapp_number : data.phone_number);
         link('business-phone-link', dial ? 'tel:' + dial : '', 'Call business' + (dial ? ' on ' + dial : ''));
         if (admin) return;
+        const cover = document.getElementById('business-cover-banner');
+        if (cover) {
+            const coverUrl = photo(data.hero_photo_path);
+            cover.style.backgroundImage = coverUrl ? 'url("' + coverUrl + '")' : 'none';
+            cover.classList.toggle('has-cover-image', !!coverUrl);
+        }
         let wa = phone(data.whatsapp_number).replace(/^\+/, '');
         if (/^0\d{9}$/.test(wa)) wa = '27' + wa.slice(1);
         link('business-whatsapp-link', wa ? 'https://wa.me/' + wa : '', 'WhatsApp');
@@ -69,7 +75,6 @@ window.BusinessProfile = (() => {
             img.loading = 'lazy'; img.onerror = () => { img.hidden = true; };
             parent.appendChild(img);
         }
-        addImage(info, data.hero_photo_path, 'Business cover');
         text('p', data.description, 'public-business-about');
         text('p', data.service_area, 'public-business-location');
         const methods = {in_person:'In person',online:'Online',mobile:'Mobile visits'};
