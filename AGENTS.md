@@ -1,6 +1,7 @@
 # Booking project working agreement
 
 - Work one small step at a time; prioritize working behaviour and data integrity.
+- Next-session reminder requested by the owner: discuss assigning a specific session to an exact calendar date/time, for example HIIT at 10:00. Read the newest handoff and docs/NEXT_SESSION_PROMPT.md. Do not turn generic availability into bookable shared classes before scheduling/capacity is implemented.
 - Latest catalogue redesign direction: read docs/catalogue-redesign.md and the newest handoff section before editing. Keep category (catalogue organisation), service (offering purchased), and booking type (scheduling rules) separate. The Order summary addition is paused.
 - Saved visual references: docs/references/final-visual-plan.png (customer/combined) and docs/references/admin-interface-reference.png (important admin target). Read docs/admin-interface.md before admin visual work. Images are staged design targets, not authorization to implement all pictured features or sample data.
 - Business Profile is now an explicitly approved extension through the bottom sidebar identity area; Calendar and Services remain the only primary sections. Read docs/business-profile.md and its original saved reference. Next owner-requested stage: careful Supabase picture-upload verification, then review actual services in Admin and on the client. Preserve all booking/payment boundaries.

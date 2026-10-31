@@ -46,6 +46,9 @@ window.BusinessProfile = (() => {
         const dial = phone(data.phone_number === undefined ? data.whatsapp_number : data.phone_number);
         link('business-phone-link', dial ? 'tel:' + dial : '', 'Call business' + (dial ? ' on ' + dial : ''));
         if (admin) return;
+        let wa = phone(data.whatsapp_number).replace(/^\+/, '');
+        if (/^0\d{9}$/.test(wa)) wa = '27' + wa.slice(1);
+        link('business-whatsapp-link', wa ? 'https://wa.me/' + wa : '', 'WhatsApp');
         const tagline = document.getElementById('business-tagline');
         if (tagline) { tagline.textContent = data.tagline || ''; tagline.hidden = !data.tagline; }
         const info = document.getElementById('public-business-profile');
@@ -73,9 +76,7 @@ window.BusinessProfile = (() => {
         text('p', (data.delivery_methods || []).map(k => methods[k]).filter(Boolean).join(' · '));
         const contacts = document.createElement('div'); contacts.className = 'public-profile-contacts';
         const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email || '') ? data.email : '';
-        let wa = phone(data.whatsapp_number).replace(/^\+/, '');
-        if (/^0\d{9}$/.test(wa)) wa = '27' + wa.slice(1);
-        for (const [label, href] of [['Email',email ? 'mailto:' + email : ''],['WhatsApp',wa ? 'https://wa.me/' + wa : ''],['Website',https(data.website_url)]]) {
+        for (const [label, href] of [['Email',email ? 'mailto:' + email : ''],['Website',https(data.website_url)]]) {
             if (!href) continue;
             const a = document.createElement('a'); a.textContent = label; a.href = href;
             a.target = '_blank'; a.rel = 'noopener noreferrer'; contacts.appendChild(a);

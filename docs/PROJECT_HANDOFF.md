@@ -2,6 +2,19 @@
 
 Updated 2026-10-31.
 
+## Next-session reminder: specific sessions at exact times; WhatsApp icon — 2026-10-31 (read first)
+
+The owner explicitly requested remembering this for next session: an admin must be able to assign a particular service/session to a specific date and time, for example HIIT at exactly 10:00. This is service-specific scheduling, not merely making a generic time available. Begin next session by reminding the owner, inspecting the current calendar/service model and agreeing the smallest implementation step. Do not seed a HIIT offering or schedule as real business data from this example. Shared classes remain unbookable until scheduling and capacity are operational; reservations and verified payments follow. Existing photo-upload verification and actual-service admin/client review remain pending.
+
+The owner supplied download.png (224×225 PNG, 4,419 bytes) as the WhatsApp contact icon and explicitly requested GitHub and Supabase copies. Original bytes saved at assets/icons/whatsapp.png and https://jtonmfevmcmnkmdjmubn.supabase.co/storage/v1/object/public/service-photos/c4a5daca-ad2d-4d58-be31-e5aa27984622/65460b0f-5b65-427e-a19f-f07c87aa01ed.png. SHA-256 5d78c87939beb6903d4e8b8b8674bc58294ff7eb0007829ce568058128c60dd9. Upload used the existing credential-checked uploader without changing its code, storage policies, business profile, phone numbers or service records. Actual retrieval returned 200 image/png with byte-for-byte equality. It is a contact icon, not a service photo; it was not added to the service-photo library manifest.
+
+The client now uses this image in the existing contact row, links the business's saved WhatsApp number to wa.me, keeps the independent call link and removes the extra standalone WhatsApp text from the About area. Missing or invalid numbers hide the icon; South African local numbers are normalised to country code 27. Accessible name retained; image contains its full aspect ratio and has a 44px link target. JavaScript syntax checked; new full browser interaction tests have not run. Deployment/live asset verification follows this commit.
+
+Previous logo fix 74edeec is production READY as dpl_G1ziaLSiAHPfijzgBBnJfGZT7q9J; affected live admin.css, profile.css, admin.html and index.html returned 200 and matched the committed content. Original logo image files are unchanged.
+
+Copy/paste continuation prompt: docs/NEXT_SESSION_PROMPT.md.
+
+
 ## Preserve full logo edges — 2026-10-31 (read first)
 
 The owner reported cropped/pinched logos. Original saved image files are unchanged. Removed rounded overflow clipping from the admin identity, bottom profile avatar and profile logo preview. The public identity no longer uses a circular clipping frame, and both business/header and Logtraq footer images use contain instead of cover. Existing frame dimensions remain responsive. No uploaded image, service photograph, database value or booking behaviour changed. Cache versions were bumped.
