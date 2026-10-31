@@ -66,3 +66,10 @@
  .profile-heading-row h2 { font-size:26px; } .profile-actions .profile-button { flex:1 1 100%; }
  .profile-heading-row .profile-button { width:100%; }
 }
+
+/* Visible progress while saving the business profile, without a blocking overlay. */
+#profile-save { gap:10px; }
+.profile-save-spinner { display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; animation:profile-logo-spin 1.15s linear infinite; }
+.profile-save-spinner img { width:100%; height:100%; object-fit:contain; }
+@keyframes profile-logo-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .profile-save-spinner { animation:none; } }
