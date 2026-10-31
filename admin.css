@@ -251,3 +251,14 @@ html:has(.admin-page dialog[open]) { overflow:hidden; }
 }
 
 
+
+/* Keep the Services toolbar stable before and after loading/saving. */
+.admin-page #services-panel .admin-section-heading { flex-wrap:wrap; }
+.admin-page #services-panel .service-heading-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:min(100%,440px); gap:10px; }
+.admin-page #services-panel .service-heading-actions button { width:100%; min-width:0; flex-shrink:1; }
+.admin-page #services-panel .service-list-toolbar { justify-content:flex-start; }
+.admin-page #services-panel #reload-services { width:auto; min-width:160px; }
+@media(max-width:480px) {
+ .admin-page #services-panel .service-heading-actions { width:100%; }
+ .admin-page #services-panel .service-heading-actions button { padding:12px 8px; }
+}
