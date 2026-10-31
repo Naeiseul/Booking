@@ -19,3 +19,9 @@ Match the black/charcoal/grey/white design, current real logo and responsive sid
 Acceptance: with zero categories, create a service, create its category inside the form, supply details and save/publish without leaving Services.
 
 Work incrementally, verify existing flows and save/deploy completed work. Order summary remains paused; scheduling/capacity → reservations → verified payments retains its order.
+
+## Implementation decisions
+
+Implemented with existing RPCs and no schema change. Category and service editors use native dialogs; Services contains all category groups and actions. The owner rejected the ambiguous Active/Published pair during implementation: there is now ONE Catalogue status selector (Draft/Published/Paused), preserving the independent stored flags. No extra Active checkbox is shown. Shared classes keep a separate Not bookable yet indicator.
+
+Refer to the newest PROJECT_HANDOFF.md section for checks, release and scope boundaries.

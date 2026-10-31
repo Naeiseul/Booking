@@ -2,6 +2,34 @@
 
 Updated 2026-10-31.
 
+## Integrated Services management implemented — 2026-10-31 (read first)
+
+The owner explicitly authorized the full Admin → Services improvement, then corrected the scope to REMOVE the separate Categories sidebar tab entirely. All category management now happens within Services. The latest reference and approved scope are [admin-services-workflow.md](admin-services-workflow.md) and the original [workflow PNG](references/admin-services-workflow-reference.png), saved unchanged in commit 50d0703. This supersedes the previous “still to agree” grouping proposal. The owner also requested replacing the two confusing Active/Published tick boxes with clearer wording.
+
+### Result
+- Only Calendar and Services remain in the sidebar. Old #categories links route to Services; calendar nodes, business logo, admin key URL, public business link and responsive sidebar are retained.
+- Services groups real saved offerings under collapsible category headers: saved icon/name/order, counts of all assigned saved services, enabled/disabled state, Edit category, and Add service to this category. Empty/disabled categories remain manageable. Existing drafts with no assignment appear in Needs a category, with Edit to assign/create a category without replacing the service record.
+- Add/Edit service is a native modal side drawer with focus containment, Escape/Close/Cancel and in-flight save dismissal protection. On phones it fills the viewport. Essential fields are shown first; Description & photos and Pricing options expand separately. Existing per-person/multiple-person pricing opens its options on edit and displays actual totals.
+- Category dropdown includes + Create new category; category create/edit is a small native dialog over the retained service draft. Existing save_admin_category persists the category, then its ID is assigned in the service form. Icons, enabled flag and display order are editable here or from the category header inside Services. No replacement category page/workflow.
+- One Catalogue status selector replaces BOTH Active/Published tick boxes: Draft (hidden), Published (show in catalogue), Paused (temporarily hidden). Published writes true/true; Draft writes false/true; Paused writes false for is_active while retaining the service's previously saved is_published value. Thus both kinds of existing paused records round-trip intact. There is no second Active checkbox.
+- Category eligibility, name/duration/price/participant validation and dynamic publication blockers are visible in the form. Disabled categories must be enabled/changed to newly publish; existing hidden/paused records retain their stored distinctions. Category and service retry UUIDs, expected_updated_at concurrency checks, input retention on failure and duplicate-submit protection remain.
+- If category save succeeds but service save fails, the category stays selected, the draft stays open and the error explicitly says the category is saved. An uncertain category save retries the SAME UUID. Photo paths, supplied library/upload/removal, descriptions, exact integer-cent prices and per-person totals remain.
+- Shared classes show Not bookable yet and remain disabled on the unchanged customer page. Published means catalogue visibility, not payment/reservation confirmation. Private services still use existing general availability; service-duration-aware scheduling and verified service payments are not introduced.
+
+### Reuse and boundaries
+Existing get_admin_services/get_admin_categories/save_admin_service/save_admin_category RPCs, Supabase category/service tables and photo infrastructure are reused unchanged. NO schema migration, backend rebuild, real business offering/category/photo/price/publication changes, package support, logout, search, extra navigation, customer redesign or Order summary work. New primary controls use black/white/grey; actual business logo remains.
+
+### Verification
+- Native Node checks pass: integrated admin services/categories (including partial failures, lost responses, stale edits, original IDs/photos/secondary fields/pricing/status preservation and class guards), navigation/calendar, cross-tab availability sync, client category browsing, monthly calendar and slot expiry. Native HTML/CSS/JavaScript syntax, unique IDs/labels and diff whitespace checked.
+- Existing transactional admin-service and category SQL integration suites pass on Supabase with fixtures rolled back; schema unchanged.
+- Chromium checks pass at 320/390/820/1440px using isolated intercepted RPC state and actual supplied photo URLs: inline category creation, publication, drawer/nested-dialog behaviour, preserved photos/prices, category order/enable/move/collapse, old category links, class-booking guard and no page/dialog overflow.
+- Actual Chromium phone browser → existing Supabase REST/RPC → public catalogue passed against a newly created isolated QA business with zero categories: create category inside Add Service, save/publish, pause/reload/resume, category enable/order, move with same service ID, publish a class while its customer selection remains disabled. The isolated QA business and its categories/services were removed after testing; no Logtraq offerings are used for test writes. Physical iOS/Safari remains untested.
+- The legacy tests/client-booking-flow.cjs has its earlier stale UI fixture failure and is not claimed as a full pass. Customer scripts are unchanged.
+- The owner needs to switch computers immediately. This save commits the tested implementation and starts the normal GitHub production deployment. Confirm the commit-matched READY deployment and compare affected live assets. Production browser smoke testing after deployment is the remaining release check; the real pre-release browser-to-Supabase test above passed and its QA business was deleted.
+
+Next: owner reviews the integrated Services workflow. Scheduling/capacity → reservations → verified payments remains the later sequence. Order summary stays PAUSED.
+
+
 ## Grouping UX reconsideration — 2026-10-31 (read first)
 
 The owner found Category/Unassigned and the publish validation confusing. They initially approved optional categories, then explicitly asked to revisit the feature rather than add explanatory text. Their latest clarification is authoritative: **grouping is essential**. They object to the separate Categories tab and a Show in client catalogue control that fails because a group has not been configured elsewhere. Do not remove grouping based on the earlier discussion.

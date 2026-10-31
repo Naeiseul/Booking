@@ -10,7 +10,8 @@ class Element {
     constructor() {
         this.value = ''; this.checked = false; this.hidden = false; this.disabled = false;
         this.required = false; this.textContent = ''; this.children = []; this.listeners = {};
-        this.attributes = {}; this.focused = false; this.dataset = {};
+        this.attributes = {}; this.focused = false; this.dataset = {}; this.open = false;
+        this.className = '';
     }
     addEventListener(name, callback) { this.listeners[name] = callback; }
     appendChild(child) { this.children.push(child); }
@@ -18,6 +19,8 @@ class Element {
     setAttribute(name, value) { this.attributes[name] = value; }
     removeAttribute(name) { delete this.attributes[name]; }
     focus() { this.focused = true; }
+    showModal() { this.open = true; }
+    close() { this.open = false; }
 }
 function backend() {
     const records = new Map();
@@ -32,6 +35,7 @@ function backend() {
         if (url.endsWith('/get_admin_services')) return { ok: true, json: async () => [...records.values()] };
         if (url.endsWith('/get_admin_service_photos')) return { ok: true, json: async () => [] };
         if (url.endsWith('/get_admin_categories')) return { ok: true, json: async () => [...categories.values()] };
+        if (state.rejectSave && url.endsWith('/save_admin_service')) return {ok:false,json:async()=>({code:'XX000'})};
         if (state.conflict) return { ok: false, json: async () => ({ code: '40001' }) };
         if (url.endsWith('/save_admin_category')) {
             const previous = categories.get(body.p_id);
@@ -50,7 +54,7 @@ function backend() {
             price_amount: body.p_price_amount, price_basis: body.p_price_basis,
             participant_count: body.p_participant_count, is_published: body.p_is_published,
             category_id: body.p_category_id, is_active: body.p_is_active,
-            currency: 'ZAR', updated_at: 'version-' + ++version
+            photo_path: body.p_photo_path, currency: 'ZAR', updated_at: 'version-' + ++version
         };
         records.set(saved.id, saved);
         if (state.failAfterSave) { state.failAfterSave = false; throw Error('lost response'); }
@@ -65,7 +69,7 @@ async function ui(api) {
         assert(elements[id], 'Referenced element exists: ' + id);
         return elements[id];
     };
-    for (const id of ['service-form', 'services-error', 'services-message', 'service-form-error', 'services-empty', 'category-form', 'category-form-error', 'categories-empty']) get(id).hidden = true;
+    for (const id of ['service-form', 'services-error', 'services-message', 'service-form-error', 'services-empty', 'category-form', 'category-form-error']) get(id).hidden = true;
     get('service-form').reset = () => {};
     get('service-form').reportValidity = () => true;
     get('category-form').reset = () => {};
@@ -82,7 +86,8 @@ async function ui(api) {
     return {
         get, submit: () => get('service-form').listeners.submit({ preventDefault() {} }),
         add: () => get('add-service').listeners.click(),
-        edit: (index = 0) => get('services-list').children[index].children.at(-1).children[1].listeners.click()
+        edit: id => walk(get('services-list')).find(item => item.dataset.serviceId === id).children.at(-1).listeners.click(),
+        editCategory: label => walk(get('services-list')).find(item => item.attributes['aria-label'] === 'Edit category ' + label).listeners.click()
     };
 }
 function fill(p, values = {}) {
@@ -91,211 +96,175 @@ function fill(p, values = {}) {
         'service-price': '450.50', 'service-price-basis': 'per_session', 'service-participants': '2' };
     for (const [key, value] of Object.entries({ ...defaults, ...values })) p.get(key).value = value;
 }
-(async () => {
-    let api = backend(), p = await ui(api);
-    assert.equal(p.get('add-service').disabled, false);
-    assert.equal(p.get('services-empty').hidden, false);
-    p.add(); fill(p);
-    await p.submit();
-    const created = api.calls.at(-1).body;
-    assert.equal(created.p_duration_minutes, 90);
-    assert.equal(created.p_price_amount, 45050);
-    assert.equal(created.p_name, 'Session');
-    assert.equal(created.p_description, 'Details');
-    assert.equal(created.p_is_published, false);
-    assert.equal(created.p_participant_count, 2);
-    assert.equal(p.get('service-form').hidden, true);
-    assert.equal(p.get('services-message').textContent, 'Service saved.');
-    assert.equal(p.get('services-list').children.length, 1);
 
-    p = await ui(api); // A fresh page reads the saved service.
-    p.edit();
-    assert.equal(p.get('service-hours').value, 1);
-    assert.equal(p.get('service-minutes').value, 30);
-    assert.equal(p.get('service-price').value, '450.50');
-    api.categories.set('cat-a', { id: 'cat-a', label: 'Configured', icon: 'grid', enabled: true, sort_order: 0 });
-    p.get('service-category').value = 'cat-a';
-    p.get('service-published').checked = true;
-    p.get('service-price').value = '100.01';
-    await p.submit();
-    assert.equal(api.calls.at(-1).body.p_expected_updated_at, 'version-1');
-    assert.equal(api.calls.at(-1).body.p_price_amount, 10001);
-    assert.equal(api.records.size, 1);
-    assert.equal([...api.records.values()][0].is_published, true);
+function walk(node) { return [node,...node.children.flatMap(walk)]; }
+const click=(p,id)=>p.get(id).listeners.click();
+const categorySubmit=p=>p.get('category-form').listeners.submit({preventDefault(){}});
+const categoryFill=(p,label,extra={})=> {
+ p.get('category-label').value=label;
+ p.get('category-icon').value=extra.icon||'grid';
+ p.get('category-order').value=extra.order??'0';
+ p.get('category-enabled').checked=extra.enabled??true;
+};
+const status=(p,value)=>{p.get('service-status').value=value;p.get('service-status').listeners.change();};
+(async()=>{
+ let api=backend(),p=await ui(api);
+ assert.equal(p.get('add-service').disabled,false);
+ assert.equal(p.get('services-empty').hidden,false);
+ p.add();fill(p);status(p,'published');
+ await p.submit();
+ assert.equal(api.records.size,0);
+ assert.match(p.get('service-category-error').textContent,/Create new category/);
+ assert.equal(p.get('service-dialog').open,true);
+ p.get('service-category').value='__create__';p.get('service-category').listeners.change();
+ assert.equal(p.get('category-dialog').open,true);
+ assert.equal(p.get('service-name').value,'Session','Nested category form preserves service draft');
+ categoryFill(p,'  Training  ',{icon:'people',order:'2'});
+ api.failAfterSave=true;
+ await categorySubmit(p);
+ assert.equal(p.get('category-dialog').open,true,'Lost category response leaves category form open');
+ const categoryId=api.calls.at(-1).body.p_id;
+ assert.equal(api.categories.size,1);
+ assert.equal(p.get('service-name').value,'Session');
+ await categorySubmit(p);
+ assert.equal(api.categories.size,1,'Category create retry reuses UUID');
+ assert.equal(p.get('category-dialog').open,false);
+ assert.equal(p.get('service-dialog').open,true);
+ assert.equal(p.get('service-category').value,categoryId);
+ assert.equal(p.get('service-type').value,'private');
+ api.rejectSave=true;await p.submit();
+ assert.match(p.get('service-form-error').textContent,/Your category is saved/);
+ assert.equal(p.get('service-category').value,categoryId);
+ const serviceId=api.calls.at(-1).body.p_id;
+ api.rejectSave=false;api.failAfterSave=true;
+ await p.submit();
+ assert.equal(api.records.size,1);
+ await p.submit();
+ assert.equal(api.records.size,1,'Service retry does not duplicate');
+ assert.equal(api.calls.at(-1).body.p_id,serviceId);
+ assert.equal(api.calls.at(-1).body.p_category_id,categoryId);
+ assert.equal(api.calls.at(-1).body.p_price_amount,45050);
+ assert.equal(api.calls.at(-1).body.p_duration_minutes,90);
+ assert.equal(api.calls.at(-1).body.p_is_active,true);
+ assert.equal(api.calls.at(-1).body.p_is_published,true);
+ assert.equal(p.get('service-dialog').open,false);
+ assert.equal(p.get('services-message').textContent,'Service saved and published.');
+ const group=p.get('services-list').children[0],toggle=group.children[0].children[0];
+ assert.equal(toggle.children[1].textContent,'Training');
+ assert.equal(toggle.children[2].textContent,'1 service');
+ toggle.listeners.click();assert.equal(group.children[1].hidden,true);
+ toggle.listeners.click();assert.equal(group.children[1].hidden,false);
 
-    p.add(); fill(p, { 'service-type': 'class', 'service-price': '0' });
-    p.get('service-type').listeners.change();
-    assert.equal(p.get('service-participants-field').hidden, true);
-    assert.equal(p.get('service-participants').disabled, true);
-    assert.equal(p.get('service-price-basis').value, 'per_person');
-    await p.submit();
-    assert.equal(api.calls.at(-1).body.p_participant_count, null);
-    assert.equal(api.calls.at(-1).body.p_price_amount, 0);
-    assert.equal(api.calls.at(-1).body.p_price_basis, 'per_person');
+ // One status control retains both old flags, including both paused combinations.
+ p.edit(serviceId);status(p,'paused');await p.submit();
+ assert.equal(api.records.get(serviceId).is_active,false);
+ assert.equal(api.records.get(serviceId).is_published,true);
+ p.edit(serviceId);assert.equal(p.get('service-status').value,'paused');
+ await p.submit();assert.equal(api.records.get(serviceId).is_published,true,'Unchanged paused published service retains publication');
+ p.edit(serviceId);status(p,'published');await p.submit();
+ assert.equal(api.records.get(serviceId).is_active,true);
+ p.edit(serviceId);status(p,'draft');await p.submit();
+ assert.equal(api.records.get(serviceId).is_published,false);
+ p.edit(serviceId);status(p,'paused');await p.submit();
+ assert.equal(api.records.get(serviceId).is_active,false);
+ assert.equal(api.records.get(serviceId).is_published,false,'Paused draft stays unpublished');
 
-    api = backend(); p = await ui(api); p.add(); fill(p);
-    const count = api.calls.length;
-    for (const values of [
-        { 'service-hours': '0', 'service-minutes': '0' },
-        { 'service-hours': '24', 'service-minutes': '1' },
-        { 'service-hours': '1.5' }, { 'service-minutes': '60' },
-        { 'service-price': '12.345' }, { 'service-price': '-1' },
-        { 'service-price': '21474836.48' }, { 'service-participants': '0' }
-    ]) {
-        fill(p, values); await p.submit(); assert.equal(api.calls.length, count);
-        assert.equal(p.get('service-form-error').hidden, false);
-    }
-    fill(p); api.failAfterSave = true;
-    await p.submit();
-    const id = api.calls.at(-1).body.p_id;
-    assert.equal(p.get('service-form').hidden, false);
-    assert.equal(p.get('service-price').value, '450.50');
-    assert.equal(p.get('service-fields').disabled, false);
-    await p.submit();
-    assert.equal(api.calls.at(-1).body.p_id, id);
-    assert.equal(api.records.size, 1, 'Lost-response retry does not duplicate service');
+ // Category edits, icons, disabling, ordering and assigned counts all stay inside Services.
+ p.editCategory('Training');
+ categoryFill(p,'Training edited',{icon:'star',order:'4',enabled:false});
+ await categorySubmit(p);
+ assert.equal(api.categories.get(categoryId).enabled,false);
+ assert.equal(api.categories.get(categoryId).icon,'star');
+ p.edit(serviceId);status(p,'published');await p.submit();
+ assert.equal(p.get('service-dialog').open,true);
+ assert.match(p.get('service-category-error').textContent,/disabled/);
+ click(p,'edit-service-category');
+ p.get('category-enabled').checked=true;await categorySubmit(p);
+ await p.submit();
+ assert.equal(api.records.get(serviceId).is_published,true);
+ assert.equal(api.records.get(serviceId).is_active,true);
+ click(p,'add-category');categoryFill(p,'Earlier',{order:'0'});await categorySubmit(p);
+ const earlierId=api.calls.at(-1).body.p_id;
+ assert.equal(p.get('services-list').children[0].children[0].children[0].children[1].textContent,'Earlier');
+ p.edit(serviceId);p.get('service-category').value=earlierId;p.get('service-category').listeners.change();
+ const version=api.records.get(serviceId).updated_at;
+ await p.submit();
+ assert.equal(api.calls.at(-1).body.p_expected_updated_at,version);
+ assert.equal(api.records.size,1,'Moving edits the existing service record');
+ assert.equal(api.records.get(serviceId).category_id,earlierId);
+ const addTo=walk(p.get('services-list')).find(item=>item.attributes['aria-label']==='Add service to Training edited');
+ addTo.listeners.click();assert.equal(p.get('service-category').value,categoryId);
+ click(p,'cancel-service');
 
-    p.edit(); api.conflict = true; await p.submit();
-    assert.equal(p.get('service-form').hidden, false);
-    assert.match(p.get('service-form-error').textContent, /Cancel editing, reload/);
-    p.get('cancel-service').listeners.click(); api.conflict = false;
+ // Existing unassigned drafts and service photos/secondary fields round-trip without new IDs.
+ const unassigned={...api.records.get(serviceId),id:'unassigned',name:'Existing draft',category_id:null,
+ is_published:false,is_active:true,photo_path:'11111111-1111-4111-8111-111111111111/22222222-2222-4222-8222-222222222222.png',
+ description:'Saved description',price_basis:'per_person',participant_count:3,updated_at:'old'};
+ api.records.set(unassigned.id,unassigned);await click(p,'reload-services');
+ assert.equal(p.get('services-list').children[0].children[0].children[0].children[1].textContent,'Needs a category');
+ p.edit('unassigned');
+ assert.equal(p.get('service-description').value,'Saved description');
+ assert.equal(p.get('service-advanced').open,true,'Existing per-person settings are visible');
+ assert.equal(p.get('service-photo-preview').hidden,false);
+ p.get('service-category').value=earlierId;status(p,'published');await p.submit();
+ assert.equal(api.records.get('unassigned').photo_path,unassigned.photo_path);
+ assert.equal(api.records.get('unassigned').description,'Saved description');
+ assert.equal(api.records.get('unassigned').participant_count,3);
+ assert.equal(api.records.size,2);
+ p.edit('unassigned');api.conflict=true;await p.submit();
+ assert.equal(p.get('service-dialog').open,true);
+ assert.match(p.get('service-form-error').textContent,/changed/);
+ click(p,'cancel-service');api.conflict=false;
+ p.editCategory('Earlier');api.conflict=true;await categorySubmit(p);
+ assert.equal(p.get('category-dialog').open,true);assert.match(p.get('category-form-error').textContent,/changed/);
+ click(p,'cancel-category');api.conflict=false;
 
-    p.add(); fill(p);
-    let resume;
-    api.pause = new Promise(resolve => { resume = resolve; });
-    const pending = p.submit();
-    const submits = api.calls.length;
-    await p.submit();
-    assert.equal(api.calls.length, submits, 'Repeated submit suppressed while saving');
-    assert.equal(p.get('service-fields').disabled, true);
-    resume(); await pending; api.pause = null;
+ // Cancellation, validation and empty/disabled categories are real records, never fabricated.
+ p.add();fill(p);click(p,'create-service-category');categoryFill(p,'Cancelled');click(p,'cancel-category');
+ assert.equal(p.get('service-dialog').open,true);assert.equal(p.get('service-category').value,'');
+ let count=api.calls.length;
+ click(p,'create-service-category');
+ for(const bad of ['', ' '.repeat(3)]) {categoryFill(p,bad);await categorySubmit(p);assert.equal(api.calls.length,count);}
+ categoryFill(p,'Valid',{order:'-1'});await categorySubmit(p);assert.equal(api.calls.length,count);
+ click(p,'cancel-category');
+ for(const [values,id] of [
+ [{'service-name':''},'service-name-error'],
+ [{'service-hours':'0','service-minutes':'0'},'service-duration-error'],
+ [{'service-hours':'24','service-minutes':'1'},'service-duration-error'],
+ [{'service-price':'12.345'},'service-price-error'],
+ [{'service-price':'-1'},'service-price-error'],
+ [{'service-price':'21474836.48'},'service-price-error']
+ ]) {
+  fill(p,values);await p.submit();assert.equal(api.calls.length,count);assert.equal(p.get(id).hidden,false);
+ }
+ fill(p,{'service-participants':'0'});await p.submit();assert.equal(api.calls.length,count);assert.equal(p.get('service-advanced').open,true);
+ fill(p);let resume;api.pause=new Promise(resolve=>{resume=resolve;});
+ const pending=p.submit();count=api.calls.length;
+ await p.submit();assert.equal(api.calls.length,count,'Duplicate submit suppressed');
+ assert.equal(p.get('close-service').disabled,true,'Cannot dismiss an in-flight save');
+ p.get('service-dialog').listeners.cancel({preventDefault(){}});assert.equal(p.get('service-dialog').open,true);
+ resume();await pending;api.pause=null;
 
-    api = backend(); api.offline = true; p = await ui(api);
-    assert.equal(p.get('services-error').hidden, false);
-    assert.equal(p.get('services-empty').hidden, true, 'Load failure is not an empty catalogue');
-    assert.equal(p.get('add-service').disabled, true);
-    assert.equal(p.get('reload-services').disabled, false);
-    api.offline = false; await p.get('reload-services').listeners.click();
-    assert.equal(p.get('add-service').disabled, false);
-    p.add(); fill(p, { 'service-name': '<img src=x onerror=alert(1)>' }); await p.submit();
-    const card = p.get('services-list').children[0];
-    assert.equal(card.children[0].children[0].textContent, '<img src=x onerror=alert(1)>');
-
-
-    // Categories save independently, restore settings after reload, and never change booking type.
-    api = backend(); p = await ui(api);
-    const addCategory = () => p.get('add-category').listeners.click();
-    const submitCategory = () => p.get('category-form').listeners.submit({ preventDefault() {} });
-    addCategory();
-    assert.equal(p.get('add-service').disabled, true);
-    p.get('category-label').value = '  Consultations  ';
-    p.get('category-icon').value = 'calendar';
-    p.get('category-order').value = '3';
-    p.get('category-enabled').checked = false;
-    api.failAfterSave = true;
-    await submitCategory();
-    const categoryId = api.calls.at(-1).body.p_id;
-    assert.equal(p.get('category-form').hidden, false);
-    assert.equal(p.get('category-fields').disabled, false);
-    assert.equal(p.get('category-label').value, 'Consultations');
-    await submitCategory();
-    assert.equal(api.calls.at(-1).body.p_id, categoryId);
-    assert.equal(api.categories.size, 1);
-    assert.equal(p.get('category-form').hidden, true);
-    assert.equal(p.get('categories-message').textContent, 'Category saved.');
-    p = await ui(api);
-    p.get('categories-list').children[0].children.at(-1).children[0].listeners.click();
-    assert.equal(p.get('category-icon').value, 'calendar');
-    assert.equal(p.get('category-order').value, 3);
-    assert.equal(p.get('category-enabled').checked, false);
-    p.get('category-label').value = '<img src=x onerror=alert(1)>';
-    p.get('category-enabled').checked = true;
-    await submitCategory();
-    assert.equal(p.get('categories-list').children[0].children[2].textContent, '<img src=x onerror=alert(1)>');
-    assert(api.calls.at(-1).body.p_expected_updated_at);
-    p.add(); fill(p);
-    assert.equal(p.get('service-active').checked, true);
-    assert.equal(p.get('service-category').children.length, 2);
-    const beforePublish = api.calls.length;
-    p.get('service-published').checked = true;
-    await p.submit();
-    assert.equal(api.calls.length, beforePublish);
-    assert.match(p.get('service-form-error').textContent, /Choose a category/);
-    p.get('service-category').value = categoryId;
-    p.get('service-active').checked = false;
-    await p.submit();
-    assert.equal(api.calls.at(-1).body.p_category_id, categoryId);
-    assert.equal(api.calls.at(-1).body.p_is_active, false);
-    assert.equal(api.calls.at(-1).body.p_service_type, 'private');
-    p.edit();
-    assert.equal(p.get('service-category').value, categoryId);
-    assert.equal(p.get('service-active').checked, false);
-    assert.equal(p.get('service-published').checked, true);
-    p.get('cancel-service').listeners.click();
-    p.get('categories-list').children[0].children.at(-1).children[0].listeners.click();
-    api.conflict = true;
-    await submitCategory();
-    assert.match(p.get('category-form-error').textContent, /category changed/);
-    p.get('cancel-category').listeners.click();
-    api.conflict = false;
-    addCategory();
-    p.get('category-label').value = 'Another';
-    p.get('category-icon').value = 'grid';
-    for (const badOrder of ['-1','0.5','2147483648']) {
-        p.get('category-order').value = badOrder;
-        const before = api.calls.length;
-        await submitCategory();
-        assert.equal(api.calls.length, before);
-    }
-    p.get('category-order').value = '0';
-    let finishCategory;
-    api.pause = new Promise(resolve => { finishCategory = resolve; });
-    const categoryPending = submitCategory();
-    const categorySubmits = api.calls.length;
-    await submitCategory();
-    assert.equal(api.calls.length, categorySubmits);
-    assert.equal(p.get('category-fields').disabled, true);
-    finishCategory(); await categoryPending; api.pause = null;
-    assert.equal(p.get('categories-list').children[0].children[2].textContent, 'Another');
-
-
-    // The dedicated table shows real assigned-service counts, including hidden/inactive services.
-    const configuredRow = p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId);
-    assert.equal(configuredRow.children[0].textContent, '3');
-    assert.equal(configuredRow.children[3].textContent, '1');
-    assert.equal(configuredRow.children[4].children[0].textContent, 'Enabled');
-    assert.equal(p.get('categories-table').hidden, false);
-    p.add(); fill(p);
-    assert.equal(p.get('categories-editing-notice').hidden, false);
-    assert.equal(p.get('reload-categories').disabled, true);
-    p.get('service-category').value = categoryId;
-    p.get('service-active').checked = false;
-    await p.submit();
-    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[3].textContent, '2');
-    assert.equal(p.get('categories-editing-notice').hidden, true);
-    p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children.at(-1).children[0].listeners.click();
-    assert.equal(p.get('services-editing-notice').hidden, false);
-    p.get('category-enabled').checked = false;
-    await submitCategory();
-    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[4].children[0].textContent, 'Disabled');
-    assert.equal(p.get('services-editing-notice').hidden, true);
-    api.offline = true;
-    await p.get('reload-categories').listeners.click();
-    assert.equal(p.get('categories-error').hidden, false);
-    assert.match(p.get('categories-error').textContent, /Reload categories/);
-    assert.equal(p.get('categories-table').hidden, true, 'Failed load must not show trusted service counts');
-    assert.equal(p.get('add-category').disabled, true);
-    assert.equal(p.get('reload-categories').disabled, false);
-    api.offline = false;
-    await p.get('reload-categories').listeners.click();
-    assert.equal(p.get('categories-table').hidden, false);
-    assert.equal(p.get('categories-error').hidden, true);
-    assert.equal(p.get('categories-loading').hidden, true);
-    assert.equal(p.get('categories-list').children.find(row => row.dataset.categoryId === categoryId).children[3].textContent, '2');
-
-    const ids = [...html.matchAll(/id="([^"]+)"/g)].map(m => m[1]);
-    assert.equal(ids.length, new Set(ids).size, 'IDs are unique');
-    for (const match of html.matchAll(/for="([^"]+)"/g)) assert(ids.includes(match[1]));
-    assert(html.indexOf('src="/admin-services.js?v=4"') < html.indexOf('src="/admin.js?v=3"'));
-    console.log('PASS: dedicated category table/order/status/counts; category feedback/reload/error recovery; cross-section editing notices; category create/edit/reload/order/enable; one assignment; independent active/publication/type; category validation/stale edits/lost-response retry/duplicate-submit safety;  service create/edit/reload; 90-minute durations; exact cents; visibility; class fields; validation; preserved input; lost-response retry; duplicate-submit prevention; stale edits; network recovery; safe text rendering; form labels and script order.');
-})().catch(error => { console.error(error); process.exitCode = 1; });
+ // Classes stay honestly unbookable and retain per-person/null-participant rules.
+ p.add();fill(p,{'service-type':'class','service-price':'0'});
+ p.get('service-type').listeners.change();
+ p.get('service-category').value=earlierId;status(p,'published');await p.submit();
+ const classId=api.calls.at(-1).body.p_id;
+ assert.equal(api.records.get(classId).participant_count,null);
+ assert.equal(api.records.get(classId).price_basis,'per_person');
+ assert(walk(p.get('services-list')).some(item=>item.textContent==='Not bookable yet'));
+ assert(!walk(p.get('services-list')).some(item=>item.textContent==='Bookable'));
+ api.offline=true;await click(p,'reload-services');
+ assert.equal(p.get('services-error').hidden,false);assert.equal(p.get('add-service').disabled,true);
+ assert.equal(p.get('services-empty').hidden,true,'Load errors are not empty catalogues');
+ api.offline=false;await click(p,'reload-services');assert.equal(p.get('add-service').disabled,false);
+ p.add();fill(p,{'service-name':'<script>unsafe</script>'});await p.submit();
+ assert(walk(p.get('services-list')).some(item=>item.textContent==='<script>unsafe</script>'));
+ const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(ids.length,new Set(ids).size);
+ for(const match of html.matchAll(/for="([^"]+)"/g))assert(ids.includes(match[1]));
+ assert(!html.includes('nav-categories') && !html.includes('categories-panel'));
+ assert(html.includes('+ Create new category'));
+ assert(html.indexOf('admin-services.js?v=5')<html.indexOf('admin.js?v=3'));
+ console.log('PASS integrated Services: no-category inline creation/publication; category/service lost-response retries and partial failures; no duplicate saves; original IDs/photos/details/pricing; category editing/enable/order/collapse/counts/add/move; draft/published/paused flag preservation; disabled validation; classes unbookable; stale edits; offline recovery; safe text; modal locking; labels/navigation.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

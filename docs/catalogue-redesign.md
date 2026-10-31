@@ -2,6 +2,10 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Integrated admin Services — 2026-10-31
+
+The owner explicitly approved [integrated Services management](admin-services-workflow.md) and the saved [original reference image](references/admin-services-workflow-reference.png). There is NO Categories sidebar tab or separate category page: saved category groups, create/edit/enable/order, adding/moving services and inline category creation all live inside Services. Add/Edit service uses a responsive modal drawer. One Catalogue status selector (Draft/Published/Paused) replaces the two confusing Active/Published tick boxes while retaining their database semantics. Existing RPCs/schema/photo handling/validation/concurrency and customer booking safeguards are unchanged. This supersedes the earlier discussion below; consult the latest handoff for implementation and verification.
+
 ## Grouping UX under review — 2026-10-31
 
 The owner confirms grouping is essential, but Category/Unassigned terminology, a separate management tab and a publishing control blocked by configuration elsewhere are confusing. Revisit the interaction rather than adding lengthy explanations. Proposed next scope: call it Group and allow selecting/creating a group within the service form; agree it before implementation. Do not remove grouping or implement the whole proposal automatically. An optional-category candidate was tested but not released; its applied database change was reversed to preserve the deployed contract. See the newest handoff for exact state and migration history.

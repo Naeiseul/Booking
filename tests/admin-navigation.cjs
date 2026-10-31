@@ -49,7 +49,7 @@ async function page(options = {}) {
         addEventListener: (_, callback) => { ready = callback; }
     };
     for (const match of html.matchAll(/id="([^"]+)"/g)) nodes[match[1]] = new Element(document);
-    for (const id of ['admin-sidebar','services-panel','categories-panel','category-form','service-form','admin-view-business']) nodes[id].hidden = true;
+    for (const id of ['admin-sidebar','services-panel','category-form','service-form','admin-view-business']) nodes[id].hidden = true;
     const window = {
         location: {
             pathname: options.pathname || '/admin/fixture/fixture-key',
@@ -78,8 +78,8 @@ async function page(options = {}) {
 }
 let p = await page({ hash: '#categories' });
 assert(!p.nodes['admin-sidebar'].hidden, 'Sidebar appears after successful existing admin lookup');
-assert(!p.nodes['categories-panel'].hidden && p.nodes['services-panel'].hidden && p.nodes['calendar-panel'].hidden, 'Direct Categories hash opens the correct panel');
-assert(p.nodes['nav-categories'].attrs['aria-current'] === 'page', 'Categories active navigation');
+assert(!p.nodes['services-panel'].hidden && p.nodes['calendar-panel'].hidden, 'Old Categories hash opens Services');
+assert(!p.nodes['nav-categories'] && p.nodes['nav-services'].attrs['aria-current'] === 'page', 'Only Calendar and Services navigation remain');
 assert(p.nodes['admin-business-name'].textContent === '<img src=x onerror=alert(1)>', 'Business name uses safe text');
 assert(p.nodes['admin-view-business'].href === '/fixture' && !p.nodes['admin-view-business'].href.includes('fixture-key'), 'View business never includes the admin key');
 assert(p.nodes['biz-avatar-img'].src === 'https://fixture.invalid/logo.png', 'Configured business logo still loads in sidebar');
@@ -90,7 +90,7 @@ assert(p.nodes['day-tabs'].children.length === 7 && slot.className.includes('ope
 p.nodes['category-form'].hidden = false;
 p.nodes['category-label'].value = 'Unsaved category';
 p.go('#services');
-assert(!p.nodes['services-panel'].hidden && p.nodes['categories-panel'].hidden, 'Services navigation works');
+assert(!p.nodes['services-panel'].hidden, 'Services navigation works');
 assert(p.nodes['category-label'].value === 'Unsaved category' && !p.nodes['category-form'].hidden, 'Cross-section navigation preserves an unsaved category draft');
 assert(p.document.activeElement === p.nodes['services-heading'], 'Section navigation focuses its heading');
 p.go('#calendar');
@@ -105,7 +105,7 @@ assert(p.nodes['time-grid'].children[0] === slot && slot.className.includes('tak
 p.go('#unknown');
 assert(!p.nodes['calendar-panel'].hidden, 'Unknown section safely defaults to Calendar');
 p.go('#categories'); p.go('#services'); p.go('#categories');
-assert(!p.nodes['categories-panel'].hidden, 'Back/Forward-style hash changes restore the panel');
+assert(!p.nodes['services-panel'].hidden, 'Old category hashes keep routing to Services');
 p = await page({ pathname: '/admin.html', search: '?biz=query-business&key=fixture-key', hash: '#services' });
 assert(p.serviceArguments.bizSlug === 'query-business' && p.nodes['admin-view-business'].href === '/query-business', 'Query-format links retain supported navigation/public destination');
 assert(!p.nodes['services-panel'].hidden, 'Direct Services hash still works');
@@ -117,6 +117,6 @@ assert(p.nodes['admin-sidebar'].hidden && !p.serviceArguments && p.nodes['time-g
 p = await page({ pathname: '/admin/incomplete' });
 assert(p.calls.length === 0 && p.nodes['admin-sidebar'].hidden && p.nodes['business-status'].textContent.includes('incomplete'), 'Incomplete admin links fail before any RPC');
 assert(!html.includes('user-scalable=no'), 'Admin pinch zoom remains enabled');
-assert(html.includes('role="region" aria-label="Category list" tabindex="0"'), 'Wide category table has a labelled keyboard-scrollable region');
-console.log('PASS: Categories/Services/Calendar direct links and hash navigation; draft and calendar state preservation; existing slot saves; query links; public link excludes admin key; business identity; focus; denied/offline/incomplete access; zoom and table accessibility.');
+assert(!html.includes('id="categories-panel"') && html.includes('id="category-dialog"'), 'Categories are managed only inside Services');
+console.log('PASS: Services/Calendar and legacy category direct links and hash navigation; draft and calendar state preservation; existing slot saves; query links; public link excludes admin key; business identity; focus; denied/offline/incomplete access; zoom and table accessibility.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

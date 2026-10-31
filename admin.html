@@ -18,7 +18,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=3">
-    <link rel="stylesheet" href="/admin.css?v=6">
+    <link rel="stylesheet" href="/admin.css?v=7">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
@@ -36,7 +36,6 @@
             <nav class="admin-navigation" aria-label="Dashboard">
                 <a href="#calendar" id="nav-calendar" aria-controls="calendar-panel" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg><span>Calendar</span></a>
                 <a href="#services" id="nav-services" aria-controls="services-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3"/></svg><span>Services</span></a>
-                <a href="#categories" id="nav-categories" aria-controls="categories-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
             </nav>
             <div class="admin-sidebar-footer">
                 <a id="admin-view-business" target="_blank" rel="noopener noreferrer" hidden>
@@ -97,49 +96,49 @@
             </section>
             <section id="services-panel" aria-labelledby="services-heading" hidden>
                 <div class="admin-section-heading">
-                    <h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
-                    <button class="admin-add-service" id="add-service" type="button" disabled>Add service</button>
+                    <div><h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
+                    <p class="muted-text admin-section-description">Create, organise and publish your services here.</p></div>
+                    <div class="service-heading-actions">
+                        <button class="service-secondary-button" id="add-category" type="button" disabled>Add category</button>
+                        <button class="admin-add-service" id="add-service" type="button" disabled>+ Add service</button>
+                    </div>
                 </div>
-                <p class="muted-text admin-section-description">Manage what your business offers. Assign browsing groups in <a href="#categories">Categories</a>.</p>
                 <p class="service-feedback" id="services-message" role="status" hidden></p>
+                <p class="service-feedback" id="categories-message" role="status" hidden></p>
                 <p class="booking-error" id="services-error" role="alert" hidden></p>
-                <p class="service-hint admin-editing-notice" id="services-editing-notice" hidden>Finish or cancel your open category edit in <a href="#categories">Categories</a> before editing a service.</p>
-
                 <div class="service-list-toolbar">
                     <p class="muted-text" id="services-loading" role="status">Loading services…</p>
                     <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
                 </div>
                 <div id="services-list" class="services-list"></div>
                 <div class="admin-services-empty" id="services-empty" hidden>
-                    <h3>Your service catalogue starts here</h3>
-                    <p>Add your first service to start building your catalogue.</p>
+                    <h3>Add your first service</h3>
+                    <p>You can create its category while adding the service.</p>
                 </div>
-                <form class="service-form" id="service-form" aria-labelledby="service-form-heading" hidden>
-                    <h3 id="service-form-heading" tabindex="-1">Add service</h3>
+            </section>
+
+            <dialog id="service-dialog" class="service-drawer" aria-labelledby="service-form-heading">
+                <form class="service-form" id="service-form" aria-labelledby="service-form-heading" novalidate hidden>
+                    <div class="drawer-heading">
+                        <h3 id="service-form-heading">Add service</h3>
+                        <button id="close-service" class="service-icon-button" type="button" aria-label="Close service form">×</button>
+                    </div>
                     <fieldset id="service-fields">
                         <div class="booking-field">
                             <label for="service-name">Service name</label>
-                            <input id="service-name" name="service_name" maxlength="120" required>
-                        </div>
-                        <div class="booking-field">
-                            <label for="service-description">Description (optional)</label>
-                            <textarea id="service-description" name="description" maxlength="2000"></textarea>
-                        </div>
-                        <div class="booking-field service-photo-field">
-                            <label for="service-photo">Photo (optional)</label>
-                            <input id="service-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
-                            <p class="service-hint">JPG, PNG or WebP · Up to 5 MB.</p>
-                            <img id="service-photo-preview" class="service-photo-preview" alt="Selected service photo" hidden>
-                            <button id="remove-service-photo" class="service-secondary-button" type="button" hidden>Remove photo</button>
-                            <p id="photo-library-error" class="booking-error" role="status" hidden>Could not load saved photos. You can still upload a photo.</p>
-                            <div id="service-photo-library" class="service-photo-library" aria-label="Saved photos"></div>
+                            <input id="service-name" name="service_name" maxlength="120" required aria-describedby="service-name-error">
+                            <p id="service-name-error" class="booking-error field-error" hidden></p>
                         </div>
                         <div class="booking-field">
                             <label for="service-category">Category</label>
-                            <select id="service-category" name="category_id">
-                                <option value="">Unassigned</option>
+                            <select id="service-category" name="category_id" aria-describedby="service-category-error">
+                                <option value="">Choose a category</option>
                             </select>
-                            <p class="service-hint">Choose a category to publish this service.</p>
+                            <div class="category-form-actions">
+                                <button id="create-service-category" class="service-text-button" type="button">+ Create new category</button>
+                                <button id="edit-service-category" class="service-text-button" type="button" hidden>Edit category</button>
+                            </div>
+                            <p id="service-category-error" class="booking-error field-error" hidden></p>
                         </div>
                         <div class="booking-field">
                             <label for="service-type">Booking type</label>
@@ -147,27 +146,56 @@
                                 <option value="private">Private appointment</option>
                                 <option value="class">Shared class</option>
                             </select>
-                            <p class="service-hint" id="service-type-help">One booking covers the people included below.</p>
+                            <p class="service-hint" id="service-type-help"></p>
                         </div>
                         <div class="service-duration" role="group" aria-labelledby="service-duration-label">
                             <p class="service-field-label" id="service-duration-label">Duration</p>
                             <div class="service-form-columns">
                                 <div class="booking-field">
                                     <label for="service-hours">Hours</label>
-                                    <input id="service-hours" name="hours" type="number" min="0" max="24" step="1" value="0" required>
+                                    <input id="service-hours" name="hours" type="number" min="0" max="24" step="1" value="0" required aria-describedby="service-duration-error">
                                 </div>
                                 <div class="booking-field">
                                     <label for="service-minutes">Minutes</label>
-                                    <input id="service-minutes" name="minutes" type="number" min="0" max="59" step="1" value="0" required>
+                                    <input id="service-minutes" name="minutes" type="number" min="0" max="59" step="1" value="0" required aria-describedby="service-duration-error">
                                 </div>
                             </div>
-                            <p class="service-hint">Enter a duration between 1 minute and 24 hours.</p>
+                            <p id="service-duration-error" class="booking-error field-error" hidden></p>
                         </div>
-                        <div class="service-form-columns">
+                        <div class="booking-field">
+                            <label for="service-price">Price (ZAR)</label>
+                            <input id="service-price" name="price" type="number" inputmode="decimal" min="0" max="21474836.47" step="0.01" required aria-describedby="service-price-help service-price-error">
+                            <p class="service-hint" id="service-price-help"></p>
+                            <p id="service-price-error" class="booking-error field-error" hidden></p>
+                        </div>
+                        <div class="booking-field">
+                            <label for="service-status">Catalogue status</label>
+                            <select id="service-status" name="catalogue_status" aria-describedby="service-publication-help">
+                                <option value="draft">Draft — hidden from clients</option>
+                                <option value="published">Published — show in catalogue</option>
+                                <option value="paused">Paused — temporarily hidden</option>
+                            </select>
+                            <p id="service-publication-help" class="service-hint" role="status"></p>
+                        </div>
+
+                        <details id="service-content" class="service-options">
+                            <summary>Description &amp; photos</summary>
                             <div class="booking-field">
-                                <label for="service-price">Price (ZAR)</label>
-                                <input id="service-price" name="price" type="number" inputmode="decimal" min="0" max="21474836.47" step="0.01" required>
+                                <label for="service-description">Description (optional)</label>
+                                <textarea id="service-description" name="description" maxlength="2000"></textarea>
                             </div>
+                            <div class="booking-field service-photo-field">
+                                <label for="service-photo">Photo (optional)</label>
+                                <input id="service-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                                <p class="service-hint">JPG, PNG or WebP · Up to 5 MB.</p>
+                                <img id="service-photo-preview" class="service-photo-preview" alt="Selected service photo" hidden>
+                                <button id="remove-service-photo" class="service-secondary-button" type="button" hidden>Remove photo</button>
+                                <p id="photo-library-error" class="booking-error" role="status" hidden>Could not load saved photos. You can still upload a photo.</p>
+                                <div id="service-photo-library" class="service-photo-library" aria-label="Saved photos"></div>
+                            </div>
+                        </details>
+                        <details id="service-advanced" class="service-options">
+                            <summary>Pricing options</summary>
                             <div class="booking-field">
                                 <label for="service-price-basis">Price applies to</label>
                                 <select id="service-price-basis" name="price_basis">
@@ -175,87 +203,58 @@
                                     <option value="per_person">Each person</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="booking-field" id="service-participants-field">
-                            <label for="service-participants">People included in one booking</label>
-                            <input id="service-participants" name="participants" type="number" min="1" max="10000" step="1" value="1" required>
-                        </div>
-                        <label class="service-checkbox" for="service-active">
-                            <input id="service-active" name="active" type="checkbox" checked>
-                            Active service
-                        </label>
-                        <label class="service-checkbox" for="service-published">
-                            <input id="service-published" name="published" type="checkbox">
-                            Show in client catalogue
-                        </label>
-                        <p class="booking-error" id="service-form-error" role="alert" hidden></p>
-                        <div class="service-form-actions">
+                            <div class="booking-field" id="service-participants-field">
+                                <label for="service-participants">People included in one booking</label>
+                                <input id="service-participants" name="participants" type="number" min="1" max="10000" step="1" value="1" required>
+                                <p class="service-hint">Private booking size, not shared-class capacity.</p>
+                            </div>
+                        </details>
+                        <p class="booking-error" id="service-form-error" role="alert" tabindex="-1" hidden></p>
+                        <div class="service-form-actions drawer-actions">
                             <button class="admin-add-service" id="save-service" type="submit">Save service</button>
                             <button class="service-secondary-button" id="cancel-service" type="button">Cancel</button>
                         </div>
                     </fieldset>
                 </form>
-            </section>
-                <section id="categories-panel" class="category-manager" aria-labelledby="categories-heading" hidden>
-                    <div class="admin-section-heading">
-                        <h2 class="admin-section-title" id="categories-heading" tabindex="-1">Categories</h2>
-                        <button class="admin-add-service" id="add-category" type="button" disabled>Add category</button>
+            </dialog>
+
+            <dialog id="category-dialog" class="category-dialog" aria-labelledby="category-form-heading">
+                <form class="service-form" id="category-form" aria-labelledby="category-form-heading" novalidate hidden>
+                    <div class="drawer-heading">
+                        <h3 id="category-form-heading">Create category</h3>
+                        <button id="close-category" class="service-icon-button" type="button" aria-label="Close category form">×</button>
                     </div>
-                    <p class="muted-text admin-section-description">Create and order browsing categories for your services.</p>
-                    <p class="service-hint">Only enabled categories containing published, active services appear to clients. Lower order numbers appear first; service counts include all saved offerings assigned to each category.</p>
-                    <p class="service-feedback" id="categories-message" role="status" hidden></p>
-                    <p class="booking-error" id="categories-error" role="alert" hidden></p>
-                    <p class="service-hint admin-editing-notice" id="categories-editing-notice" hidden>Finish or cancel your open service edit in <a href="#services">Services</a> before editing a category.</p>
-                    <div class="service-list-toolbar">
-                        <p class="muted-text" id="categories-loading" role="status">Loading categories…</p>
-                        <button class="service-text-button" id="reload-categories" type="button" disabled>Reload categories</button>
-                    </div>
-                    <div id="categories-table" class="admin-table-scroll" role="region" aria-label="Category list" tabindex="0" hidden>
-                        <table class="admin-category-table">
-                            <caption class="admin-sr-only">Saved browsing categories and assigned service counts</caption>
-                            <thead>
-                                <tr><th scope="col">Order</th><th scope="col">Icon</th><th scope="col">Category name</th><th scope="col">Services</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
-                            </thead>
-                            <tbody id="categories-list"></tbody>
-                        </table>
-                    </div>
-                    <p class="muted-text" id="categories-empty" hidden>No categories added yet.</p>
-                    <form class="service-form" id="category-form" aria-labelledby="category-form-heading" hidden>
-                        <h3 id="category-form-heading" tabindex="-1">Add category</h3>
-                        <fieldset id="category-fields">
+                    <fieldset id="category-fields">
+                        <div class="booking-field">
+                            <label for="category-label">Category name</label>
+                            <input id="category-label" name="label" maxlength="80" required>
+                        </div>
+                        <div class="service-form-columns">
                             <div class="booking-field">
-                                <label for="category-label">Category name</label>
-                                <input id="category-label" name="label" maxlength="80" required>
+                                <label for="category-icon">Icon</label>
+                                <select id="category-icon" name="icon">
+                                    <option value="grid">Grid</option><option value="person">Person</option>
+                                    <option value="people">People</option><option value="calendar">Calendar</option>
+                                    <option value="book">Book</option><option value="star">Star</option>
+                                </select>
                             </div>
-                            <div class="service-form-columns">
-                                <div class="booking-field">
-                                    <label for="category-icon">Icon</label>
-                                    <select id="category-icon" name="icon">
-                                        <option value="grid">Grid</option>
-                                        <option value="person">Person</option>
-                                        <option value="people">People</option>
-                                        <option value="calendar">Calendar</option>
-                                        <option value="book">Book</option>
-                                        <option value="star">Star</option>
-                                    </select>
-                                </div>
-                                <div class="booking-field">
-                                    <label for="category-order">Display order</label>
-                                    <input id="category-order" name="sort_order" type="number" min="0" max="2147483647" step="1" value="0" required>
-                                </div>
+                            <div class="booking-field">
+                                <label for="category-order">Display order</label>
+                                <input id="category-order" name="sort_order" type="number" min="0" max="2147483647" step="1" value="0" required>
                             </div>
-                            <label class="service-checkbox" for="category-enabled">
-                                <input id="category-enabled" name="enabled" type="checkbox" checked>
-                                Enable category
-                            </label>
-                            <p class="booking-error" id="category-form-error" role="alert" hidden></p>
-                            <div class="service-form-actions">
-                                <button class="admin-add-service" id="save-category" type="submit">Save category</button>
-                                <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
-                            </div>
-                        </fieldset>
-                    </form>
-                </section>
+                        </div>
+                        <label class="service-checkbox" for="category-enabled">
+                            <input id="category-enabled" name="enabled" type="checkbox" checked>Enable category
+                        </label>
+                        <p class="service-hint" id="category-impact">Disabling hides this category and its services from clients.</p>
+                        <p class="booking-error" id="category-form-error" role="alert" tabindex="-1" hidden></p>
+                        <div class="service-form-actions">
+                            <button class="admin-add-service" id="save-category" type="submit">Save category</button>
+                            <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </dialog>
         </main>
 
         <footer style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
@@ -278,8 +277,8 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
-    <script src="/admin-navigation.js?v=2"></script>
-    <script src="/admin-services.js?v=4"></script>
+    <script src="/admin-navigation.js?v=3"></script>
+    <script src="/admin-services.js?v=5"></script>
     <script src="/admin.js?v=3"></script>
     <script src="/admin-contacts.js"></script>
 </body>

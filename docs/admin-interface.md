@@ -4,6 +4,14 @@ Saved 2026-10-30 from the owner's original admin.png attachment. This is the imp
 
 ![Admin interface visual reference](references/admin-interface-reference.png)
 
+## Current integrated Services workflow — 2026-10-31
+
+The owner has now explicitly approved [this workflow and reference](admin-services-workflow.md). All category management lives inside Services; the Categories sidebar tab/page is removed. Services has collapsible saved category groups, counts, Edit category and Add service actions. Add/Edit service uses a responsive modal drawer and can create/edit its category in a nested dialog without losing the service draft.
+
+One Catalogue status selector replaces the Active and Published checkboxes: Draft is hidden, Published is shown subject to category eligibility, and Paused is temporarily hidden. The original independent database values are preserved; paused services retain their prior publication flag. Shared classes remain Not bookable yet. Description/photos and pricing options are expandable. Existing records, photo handling, icons/order, calculations, validation, retry IDs and concurrency checks are retained.
+
+The original reference PNG is saved unchanged at [admin-services-workflow-reference.png](references/admin-services-workflow-reference.png). It supersedes the older standalone Categories/table workflow below. No sample screenshot offerings, capacity, packages or extra modules were added. See the latest handoff for verification.
+
 ## Implemented admin stage — 2026-10-30
 
 The owner approved a dedicated Categories screen and workspace/sidebar cleanup. Admin now has a dark sidebar with Calendar, Services and Categories, actual business identity, a safe public View business link, compact header/contact links and responsive navigation.
