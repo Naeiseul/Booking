@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         statusEl.textContent = "Tap a slot to toggle its availability";
         window.initializeAdminNavigation(data.name, bizSlug);
         window.initializeAdminServices({ bizSlug, adminKey });
+        if (window.initializeAdminProfile) window.initializeAdminProfile({ bizSlug, adminKey });
         
         // Logo and PWA injection
         if (data.name) {
@@ -166,7 +167,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 // Default to "taken" (grey) if it's not marked open in the DB
                 let status = dbSlot ? dbSlot.status : 'taken'; 
-                let isTaken = status === 'taken';
+                const expired = window.adminSlotHasPassed && window.adminSlotHasPassed(dateString, time);
+                let isTaken = expired || status === 'taken';
                 
                 chip.className = `time-chip ${isTaken ? 'taken' : 'open'}`;
                 
@@ -180,6 +182,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 // 7. Clicking a slot to toggle it
                 chip.addEventListener('click', async () => {
+                    if (window.adminSlotHasPassed && window.adminSlotHasPassed(dateString, time)) {
+                        chip.className = 'time-chip taken';
+                        isTaken = true;
+                        window.notifyAdminPastSlot(time);
+                        return;
+                    }
                     const newStatus = isTaken ? 'open' : 'taken';
                     
                     // Instantly change color for a smooth experience
@@ -236,3 +244,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         gridEl.innerHTML = '<div class="empty-state">Connection failed. Please check your internet.</div>';
     }
 });
+

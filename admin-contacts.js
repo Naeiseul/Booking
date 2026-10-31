@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 phoneEl.removeAttribute('href');
                 phoneEl.removeAttribute('title');
                 phoneEl.setAttribute('aria-label', 'Call business');
-                const phone = typeof data.whatsapp_number === 'string' ? data.whatsapp_number.trim() : '';
+                const phone = String(data.phone_number === undefined ? data.whatsapp_number || '' : data.phone_number || '').trim();
                 const dialNumber = phone.replace(/[\s().-]/g, '');
                 if (/^\+?\d[\d\s().-]*$/.test(phone) && /^\+?\d{7,15}$/.test(dialNumber)) {
                     phoneEl.href = 'tel:' + dialNumber;
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
 
+            if (window.BusinessProfile) BusinessProfile.render(data,true);
         } catch (_) {
             // Contact failures must not interrupt calendar or service controls.
         } finally {
@@ -63,3 +64,4 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshContacts();
     setInterval(refreshContacts, 3000);
 });
+

@@ -2,6 +2,32 @@
 
 Updated 2026-10-31.
 
+## Editable Business Profile and admin past-time notice — 2026-10-31 (read first)
+
+The owner explicitly instructed saving the supplied Business Profile mockup and implementing the extension after checking the completed Services workflow. Original Modern Business Profile Dashboard.png is saved unchanged at docs/references/business-profile-reference.png (1,682,547 bytes; blob 4100488b0a33b39a33da5aabeb0f8136c98eb97e). Reference commit: 26f70aeffc50ebe5a8ce6c68fa5fd053ec89af9c. Read docs/business-profile.md. Services already passed its existing requirements; no repeat redesign or Categories page was added.
+
+### Implemented
+- Footer identity tile opens #profile inside the existing workspace. Calendar and Services remain the only primary links. Separate View client page and Preview client page open the existing slug route in a new tab, without admin credentials.
+- Responsive profile cards edit the existing business row: name, tagline/About, logo/hero/gallery, email, independent phone/WhatsApp, configured social/website URLs, visibility toggle, read-only public link/copy, area and delivery descriptions. Empty public fields remain hidden. Client booking/catalogue logic is retained.
+- Existing name/logo/social/WhatsApp fields, admin-link ownership model, photo uploader and bucket are reused. Migration 20261031093801_add_editable_business_profile adds only missing fields and profile_version. It copies the existing WhatsApp value into phone_number to preserve the call link; it never changes the slug.
+- New public SECURITY INVOKER RPC wrappers call credential-checked private implementations with pinned search_path. RLS/direct table denial are retained. Saves whitelist fields, validate lengths/email/phones/HTTPS URLs/owned image objects, reject stale versions and recover an identical request after a lost response. No private profile metadata is returned publicly.
+- Image previews retain aspect ratio; JPG/PNG/WebP up to 5 MB, gallery up to 12. Uploads happen on Save through the UNCHANGED service-photo-upload function. Failed saves retain image paths/retry IDs and edits; Cancel restores the loaded profile. Remove drops only the profile reference, preserving shared storage/service assets.
+- Owner separately requested a friendly admin-only past-time popup: expired times are black, click checks South African time again and shows “09:00 has passed. Clients can only book future times.” No expired-slot write occurs. Future slot saving stays intact. This does not change set_slot's backend contract; public expiry filtering already exists.
+
+### Verification
+- Native admin Services/navigation, client categories/monthly calendar, availability sync, slot expiry and new admin past-time checks pass. Script syntax and markup checks performed.
+- Profile SQL suite passes on Supabase under anon/authenticated roles with fixtures rolled back: ownership/wrong keys/inactive business, direct-table denial, safe fields, validation, owned photos, stale edits, retry and unchanged slot/catalogue contracts.
+- Chromium 320/390/820/1440px: profile save/reload/sidebar identity, public display, independent contacts/social toggle, preview/mocked uploads/removal, failed-save retry without repeat uploads, validation, stale edits, Cancel, navigation, expired-slot no-write popup, future saves and no horizontal overflow.
+- Actual 390px browser → Supabase profile save → public page refresh passed using a disposable QA business. Its row was deleted and zero remaining rows verified. This test SKIPPED real image uploads; do not claim newly verified real branding uploads. Existing uploader is unchanged and was previously tested. Physical Safari/iOS is untested.
+- Real original business fields match the pre-change hash after excluding the newly added columns. Its profile_version remains 0. No real services/categories/photos/prices/availability were edited.
+- Security/performance advisors were reviewed; existing warnings concern the older calendar functions, not the new profile RPCs. Production release verification is recorded in the follow-up release note.
+
+### Authoritative next step
+The owner explicitly requests: after this release, carefully check picture uploading in Supabase, then test how the ACTUAL configured services appear on both Admin and client pages. Review ownership/file limits/preview/replacement/removal and use isolated QA for test writes. Do not insert mockup examples into Logtraq. This supersedes an automatic move to scheduling.
+Shared classes remain unbookable, service payments disabled, real Paystack preserved, date/time-only public slots accepted and Order summary PAUSED. Later sequence remains scheduling/capacity → reservations → verified payments.
+
+
+
 ## Integrated Services management implemented — 2026-10-31 (read first)
 
 The owner explicitly authorized the full Admin → Services improvement, then corrected the scope to REMOVE the separate Categories sidebar tab entirely. All category management now happens within Services. The latest reference and approved scope are [admin-services-workflow.md](admin-services-workflow.md) and the original [workflow PNG](references/admin-services-workflow-reference.png), saved unchanged in commit 50d0703. This supersedes the previous “still to agree” grouping proposal. The owner also requested replacing the two confusing Active/Published tick boxes with clearer wording.
@@ -525,3 +551,4 @@ Validation: JavaScript syntax, markup uniqueness/placement and mocked-DOM checks
 The owner approved a monthly calendar with previous/next arrows, replacing the date tabs within Your booking. Monday-first local dates, month/year header, weekday labels, highlighted selected date and today outline. Dates with returned open/date-time-only slots have a dot; dates without times remain selectable and show the honest empty message. Past dates are disabled and previous-month navigation stops at the current month. Future months remain browsable even when empty. Month browsing preserves the selected date/time and the time heading explicitly identifies that selected date; choosing another date clears the time. Polling preserves the viewed month, empty selected days and unchanged focused day nodes while updating availability markers. Keyboard-accessible buttons have full-date/opening labels; no new grid keyboard interaction is implied. No business data, admin/backend, scheduling-duration, reservation or payment changes.
 
 Validation: JavaScript syntax plus dependency-free tests/client-monthly-calendar.cjs, executed against the modified app/HTML in the session's JavaScript runtime. Covers Monday offset, month/year boundaries, leap years, past/empty dates, date/time-only slots, explicit taken/unknown rejection, focus, month/date/time preservation, slot disappearance, offline/recovery and details navigation. Node executable and actual desktop/mobile browser checks remain unavailable in this environment; do not claim browser verification. Verify production and changed live assets before reporting release. Next: owner reviews the monthly calendar before another small client edit.
+

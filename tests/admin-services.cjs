@@ -265,6 +265,7 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  for(const match of html.matchAll(/for="([^"]+)"/g))assert(ids.includes(match[1]));
  assert(!html.includes('nav-categories') && !html.includes('categories-panel'));
  assert(html.includes('+ Create new category'));
- assert(html.indexOf('admin-services.js?v=5')<html.indexOf('admin.js?v=3'));
+ assert(html.indexOf('admin-services.js?v=5')<html.indexOf('admin.js?v=4'));
  console.log('PASS integrated Services: no-category inline creation/publication; category/service lost-response retries and partial failures; no duplicate saves; original IDs/photos/details/pricing; category editing/enable/order/collapse/counts/add/move; draft/published/paused flag preservation; disabled validation; classes unbookable; stale edits; offline recovery; safe text; modal locking; labels/navigation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
+

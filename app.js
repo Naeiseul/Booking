@@ -473,6 +473,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 calendarEl.hidden = false;
                 availabilityLoaded = false;
                 updateBookButton();
+                if (window.BusinessProfile) BusinessProfile.render(null);
                 nameEl.textContent = "Not Found";
                 statusEl.hidden = false;
                 statusEl.textContent = "We couldn't find this calendar.";
@@ -549,6 +550,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (fbEl) { fbEl.href = data.facebook_url; fbEl.style.display = 'block'; }
             }
 
+            if (window.BusinessProfile) BusinessProfile.render(data);
             const nextServices = data.services || [];
             const publicCategories = data.categories || [];
             // The RPC enforces published + active + enabled, scoped to this business.
@@ -654,3 +656,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     // LIVE UPDATES: Poll the server silently every 3 seconds to update the UI
     setInterval(loadData, 3000);
 });
+

@@ -38,6 +38,7 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
     const name=new URL(route.request().url()).pathname.split('/').at(-1),p=route.request().postDataJSON();
     let data;
     if(name==='get_admin_page') data={name:'Isolated UI fixture',slots:[]};
+    else if(name==='get_admin_business_profile') data={name:'Isolated UI fixture',slug,profile_version:0,gallery_photo_paths:[],delivery_methods:[],show_social_icons:true};
     else if(name==='get_admin_services') data=records;
     else if(name==='get_admin_categories') data=categories;
     else if(name==='get_admin_service_photos') data=fixture?[{path:fixture.photo_path}]:[];
@@ -149,3 +150,4 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
   }
  } finally {await browser.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;});
+

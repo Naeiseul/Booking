@@ -1,0 +1,15 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(require('node:path').join(__dirname,'../admin-slot-time.js'),'utf8');
+const notice={hidden:true,textContent:''}; let dismiss;
+const context={window:{},Intl,Date,document:{getElementById:()=>notice},setTimeout:fn=>{dismiss=fn;return 1;},clearTimeout:()=>{}};
+vm.runInNewContext(source,context);
+const expired=context.window.adminSlotHasPassed;
+assert.equal(expired('2026-10-31','09:00',new Date('2026-10-31T06:59:59Z')),false);
+assert.equal(expired('2026-10-31','09:00',new Date('2026-10-31T07:00:00Z')),true);
+assert.equal(expired('2026-10-31','09:00',new Date('2026-10-31T07:00:01Z')),true);
+assert.equal(expired('2026-10-30','23:00',new Date('2026-10-30T22:00:00Z')),true);
+assert.equal(expired('2026-11-01','07:00',new Date('2026-10-31T07:00:00Z')),false);
+context.window.notifyAdminPastSlot('09:00');assert.equal(notice.hidden,false);
+assert.equal(notice.textContent,'09:00 has passed. Clients can only book future times.');
+dismiss();assert.equal(notice.hidden,true);
+console.log('PASS admin past-time guard: South African timezone, exact expiry, midnight, future times and accessible notice.');

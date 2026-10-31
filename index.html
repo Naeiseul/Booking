@@ -25,6 +25,7 @@
     </script>
     <link rel="stylesheet" href="/styles.css?v=3">
     <link rel="stylesheet" href="/catalogue.css?v=15">
+    <link rel="stylesheet" href="/profile.css?v=1">
 </head>
 <body class="catalogue-page">
     <div class="container-public">
@@ -37,6 +38,7 @@
             
             <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                 <h1 id="biz-title-text" style="color: var(--text); font-weight: 700; font-size: 24px; margin: 0; padding-bottom: 4px; width: 100%;"><span class="skeleton-text" style="display:inline-block;"></span></h1>
+                <p id="business-tagline" hidden></p>
                 <p class="muted-text" id="business-status" style="margin: 0;" hidden></p>
                 
                 <!-- Social Links -->
@@ -61,6 +63,7 @@
             </div>
         </header>
 
+        <section id="public-business-profile" class="public-business-profile" aria-label="About this business" hidden></section>
         <main class="catalogue-layout">
             <nav class="catalogue-menu" aria-label="Booking steps" hidden>
                 <button type="button" data-step="sessions" aria-controls="service-catalogue" aria-pressed="true" aria-current="step"><span class="step-number" aria-hidden="true">1</span><span class="step-label">Choose a session</span><span class="step-indicator" aria-hidden="true">Current step</span></button>
@@ -149,6 +152,7 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the logic -->
-    <script src="/app.js?v=8"></script>
+    <script src="/business-profile.js?v=1"></script>
+    <script src="/app.js?v=9"></script>
 </body>
 </html>

@@ -18,7 +18,8 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=3">
-    <link rel="stylesheet" href="/admin.css?v=7">
+    <link rel="stylesheet" href="/admin.css?v=8">
+    <link rel="stylesheet" href="/profile.css?v=1">
 </head>
 <body class="admin-page">
     <div class="admin-shell" id="admin-shell">
@@ -26,7 +27,7 @@
             <div class="admin-sidebar-brand">
             <div id="biz-avatar-container" class="admin-sidebar-avatar">
                 <svg id="biz-avatar-svg" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <img id="biz-avatar-img" src="" alt="Business Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <img id="biz-avatar-img" src="" alt="Business Logo" style="width: 100%; height: 100%; object-fit: contain; display: none;">
             </div>
                 <div class="admin-sidebar-identity">
                     <p class="admin-business-name" id="admin-business-name"></p>
@@ -38,8 +39,9 @@
                 <a href="#services" id="nav-services" aria-controls="services-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3"/></svg><span>Services</span></a>
             </nav>
             <div class="admin-sidebar-footer">
+<a id="nav-profile" class="admin-profile-link" href="#profile" aria-controls="profile-panel"><span id="profile-sidebar-avatar" class="profile-sidebar-avatar">B</span><span><strong id="profile-sidebar-name">Your business</strong><small>Business profile</small></span></a>
                 <a id="admin-view-business" target="_blank" rel="noopener noreferrer" hidden>
-                    <span>View business</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+                    <span>View client page</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
                 </a>
             </div>
         </aside>
@@ -69,6 +71,7 @@
                 </div>
         </header>
 
+        <div id="admin-calendar-toast" class="admin-calendar-toast" role="status" aria-live="polite" hidden></div>
         <main class="admin-main">
             <section id="calendar-panel" aria-labelledby="calendar-heading">
             <h2 class="admin-section-title" id="calendar-heading" tabindex="-1">Calendar</h2>
@@ -255,6 +258,20 @@
                     </fieldset>
                 </form>
             </dialog>
+        <section id="profile-panel" aria-labelledby="profile-heading" hidden>
+ <div class="profile-heading-row"><div><h2 id="profile-heading" tabindex="-1">Business Profile</h2><p>Manage your business details, branding and client-facing information.</p></div><a id="profile-preview" class="profile-button profile-secondary" target="_blank" rel="noopener noreferrer">Preview client page ↗</a></div>
+ <p id="profile-feedback" role="status" aria-live="polite">Loading business profile…</p>
+ <button type="button" id="profile-reload" class="profile-button profile-secondary">Reload saved profile</button>
+ <form id="business-profile-form">
+ <fieldset id="profile-fields" disabled><legend class="admin-sr-only">Business profile details</legend><div class="profile-grid">
+ <section class="profile-card"><h3>Basic information</h3><p class="profile-card-hint">Your business name, tagline and description.</p><label class="profile-field" for="profile-name"><span>Business name</span><input id="profile-name" name="name" required maxlength="120" autocomplete="organization"></label><label class="profile-field" for="profile-tagline"><span>Short tagline (optional)</span><input id="profile-tagline" name="tagline" maxlength="100" placeholder="Stronger. Healthier. You."></label><label class="profile-field" for="profile-description"><span>Business description / About (optional)</span><textarea id="profile-description" name="description" maxlength="2000" rows="6"></textarea></label></section>
+ <section class="profile-card"><h3>Branding</h3><p class="profile-card-hint">JPG, PNG or WebP. Up to 5 MB per image.</p><div class="profile-branding-grid"><div class="profile-image-control"><span class="profile-label">Business logo</span><div id="profile-logo-preview" class="profile-image-preview profile-logo-preview"></div><label class="profile-upload" for="profile-logo-file">Choose logo<input id="profile-logo-file" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" class="profile-remove" id="profile-logo-remove">Remove logo</button></div><div class="profile-image-control"><span class="profile-label">Booking page hero image</span><div id="profile-hero-preview" class="profile-image-preview "></div><label class="profile-upload" for="profile-hero-file">Choose image<input id="profile-hero-file" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" class="profile-remove" id="profile-hero-remove">Remove image</button></div></div><p class="profile-card-hint">Your logo keeps its original proportions.</p><span class="profile-label">Branding gallery (optional)</span><div id="profile-gallery" class="profile-gallery"></div><label class="profile-upload" for="profile-gallery-files">Add gallery photos<input id="profile-gallery-files" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><p class="profile-card-hint">Up to 12 photos.</p></section>
+ <section class="profile-card"><h3>Contact details</h3><p class="profile-card-hint">How clients can get in touch with you.</p><label class="profile-field" for="profile-email"><span>Business email (optional)</span><input id="profile-email" name="email" type="email" maxlength="254" autocomplete="email"></label><div class="profile-pair"><label class="profile-field" for="profile-phone_number"><span>Business phone (optional)</span><input id="profile-phone_number" name="phone_number" type="tel" maxlength="40" autocomplete="tel"></label><label class="profile-field" for="profile-whatsapp_number"><span>WhatsApp number (optional)</span><input id="profile-whatsapp_number" name="whatsapp_number" type="tel" maxlength="40"></label></div></section>
+ <section class="profile-card"><h3>Social links</h3><p class="profile-card-hint">Add your social media and website links.</p><div class="profile-pair"><label class="profile-field" for="profile-instagram_url"><span>Instagram (optional)</span><input id="profile-instagram_url" name="instagram_url" type="text" inputmode="url" maxlength="2048"></label><label class="profile-field" for="profile-facebook_url"><span>Facebook (optional)</span><input id="profile-facebook_url" name="facebook_url" type="text" inputmode="url" maxlength="2048"></label><label class="profile-field" for="profile-tiktok_url"><span>TikTok (optional)</span><input id="profile-tiktok_url" name="tiktok_url" type="text" inputmode="url" maxlength="2048"></label><label class="profile-field" for="profile-website_url"><span>Website (optional)</span><input id="profile-website_url" name="website_url" type="text" inputmode="url" maxlength="2048"></label></div></section>
+ <section class="profile-card"><h3>Client page details</h3><p class="profile-card-hint">Your public booking page and social visibility.</p><label class="profile-field" for="profile-public-link"><span>Public booking link</span><input id="profile-public-link" type="url" readonly></label><button type="button" id="profile-copy" class="profile-button profile-secondary">Copy Link</button><label class="profile-check" for="profile-show_social_icons"><input id="profile-show_social_icons" type="checkbox" role="switch">Show social icons on client page</label></section>
+ <section class="profile-card"><h3>Business settings</h3><p class="profile-card-hint">How and where you offer your services.</p><span class="profile-label">Service delivery methods</span><div class="profile-delivery"><label class="profile-delivery-option" for="profile-delivery-in_person"><input id="profile-delivery-in_person" type="checkbox" value="in_person"><span>In person<small>Clients come to you</small></span></label><label class="profile-delivery-option" for="profile-delivery-online"><input id="profile-delivery-online" type="checkbox" value="online"><span>Online<small>Virtual sessions</small></span></label><label class="profile-delivery-option" for="profile-delivery-mobile"><input id="profile-delivery-mobile" type="checkbox" value="mobile"><span>Mobile visits<small>You go to clients</small></span></label></div><label class="profile-field" for="profile-service_area"><span>Service area / Location (optional)</span><input id="profile-service_area" name="service_area" maxlength="250" placeholder="City, area or service region"></label></section>
+ </div><div class="profile-actions"><button type="submit" class="profile-button" id="profile-save">Save changes</button><button type="button" class="profile-button profile-secondary" id="profile-cancel">Cancel</button></div></fieldset></form>
+ </section>
         </main>
 
         <footer style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
@@ -277,9 +294,13 @@
     <!-- Load the configuration keys -->
     <script src="/config.js"></script>
     <!-- Load the admin logic -->
-    <script src="/admin-navigation.js?v=3"></script>
+    <script src="/business-profile.js?v=1"></script>
+    <script src="/admin-profile.js?v=1"></script>
+    <script src="/admin-navigation.js?v=4"></script>
     <script src="/admin-services.js?v=5"></script>
-    <script src="/admin.js?v=3"></script>
-    <script src="/admin-contacts.js"></script>
+    <script src="/admin-slot-time.js?v=1"></script>
+    <script src="/admin.js?v=4"></script>
+    <script src="/admin-contacts.js?v=2"></script>
 </body>
 </html>
+
