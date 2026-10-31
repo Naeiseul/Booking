@@ -30,7 +30,8 @@
 .profile-image-control { min-width:0; }
 .profile-image-preview { display:flex; align-items:center; justify-content:center; width:100%; height:135px; background:#f6f6f6; border:1px dashed #ddd; border-radius:10px; margin:12px 0; overflow:hidden; font-size:13px; color:#666; }
 .profile-image-preview img { width:100%; height:100%; object-fit:contain; }
-.profile-logo-preview { max-width:135px; font-size:38px; }
+.profile-logo-preview { max-width:135px; font-size:38px; overflow:visible; }
+.profile-logo-preview img, .profile-sidebar-avatar img { border-radius:0; }
 .profile-upload { position:relative; font-size:12px; background:#f3f3f3; border-color:#ddd; color:#111; padding:10px 12px; overflow:hidden; }
 .profile-upload input { position:absolute; inset:0; opacity:0; width:100%; cursor:pointer; }
 .profile-upload:focus-within { outline:2px solid #111; outline-offset:3px; }
@@ -44,7 +45,7 @@
 .admin-profile-link > span:last-child { min-width:0; }
 .admin-profile-link strong { display:block; font-size:13px; overflow-wrap:anywhere; }
 .admin-profile-link small { display:block; margin-top:5px; color:#bbb; font-size:12px; }
-.profile-sidebar-avatar { display:flex; align-items:center; justify-content:center; width:40px; height:40px; flex:0 0 40px; border-radius:10px; background:#fff; color:#111; overflow:hidden; }
+.profile-sidebar-avatar { display:flex; align-items:center; justify-content:center; width:40px; height:40px; flex:0 0 40px; border-radius:10px; background:#fff; color:#111; overflow:visible; }
 .profile-sidebar-avatar img { width:100%; height:100%; object-fit:contain; }
 #profile-panel :focus-visible { outline:2px solid #111; outline-offset:3px; }
 .public-business-profile { max-width:900px; margin:0 auto 24px; text-align:center; color:var(--text); }

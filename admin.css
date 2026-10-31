@@ -25,7 +25,7 @@
     background: #0B0C0E; color: #F8FAFC;
 }
 .admin-sidebar-brand { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 4px 8px; }
-.admin-sidebar-avatar { width: 44px; height: 44px; flex: 0 0 44px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; background: #1F2227; }
+.admin-sidebar-avatar { width: 44px; height: 44px; flex: 0 0 44px; display: flex; align-items: center; justify-content: center; overflow: visible; border-radius: 12px; background: #1F2227; }
 .admin-sidebar-avatar svg { width: 28px; height: 28px; }
 .admin-sidebar-identity { min-width: 0; }
 .admin-business-name { font-size: 14px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }

@@ -2,6 +2,12 @@
 
 Updated 2026-10-31.
 
+## Preserve full logo edges — 2026-10-31 (read first)
+
+The owner reported cropped/pinched logos. Original saved image files are unchanged. Removed rounded overflow clipping from the admin identity, bottom profile avatar and profile logo preview. The public identity no longer uses a circular clipping frame, and both business/header and Logtraq footer images use contain instead of cover. Existing frame dimensions remain responsive. No uploaded image, service photograph, database value or booking behaviour changed. Cache versions were bumped.
+
+Native admin navigation checks passed. Browser verification was attempted but this fresh sandbox lacks Chromium system libraries; do not claim a new browser pass for this styling-only fix. Earlier responsive workflow checks remain recorded below. Production deployment/assets are checked after this commit. Careful real Supabase picture-upload verification remains pending.
+
 ## Simple Groups workflow replaces technical category controls — 2026-10-31 (read first)
 
 The owner explicitly rejected the complexity of Category, Display order, Enable category and icon-name choices. Visible admin wording is now Group. Creating a group asks only for Group name and Save group. New groups remain shown by default. Optional visual symbols and Show to clients are inside a closed More options section. Hiding a group still hides its published services without deleting anything. Existing category IDs, icons, enabled values and order fields remain intact.
