@@ -1,4 +1,8 @@
 /* Admin workspace: business identity and supported sections in a neutral sidebar. */
+.category-options { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+.category-options summary { cursor: pointer; min-height: 32px; font-size: 14px; }
+.category-options[open] summary { margin-bottom: 16px; }
+.category-options .service-checkbox { margin-top: 16px; }
 .category-icon-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .category-icon-choice { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 8px; border: 1px solid #ccc; border-radius: 9px; background: #fff; color: #222; cursor: pointer; }
 .category-icon-choice[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }

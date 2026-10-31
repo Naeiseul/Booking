@@ -75,8 +75,8 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
    await page.locator('#service-category-error').waitFor();
    await page.locator('#service-category').selectOption('__create__');
    await page.locator('#category-label').fill('QA Training');
-   await page.getByRole('button',{name:'Use people icon',exact:true}).click();
-   await page.locator('#category-order').fill('2');
+   await page.locator('#category-options summary').click();await page.getByRole('button',{name:'Use people icon',exact:true}).click();
+   
    await check(page);await saveCategory(page);
    assert.equal(await page.locator('#service-name').inputValue(),'QA Workflow Service');
    await page.locator('#service-content summary').click();
@@ -87,7 +87,7 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
    await check(page);await saveService(page);
    await row(page,'QA Workflow Service').getByText('Published',{exact:true}).waitFor();
    const originalId=await row(page,'QA Workflow Service').getAttribute('data-service-id');
-   const group=page.locator('.admin-service-group').filter({has:page.getByRole('button',{name:'Edit category QA Training',exact:true})});
+   const group=page.locator('.admin-service-group').filter({has:page.getByRole('button',{name:'Edit group QA Training',exact:true})});
    await group.locator('.service-group-toggle').click();assert.equal(await row(page,'QA Workflow Service').isVisible(),false);
    await group.locator('.service-group-toggle').click();
    await row(page,'QA Workflow Service').getByRole('button',{name:'Edit QA Workflow Service',exact:true}).click();
@@ -100,16 +100,16 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
    assert.equal(await page.locator('#service-participants').inputValue(),'2');
    assert.equal(await page.locator('#service-description').inputValue(),'Isolated QA description');
    await page.locator('#service-status').selectOption('published');await saveService(page);
-   await page.getByRole('button',{name:'Edit category QA Training',exact:true}).click();
-   await page.locator('#category-enabled').uncheck();await saveCategory(page);
-   await row(page,'QA Workflow Service').getByText('Category disabled',{exact:true}).waitFor();
-   await page.getByRole('button',{name:'Edit category QA Training',exact:true}).click();
-   await page.locator('#category-enabled').check();await saveCategory(page);
+   await page.getByRole('button',{name:'Edit group QA Training',exact:true}).click();
+   await page.locator('#category-options summary').click();await page.locator('#category-enabled').uncheck();await saveCategory(page);
+   await row(page,'QA Workflow Service').getByText('Group disabled',{exact:true}).waitFor();
+   await page.getByRole('button',{name:'Edit group QA Training',exact:true}).click();
+   await page.locator('#category-options summary').click();await page.locator('#category-enabled').check();await saveCategory(page);
    await row(page,'QA Workflow Service').getByText('Published',{exact:true}).waitFor();
    await page.locator('#add-category').click();await page.locator('#category-label').fill('QA Earlier');
-   await page.locator('#category-order').fill('0');await saveCategory(page);
+   await saveCategory(page);
    await row(page,'QA Workflow Service').getByRole('button',{name:'Edit QA Workflow Service',exact:true}).click();
-   const earlier=await page.locator('#service-category option').filter({hasText:'QA Earlier'}).getAttribute('value');
+   const earlier=await page.locator('#service-group option').filter({hasText:'QA Earlier'}).getAttribute('value');
    await page.locator('#service-category').selectOption(earlier);await saveService(page);
    assert.equal(await row(page,'QA Workflow Service').getAttribute('data-service-id'),originalId);
    await page.getByRole('button',{name:'Add service to QA Training',exact:true}).click();
@@ -126,10 +126,10 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
     assert.equal(records.find(s=>s.id===fixture.id).photo_path,fixture.photo_path);
     assert.equal(records.find(s=>s.id===fixture.id).price_amount,fixture.price_amount);
    }
-   await page.locator('#add-service').click();await fill(page,'Cancelled nested category');
+   await page.locator('#add-service').click();await fill(page,'Cancelled nested group');
    await page.locator('#create-service-category').click();await page.keyboard.press('Escape');
    assert.equal(await page.locator('#service-dialog').isVisible(),true);
-   assert.equal(await page.locator('#service-name').inputValue(),'Cancelled nested category');
+   assert.equal(await page.locator('#service-name').inputValue(),'Cancelled nested group');
    await check(page);
    await page.screenshot({path:'/tmp/admin-services-drawer-'+width+(qa?'-real':'')+'.png',fullPage:true});
    await page.locator('#cancel-service').click();
@@ -145,10 +145,8 @@ const row=(page,name)=>page.locator('.admin-service-row').filter({has:page.getBy
    assert.equal(await classCard.getByRole('button').isDisabled(),true,'Shared class scheduling remains disabled');
    await check(client);
    assert.deepEqual(errors,[]);
-   console.log('PASS '+(qa?'real browser → Supabase → public catalogue':'intercepted RPC browser')+' '+width+'px: category creation/assignment, publication, status round-trip, icons/order/enable, move preserving ID, classes disabled, modal cancel/focus, photographs, no overflow');
+   console.log('PASS '+(qa?'real browser → Supabase → public catalogue':'intercepted RPC browser')+' '+width+'px: group creation/assignment, publication, status round-trip, icons/order/enable, move preserving ID, classes disabled, modal cancel/focus, photographs, no overflow');
    await context.close();
   }
  } finally {await browser.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;});
-
-

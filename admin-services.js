@@ -220,7 +220,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         states.appendChild(badge);
         if (service.is_published && (!category || !category.enabled)) {
             const reason = document.createElement('span'); reason.className = 'service-hint';
-            reason.textContent = !category ? 'Needs a category' : 'Category disabled'; states.appendChild(reason);
+            reason.textContent = !category ? 'Needs a group' : 'Group disabled'; states.appendChild(reason);
         }
         if (service.service_type === 'class') {
             const pending = document.createElement('span'); pending.className = 'service-hint';
@@ -252,7 +252,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             toggle.setAttribute('aria-controls',bodyId);
             toggle.setAttribute('aria-expanded',String(!collapsedCategories.has(key)));
             toggle.appendChild(iconElement(category ? category.icon : 'grid'));
-            const heading = document.createElement('h3'); heading.textContent = category ? category.label : 'Needs a category';
+            const heading = document.createElement('h3'); heading.textContent = category ? category.label : 'Needs a group';
             toggle.appendChild(heading);
             const count = document.createElement('span'); count.className='service-group-count';
             count.textContent=items.length+' '+(items.length===1?'service':'services'); toggle.appendChild(count);
@@ -264,8 +264,15 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
                     const disabled=document.createElement('span'); disabled.className='service-badge';
                     disabled.textContent='Disabled'; header.appendChild(disabled);
                 }
-                const edit=button('Edit category',()=>openCategoryForm(category));
-                edit.setAttribute('aria-label','Edit category '+category.label); header.appendChild(edit);
+                const edit=button('Edit group',()=>openCategoryForm(category));
+                edit.setAttribute('aria-label','Edit group '+category.label); header.appendChild(edit);
+                const position=ordered.findIndex(item=>item.id===category.id);
+                for(const [label,step] of [['Move up',-1],['Move down',1]]) {
+                    const move=button(label,()=>moveGroup(category,step));
+                    move.setAttribute('aria-label',label+' '+category.label);
+                    if(position+step<0 || position+step>=ordered.length) move.disabled=true;
+                    header.appendChild(move);
+                }
             }
             group.appendChild(header);
             const body=document.createElement('div'); body.id=bodyId; body.className='service-group-body';
@@ -277,15 +284,15 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             });
             if(!category) {
                 const hint=document.createElement('p'); hint.className='service-hint unassigned-help';
-                hint.textContent='Edit a service to choose or create its category.'; body.appendChild(hint);
+                hint.textContent='Edit a service to choose or create its group.'; body.appendChild(hint);
             }
             items.forEach(service=>body.appendChild(renderServiceRow(service)));
             if(!items.length) {
                 const hint=document.createElement('p'); hint.className='service-hint unassigned-help';
-                hint.textContent='No services in this category yet.'; body.appendChild(hint);
+                hint.textContent='No services in this group yet.'; body.appendChild(hint);
             }
             if(category) {
-                const addInCategory=button('+ Add service to this category',()=>openForm(null,category.id),'service-secondary-button category-add-service');
+                const addInCategory=button('+ Add service to this group',()=>openForm(null,category.id),'service-secondary-button group-add-service');
                 addInCategory.setAttribute('aria-label','Add service to '+category.label);
                 body.appendChild(addInCategory);
             }
@@ -296,8 +303,8 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     function updatePublication() {
         const category=categorySelection(), {published,active}=catalogueState();
         get('edit-service-category').hidden=!category;
-        let text=!active ? 'Paused. Hidden from clients.' : !published ? 'Draft. Hidden from clients.' : !category ? 'Choose or create a category to publish.' :
-            !category.enabled ? 'This category is disabled. Edit it here to enable it, or choose another.' :
+        let text=!active ? 'Paused. Hidden from clients.' : !published ? 'Draft. Hidden from clients.' : !category ? 'Choose or create a group to publish.' :
+            !category.enabled ? 'This group is disabled. Edit it here to enable it, or choose another.' :
             get('service-type').value==='class' ? 'Shown in the catalogue. Not bookable yet. Class scheduling is not ready.' :
             'Shown in the catalogue. Payment checkout is not available yet.';
         get('service-publication-help').textContent=text;
@@ -320,12 +327,12 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
     function renderCategoryOptions(selectedId) {
         const select=get('service-category'); select.replaceChildren();
-        const placeholder=document.createElement('option'); placeholder.value=''; placeholder.textContent='Choose a category'; select.appendChild(placeholder);
+        const placeholder=document.createElement('option'); placeholder.value=''; placeholder.textContent='Choose a group'; select.appendChild(placeholder);
         [...categories].sort((a,b)=>a.sort_order-b.sort_order || a.label.localeCompare(b.label)).forEach(category=>{
             const option=document.createElement('option'); option.value=category.id;
             option.textContent=category.label+(category.enabled?'':' (disabled)'); select.appendChild(option);
         });
-        const create=document.createElement('option'); create.value='__create__'; create.textContent='+ Create new category'; select.appendChild(create);
+        const create=document.createElement('option'); create.value='__create__'; create.textContent='+ Create new group'; select.appendChild(create);
         select.value=selectedId || ''; selectedCategoryId=select.value;
     }
     function clearFieldErrors() {
@@ -375,9 +382,24 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         } catch(failure) { showError(error,requestError(failure,'load')); }
         finally { loading.hidden=true; updateButtons(); }
     }
+    async function moveGroup(category,step) {
+        if(saving || !ready || !form.hidden || !categoryForm.hidden) return;
+        const ordered=[...categories].sort((a,b)=>a.sort_order-b.sort_order || String(a.created_at).localeCompare(String(b.created_at)) || a.id.localeCompare(b.id));
+        const index=ordered.findIndex(item=>item.id===category.id),next=index+step;
+        if(next<0 || next>=ordered.length) return;
+        [ordered[index],ordered[next]]=[ordered[next],ordered[index]];
+        saving=true; updateButtons(); renderServices(); error.hidden=true;
+        try {
+            const saved=await rpc('reorder_admin_categories',{p_ids:ordered.map(item=>item.id),p_expected_versions:Object.fromEntries(categories.map(item=>[item.id,item.updated_at]))});
+            if(!Array.isArray(saved)) throw Error('Could not confirm the new order. Try again.');
+            categories=saved; showError(message,'Group moved.');
+        } catch(failure) { showError(error,failure.message || 'Could not move this group. Reload Services and try again.'); }
+        finally { saving=false; updateButtons(); renderServices(); }
+    }
     function openCategoryForm(category, fromService=false) {
         if(saving || !ready || !categoryForm.hidden || (!form.hidden && !fromService)) return;
         inlineCategory=fromService; categoryForm.reset();
+        get('category-options').open=false;
         categoryDraftId=category ? category.id : crypto.randomUUID();
         categoryExpectedUpdatedAt=category ? category.updated_at : null;
         get('category-label').value=category ? category.label : '';
@@ -385,7 +407,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         renderIconPicker();
         get('category-order').value=category ? category.sort_order : Math.min(2147483647,categories.reduce((max,item)=>Math.max(max,item.sort_order+1),0));
         get('category-enabled').checked=category ? category.enabled : true;
-        get('category-form-heading').textContent=category ? 'Edit category' : 'Create category';
+        get('category-form-heading').textContent=category ? 'Edit group' : 'Create group';
         categoryError.hidden=true; categoryMessage.hidden=true; categoryForm.hidden=false;
         updateButtons(); categoryDialog.showModal(); get('category-label').focus();
     }
@@ -406,11 +428,11 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         event.preventDefault(); if(saving || categoryForm.hidden) return;
         categoryError.hidden=true;
         get('category-label').value=get('category-label').value.trim();
-        if(!get('category-label').value) { showError(categoryError,'Enter a category name.'); get('category-label').focus(); return; }
-        if(get('category-label').value.length>80) { showError(categoryError,'Use 80 characters or fewer for the category name.'); get('category-label').focus(); return; }
+        if(!get('category-label').value) { showError(categoryError,'Enter a group name.'); get('category-label').focus(); return; }
+        if(get('category-label').value.length>80) { showError(categoryError,'Use 80 characters or fewer for the group name.'); get('category-label').focus(); return; }
         const order=Number(get('category-order').value);
         if(get('category-order').value==='' || !Number.isInteger(order)||order<0||order>2147483647) {
-            showError(categoryError,'Enter a whole display order between 0 and 2,147,483,647.'); get('category-order').focus(); return;
+            showError(categoryError,'Reload Services and try saving this group again.'); return;
         }
         if(!categoryForm.reportValidity()) return;
         saving=true; get('category-fields').disabled=true; get('save-category').textContent='Saving…'; updateButtons();
@@ -418,7 +440,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             const wasNew=categoryExpectedUpdatedAt===null;
             const saved=await rpc('save_admin_category',{p_id:categoryDraftId,p_label:get('category-label').value,
                 p_icon:get('category-icon').value,p_enabled:get('category-enabled').checked,p_sort_order:order,p_expected_updated_at:categoryExpectedUpdatedAt});
-            if(!saved || saved.id!==categoryDraftId || !saved.updated_at) throw Error('Invalid category save response');
+            if(!saved || saved.id!==categoryDraftId || !saved.updated_at) throw Error('Invalid group save response');
             const index=categories.findIndex(item=>item.id===saved.id);
             if(index===-1) categories.push(saved); else categories[index]=saved;
             if(inlineCategory) {
@@ -426,13 +448,13 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
                 get('service-category-error').hidden=true;
             }
             closeCategoryForm();
-            categoryMessage.textContent='Category saved.'; categoryMessage.hidden=false;
+            categoryMessage.textContent='Group saved.'; categoryMessage.hidden=false;
             if(inlineCategory) {
                 updatePublication();
-                if(wasNew) get('service-publication-help').textContent='Category saved and selected. Save the service to finish.';
+                if(wasNew) get('service-publication-help').textContent='Group saved and selected. Save the service to finish.';
             }
         } catch(failure) { showError(categoryError,requestError(failure,'save','category')); }
-        finally { saving=false; get('category-fields').disabled=false; get('save-category').textContent='Save category'; updateButtons(); renderServices(); }
+        finally { saving=false; get('category-fields').disabled=false; get('save-category').textContent='Save group'; updateButtons(); renderServices(); }
     });
     add.addEventListener('click',()=>openForm(null));
     reload.addEventListener('click',loadServices);
@@ -457,8 +479,8 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             fieldError('service-name','Enter a service name of 1–120 characters.'); return;
         }
         const category=categorySelection(), {published,active}=catalogueState();
-        if(published && !category) { fieldError('service-category','Choose a category or use + Create new category to publish.'); return; }
-        if(published && active && !category.enabled && (!initialPublished || publicationRequested || category.id!==initialCategoryId)) { fieldError('service-category','This category is disabled. Use Edit category to enable it, or choose another.'); return; }
+        if(published && !category) { fieldError('service-category','Choose a group or use + Create new group to publish.'); return; }
+        if(published && active && !category.enabled && (!initialPublished || publicationRequested || category.id!==initialCategoryId)) { fieldError('service-category','This group is hidden. Open Edit group and switch on Show to clients, or choose another group.'); return; }
         const hours=Number(get('service-hours').value), minutes=Number(get('service-minutes').value), duration=hours*60+minutes;
         if(get('service-hours').value==='' || get('service-minutes').value==='' || !Number.isInteger(hours) ||
             !Number.isInteger(minutes)||hours<0||minutes<0||minutes>59||duration<1||duration>1440) {
@@ -489,10 +511,10 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             const index=services.findIndex(item=>item.id===saved.id);
             if(index===-1) services.push(saved); else services[index]=saved;
             closeForm(); error.hidden=true;
-            message.textContent=!saved.is_active ? 'Service saved. Paused. Hidden from clients.' : !saved.is_published ? 'Draft saved.' : category && category.enabled ? 'Service saved and published.' : 'Service saved. Category disabled. Hidden from clients.';
+            message.textContent=!saved.is_active ? 'Service saved. Paused. Hidden from clients.' : !saved.is_published ? 'Draft saved.' : category && category.enabled ? 'Service saved and published.' : 'Service saved. Group disabled. Hidden from clients.';
             message.hidden=false;
         } catch(failure) {
-            showError(formError,(createdInlineCategory?'Your category is saved. ':'')+requestError(failure,'save'));
+            showError(formError,(createdInlineCategory?'Your group is saved. ':'')+requestError(failure,'save'));
             formError.focus();
         } finally { saving=false; fields.disabled=false; save.textContent='Save service'; updateButtons(); renderServices(); }
     });

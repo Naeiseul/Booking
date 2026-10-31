@@ -87,7 +87,7 @@ async function ui(api) {
         get, submit: () => get('service-form').listeners.submit({ preventDefault() {} }),
         add: () => get('add-service').listeners.click(),
         edit: id => walk(get('services-list')).find(item => item.dataset.serviceId === id).children.at(-1).listeners.click(),
-        editCategory: label => walk(get('services-list')).find(item => item.attributes['aria-label'] === 'Edit category ' + label).listeners.click()
+        editCategory: label => walk(get('services-list')).find(item => item.attributes['aria-label'] === 'Edit group ' + label).listeners.click()
     };
 }
 function fill(p, values = {}) {
@@ -114,26 +114,26 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  p.add();fill(p);status(p,'published');
  await p.submit();
  assert.equal(api.records.size,0);
- assert.match(p.get('service-category-error').textContent,/Create new category/);
+ assert.match(p.get('service-category-error').textContent,/Create new group/);
  assert.equal(p.get('service-dialog').open,true);
  p.get('service-category').value='__create__';p.get('service-category').listeners.change();
  assert.equal(p.get('category-dialog').open,true);
- assert.equal(p.get('service-name').value,'Session','Nested category form preserves service draft');
+ assert.equal(p.get('service-name').value,'Session','Nested group form preserves service draft');
  categoryFill(p,'  Training  ',{icon:'people',order:'2'});
  api.failAfterSave=true;
  await categorySubmit(p);
- assert.equal(p.get('category-dialog').open,true,'Lost category response leaves category form open');
+ assert.equal(p.get('category-dialog').open,true,'Lost group response leaves group form open');
  const categoryId=api.calls.at(-1).body.p_id;
  assert.equal(api.categories.size,1);
  assert.equal(p.get('service-name').value,'Session');
  await categorySubmit(p);
- assert.equal(api.categories.size,1,'Category create retry reuses UUID');
+ assert.equal(api.categories.size,1,'Group create retry reuses UUID');
  assert.equal(p.get('category-dialog').open,false);
  assert.equal(p.get('service-dialog').open,true);
  assert.equal(p.get('service-category').value,categoryId);
  assert.equal(p.get('service-type').value,'private');
  api.rejectSave=true;await p.submit();
- assert.match(p.get('service-form-error').textContent,/Your category is saved/);
+ assert.match(p.get('service-form-error').textContent,/Your group is saved/);
  assert.equal(p.get('service-category').value,categoryId);
  const serviceId=api.calls.at(-1).body.p_id;
  api.rejectSave=false;api.failAfterSave=true;
@@ -177,7 +177,7 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  assert.equal(api.categories.get(categoryId).icon,'star');
  p.edit(serviceId);status(p,'published');await p.submit();
  assert.equal(p.get('service-dialog').open,true);
- assert.match(p.get('service-category-error').textContent,/disabled/);
+ assert.match(p.get('service-category-error').textContent,/hidden/);
  click(p,'edit-service-category');
  p.get('category-enabled').checked=true;await categorySubmit(p);
  await p.submit();
@@ -201,7 +201,7 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  is_published:false,is_active:true,photo_path:'11111111-1111-4111-8111-111111111111/22222222-2222-4222-8222-222222222222.png',
  description:'Saved description',price_basis:'per_person',participant_count:3,updated_at:'old'};
  api.records.set(unassigned.id,unassigned);await click(p,'reload-services');
- assert.equal(p.get('services-list').children[0].children[0].children[0].children[1].textContent,'Needs a category');
+ assert.equal(p.get('services-list').children[0].children[0].children[0].children[1].textContent,'Needs a group');
  p.edit('unassigned');
  assert.equal(p.get('service-description').value,'Saved description');
  assert.equal(p.get('service-advanced').open,true,'Existing per-person settings are visible');
@@ -264,9 +264,9 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  assert.equal(ids.length,new Set(ids).size);
  for(const match of html.matchAll(/for="([^"]+)"/g))assert(ids.includes(match[1]));
  assert(!html.includes('nav-categories') && !html.includes('categories-panel'));
- assert(html.includes('+ Create new category'));
- assert(html.indexOf('admin-services.js?v=6')<html.indexOf('admin.js?v=4'));
- console.log('PASS integrated Services: no-category inline creation/publication; category/service lost-response retries and partial failures; no duplicate saves; original IDs/photos/details/pricing; category editing/enable/order/collapse/counts/add/move; draft/published/paused flag preservation; disabled validation; classes unbookable; stale edits; offline recovery; safe text; modal locking; labels/navigation.');
+ assert(html.includes('+ Create new group'));
+ assert(html.indexOf('admin-services.js?v=7')<html.indexOf('admin.js?v=4'));
+ console.log('PASS integrated Services: no-group inline creation/publication; group/service lost-response retries and partial failures; no duplicate saves; original IDs/photos/details/pricing; group editing/enable/order/collapse/counts/add/move; draft/published/paused flag preservation; disabled validation; classes unbookable; stale edits; offline recovery; safe text; modal locking; labels/navigation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 
 

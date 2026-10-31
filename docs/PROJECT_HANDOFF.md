@@ -2,6 +2,17 @@
 
 Updated 2026-10-31.
 
+## Simple Groups workflow replaces technical category controls — 2026-10-31 (read first)
+
+The owner explicitly rejected the complexity of Category, Display order, Enable category and icon-name choices. Visible admin wording is now Group. Creating a group asks only for Group name and Save group. New groups remain shown by default. Optional visual symbols and Show to clients are inside a closed More options section. Hiding a group still hides its published services without deleting anything. Existing category IDs, icons, enabled values and order fields remain intact.
+
+Raw display-order input is hidden and preserved internally. Group headers offer Move up and Move down instead. Migration 20261031095734_add_safe_group_reordering adds only a credential-checked reorder RPC; it locks owned rows, verifies the exact owned ID set and expected timestamps, applies the full order in one transaction and accepts a retry whose desired order already matches. Wrong keys/stale reorders are rejected. No real groups or offerings were created or changed.
+
+Native Services/navigation checks pass. New browser test tests/simple-groups-browser.cjs passed at 320/390/820/1440px: name/save-only creation inside Add service, assignment, optional symbol/visibility, Move up and no overflow. Reorder database tests under anon passed with fixtures rolled back, including retry, stale edit and wrong-key handling. Existing Services browser runner was updated for the new labels and optional settings.
+
+The owner has only minutes left and wants the UI to require no technical knowledge. Next: owner review this simple flow, then complete careful real Supabase picture-upload verification and actual-service admin/client review. Existing photo retrieval/invalid-key upload rejection were checked; fresh successful branding uploads and actual-record client preview remain unverified. No automatic real publication. Keep all existing booking/payment safeguards and the established sequence.
+
+
 ## Category symbols and punctuation simplified — 2026-10-31 (read first)
 
 The owner saw the category Icon dropdown's “Star” and similar labels while editing PILATES & MOBILITY and mistook them for category names. Replaced the visible icon-name dropdown with six visual SVG symbol buttons labelled Category symbol. Accessible button names remain for assistive technology; existing icon identifiers, values, persistence and database records are retained. The hidden existing selector remains the form's value source. This is not a list of suggested category names.
