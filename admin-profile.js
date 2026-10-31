@@ -12,6 +12,15 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
     const publicUrl = new URL('/' + encodeURIComponent(bizSlug), location.origin).href;
     get('preview').href = publicUrl; get('public-link').value = publicUrl;
     function message(text, error = false) { feedback.textContent = text; feedback.setAttribute('role', error ? 'alert' : 'status'); }
+    function notifySaved() {
+        const toast = document.createElement('div');
+        toast.className = 'profile-save-toast';
+        toast.setAttribute('role','status');
+        toast.textContent = 'Your changes have been saved!';
+        document.querySelectorAll('.profile-save-toast').forEach(el => el.remove());
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4500);
+    }
     const saveButton = get('save');
     const saveLabel = saveButton.textContent;
     function saveState(active) {
@@ -31,7 +40,7 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
             saveButton.removeAttribute('aria-busy');
         }
     }
-    function lock(value) { busy = value; fields.disabled = value || !saved || preparing > 0; reload.disabled = value || preparing > 0; get('save').disabled = value || preparing > 0; }
+    function lock(value) { busy = value; form.classList.toggle('profile-is-busy',value); fields.disabled = value || !saved || preparing > 0; reload.disabled = value || preparing > 0; get('save').disabled = value || preparing > 0; }
     async function request(name, body, multipart = false) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 30000);
@@ -159,7 +168,7 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
             profile.delivery_methods = delivery.filter(key => get('delivery-' + key).checked);
             const result = await request('save_admin_business_profile',{p_slug:bizSlug,p_key:adminKey,p_profile:profile,p_expected_version:saved.profile_version});
             if (!result || !Number.isSafeInteger(result.profile_version)) throw new Error('Save could not be confirmed. Try again to confirm your changes.');
-            saved = result; populate(); updateIdentity(saved); message('Your changes have been saved!');
+            saved = result; populate(); updateIdentity(saved); message('Your changes have been saved!'); notifySaved();
             // Existing public polling/focus reads remain authoritative; this is only a refresh hint.
             try { localStorage.setItem('booking-availability:' + bizSlug,JSON.stringify({type:'availability-changed',id:crypto.randomUUID()})); } catch (_) {}
         } catch (error) { message((error.message || 'Saving failed. Please try again.') + ' Your edits and uploaded images are retained.',true); }
