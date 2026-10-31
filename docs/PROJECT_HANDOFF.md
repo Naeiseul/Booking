@@ -1,6 +1,19 @@
 # Booking project handoff
 
-Updated 2026-10-30.
+Updated 2026-10-31.
+
+## Grouping UX reconsideration — 2026-10-31 (read first)
+
+The owner found Category/Unassigned and the publish validation confusing. They initially approved optional categories, then explicitly asked to revisit the feature rather than add explanatory text. Their latest clarification is authoritative: **grouping is essential**. They object to the separate Categories tab and a Show in client catalogue control that fails because a group has not been configured elsewhere. Do not remove grouping based on the earlier discussion.
+
+Proposed next small step, still to agree: use the word **Group** consistently, select/create a group directly inside the service form, and avoid sending owners to a separate tab before they can publish. Discuss where group editing belongs before hiding/removing the existing Categories screen. Keep browsing groups independent of service purchases and booking-type/scheduling rules. Do not ship long helper copy as the solution.
+
+An optional-category implementation was prepared and tested but its UI changes were NOT committed or deployed after the owner's steering. The database migration allowing ungrouped publication (20261031081539) was applied during that work, then explicitly reversed by 20261031081837 to keep the database compatible with the unchanged production client/admin. Both migration files are preserved for accurate history; the resulting functions match the previous deployed contract. No real service/category/photo/price/publication records were changed. PILATES & MOBILITY remains the owner's existing unpublished, active service with no group and its supplied photo.
+
+Candidate checks passed: six existing Node admin/category/calendar/sync/expiry suites, a focused details/payment guard check, transactional Supabase category/service/public/photo/optional-publication checks (fixtures rolled back), and Chromium at 320/390/820/1440px with intercepted in-memory RPC responses and the actual supplied photo. These do not establish a released optional-category feature or real browser-to-database publication. The legacy tests/client-booking-flow.cjs still fails against the current UI fixture at querySelectorAll; do not report that full suite as passed. Existing Supabase advisor findings were unchanged.
+
+Next: agree the inline Group selection/creation interaction, then implement only that small scope and save/deploy/verify it. Preserve real Paystack, service-specific payment guards, date/time-only slots, paused Order summary, and scheduling/capacity → reservations → verified payments.
+
 
 ## Photos, automatic slot expiry and Checkout cleanup — 2026-10-30 (read first)
 

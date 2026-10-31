@@ -2,6 +2,10 @@
 
 This records the owner's latest instructions and the review discussion. Read alongside AGENTS.md and the latest docs/PROJECT_HANDOFF.md section. It is a staged direction, not permission to implement every capability at once.
 
+## Grouping UX under review — 2026-10-31
+
+The owner confirms grouping is essential, but Category/Unassigned terminology, a separate management tab and a publishing control blocked by configuration elsewhere are confusing. Revisit the interaction rather than adding lengthy explanations. Proposed next scope: call it Group and allow selecting/creating a group within the service form; agree it before implementation. Do not remove grouping or implement the whole proposal automatically. An optional-category candidate was tested but not released; its applied database change was reversed to preserve the deployed contract. See the newest handoff for exact state and migration history.
+
 ## Admin Categories stage — 2026-10-30
 
 The owner explicitly chose the admin dashboard as the next priority and approved the Categories screen/sidebar cleanup. The dark responsive sidebar now links Calendar, Services and Categories. The dedicated category table and existing forms use saved Supabase categories and real service-assignment counts. Services still has working cards/forms and the category selector. See [admin-interface.md](admin-interface.md) and the newest handoff. Next admin visual work still needs a small agreed scope; photos and scheduling/payment stages remain separate.
