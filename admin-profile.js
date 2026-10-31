@@ -12,6 +12,25 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
     const publicUrl = new URL('/' + encodeURIComponent(bizSlug), location.origin).href;
     get('preview').href = publicUrl; get('public-link').value = publicUrl;
     function message(text, error = false) { feedback.textContent = text; feedback.setAttribute('role', error ? 'alert' : 'status'); }
+    const saveButton = get('save');
+    const saveLabel = saveButton.textContent;
+    function saveState(active) {
+        saveButton.replaceChildren();
+        if (active) {
+            const spinner = document.createElement('span');
+            spinner.className = 'profile-save-spinner';
+            spinner.setAttribute('aria-hidden','true');
+            const logoImage = document.createElement('img');
+            logoImage.alt = '';
+            logoImage.src = '/final_tax_logo.png';
+            spinner.appendChild(logoImage);
+            saveButton.append(spinner, document.createTextNode('Saving…'));
+            saveButton.setAttribute('aria-busy','true');
+        } else {
+            saveButton.textContent = saveLabel;
+            saveButton.removeAttribute('aria-busy');
+        }
+    }
     function lock(value) { busy = value; fields.disabled = value || !saved || preparing > 0; reload.disabled = value || preparing > 0; get('save').disabled = value || preparing > 0; }
     async function request(name, body, multipart = false) {
         const controller = new AbortController();
@@ -128,7 +147,7 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
         }
         for (const key of ['phone_number','whatsapp_number']) if (get(key).value.trim() && !BusinessProfile.phone(get(key).value)) get(key).setCustomValidity('Enter a phone number with 7 to 15 digits.');
         if (!form.reportValidity()) return;
-        lock(true); message('Saving changes…');
+        lock(true); saveState(true); message('Saving changes…');
         try {
             for (const item of [logo,hero,...gallery]) await upload(item);
             const profile = Object.fromEntries(textFields.map(key => [key,get(key).value.trim()]));
@@ -140,11 +159,11 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
             profile.delivery_methods = delivery.filter(key => get('delivery-' + key).checked);
             const result = await request('save_admin_business_profile',{p_slug:bizSlug,p_key:adminKey,p_profile:profile,p_expected_version:saved.profile_version});
             if (!result || !Number.isSafeInteger(result.profile_version)) throw new Error('Save could not be confirmed. Try again to confirm your changes.');
-            saved = result; populate(); updateIdentity(saved); message('Business profile saved.');
+            saved = result; populate(); updateIdentity(saved); message('Your changes have been saved!');
             // Existing public polling/focus reads remain authoritative; this is only a refresh hint.
             try { localStorage.setItem('booking-availability:' + bizSlug,JSON.stringify({type:'availability-changed',id:crypto.randomUUID()})); } catch (_) {}
         } catch (error) { message((error.message || 'Saving failed. Please try again.') + ' Your edits and uploaded images are retained.',true); }
-        finally { lock(false); }
+        finally { saveState(false); lock(false); }
     });
     get('cancel').addEventListener('click',() => { if (!busy && !preparing && saved) { populate(); message('Unsaved changes cancelled.'); } });
     reload.addEventListener('click',load);
