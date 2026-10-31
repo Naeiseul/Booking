@@ -1,4 +1,8 @@
 /* Admin workspace: business identity and supported sections in a neutral sidebar. */
+/* Once access is verified, the sidebar identifies the business and each page has its own heading. */
+.admin-ready .admin-workspace-identity { display: none; }
+.admin-ready .admin-contact-links { margin-left: auto; }
+.admin-ready .admin-workspace-header { margin-bottom: 16px; }
 .admin-page { padding: 24px; }
 .admin-shell { width: 100%; max-width: 600px; }
 .admin-shell.admin-ready {
@@ -237,3 +241,5 @@ html:has(.admin-page dialog[open]) { overflow:hidden; }
     .admin-page dialog .service-form-columns { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
     .admin-page .drawer-actions { bottom:-20px; padding-bottom:20px; }
 }
+
+

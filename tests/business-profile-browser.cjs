@@ -126,7 +126,9 @@ async function saved(page){await page.locator('#profile-save').click();await pag
     await page.getByText('09:00 has passed. Clients can only book future times.',{exact:true}).waitFor();
     assert((await past.getAttribute('class')).includes('taken'));assert.equal(slotWrites,0,'Past time never saved');
     assert(await page.locator('#admin-calendar-toast').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1;}));
-    await page.locator('#day-tabs .day-tab').nth(1).click();await page.locator('#time-grid .time-chip').first().click();assert.equal(slotWrites,1,'Future time still saves');
+    await page.locator('#day-tabs .day-tab').nth(1).click();
+    const futureSave=page.waitForResponse(response=>response.url().includes('/rpc/set_slot')&&response.status()===200);
+    await page.locator('#time-grid .time-chip').first().click();await futureSave;assert.equal(slotWrites,1,'Future time still saves');
     await page.locator('#nav-services').click();await page.locator('#services-panel').waitFor({state:'visible'});
     await page.locator('#nav-profile').click();await page.locator('#profile-panel').waitFor({state:'visible'});assert.equal(await page.locator('#profile-name').inputValue(),'FitCore QA');
    }
@@ -142,3 +144,4 @@ async function saved(page){await page.locator('#profile-save').click();await pag
   }
  } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
+

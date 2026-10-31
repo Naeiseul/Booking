@@ -2,6 +2,16 @@
 
 Updated 2026-10-31.
 
+## Business Profile released; workspace headings simplified — 2026-10-31 (read first)
+
+Business Profile implementation d8ec0caebdf2a2b72234a53c326488081d6194a8 deployed as dpl_FVnY3qAPpg8KonJEqJZHtpSnJEY9 (READY, booking.logtraq.co.za). Live profile/admin/client HTML, JavaScript and CSS returned 200 and matched the candidate content (ignoring trailing newlines in unchanged local copies). Production Chromium at 320/390/820/1440px passed BOTH profile and integrated Services workflows with isolated intercepted RPC fixtures. Supplied service-photo URLs decoded correctly. Profile tests cover the admin past-time notification and no expired-slot writes; future-slot tests now await the actual save response before asserting. Separate actual Supabase profile-save/public-display verification and QA cleanup are recorded below.
+
+The owner then explicitly requested removing the repeated business-name “(Admin)” page heading and generic “Manage your service catalogue” / “Tap a slot to toggle its availability” text. Business identity stays in the sidebar; each workspace retains its Calendar, Services or Business Profile title. The identity/help area is hidden only AFTER successful access verification, so incomplete/denied/offline startup messages remain visible. Contact icons are retained. This is a small admin CSS/cache-version change, with no data/booking changes.
+
+Next remains the owner's request: careful Supabase picture-upload verification, then review the owner's actual services in Admin and the client catalogue. Real branding upload testing is deliberately still pending, while previews/mocked uploads and owned-photo SQL validation passed. Physical Safari/iOS remains untested. Preserve the safeguards and later scheduling/capacity → reservations → verified payments sequence; Order summary stays paused.
+
+
+
 ## Editable Business Profile and admin past-time notice — 2026-10-31 (read first)
 
 The owner explicitly instructed saving the supplied Business Profile mockup and implementing the extension after checking the completed Services workflow. Original Modern Business Profile Dashboard.png is saved unchanged at docs/references/business-profile-reference.png (1,682,547 bytes; blob 4100488b0a33b39a33da5aabeb0f8136c98eb97e). Reference commit: 26f70aeffc50ebe5a8ce6c68fa5fd053ec89af9c. Read docs/business-profile.md. Services already passed its existing requirements; no repeat redesign or Categories page was added.
