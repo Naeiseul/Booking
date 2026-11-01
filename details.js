@@ -111,10 +111,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         form.hidden = false;
-        if (serviceId) {
-            button.disabled = true;
-            document.getElementById('service-payment-note').hidden = false;
-        }
+        // Demo checkout: published services also proceed to the existing Paystack gate.
+        button.disabled = false;
     } catch (_) {
         showError('We could not check this time. Please refresh the page to try again.');
         return;
@@ -122,13 +120,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Restore the submit button when returning from checkout using browser Back.
     window.addEventListener('pageshow', () => {
-        button.disabled = Boolean(serviceId);
+        button.disabled = false;
         button.textContent = 'Continue to payment';
     });
 
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        if (button.disabled || serviceId) return;
+        if (button.disabled) return;
         fields.forEach(name => {
             const input = form.elements.namedItem(name);
             input.value = input.value.trim();
@@ -148,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showError('This time is no longer available. Please choose another slot from the calendar.');
                 return;
             }
-            const draft = { business: bizSlug, date, time };
+            const draft = { business: bizSlug, date, time, service_id: serviceId || null };
             fields.forEach(name => { draft[name] = form.elements.namedItem(name).value; });
             try {
                 // Keep the demo details in this tab only; no booking is confirmed here.
