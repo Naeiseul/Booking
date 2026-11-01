@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Restore the submit button when returning from checkout using browser Back.
     window.addEventListener('pageshow', () => {
         button.disabled = false;
-        button.textContent = 'Continue to payment';
+        button.textContent = 'Pay R1 via Paystack';
     });
 
     form.addEventListener('submit', async event => {
@@ -152,9 +152,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Keep the demo details in this tab only; no booking is confirmed here.
                 sessionStorage.setItem(draftKey, JSON.stringify(draft));
             } catch (_) {
-                showError('We could not keep your details in this browser. Please allow site storage and try again.');
-                return;
+                // Storage is optional for the demo payment gate; do not block checkout.
             }
+            // Existing live R1 Paystack demo gate; service catalogue prices are illustrative.
             const payment = new URL('https://paystack.shop/pay/o495iejvn3');
             ['first_name', 'last_name', 'email'].forEach(name => payment.searchParams.set(name, draft[name]));
             window.location.href = payment.href;
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             showError('We could not check availability. Please try again.');
         } finally {
             button.disabled = false;
-            button.textContent = 'Continue to payment';
+            button.textContent = 'Pay R1 via Paystack';
         }
     });
 });
