@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Restore the submit button when returning from checkout using browser Back.
     window.addEventListener('pageshow', () => {
         button.disabled = false;
-        button.textContent = 'Pay R1 via Paystack';
+        button.textContent = 'Continue to secure payment';
     });
 
     form.addEventListener('submit', async event => {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             showError('We could not check availability. Please try again.');
         } finally {
             button.disabled = false;
-            button.textContent = 'Pay R1 via Paystack';
+            button.textContent = 'Continue to secure payment';
         }
     });
 });
