@@ -75,9 +75,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         activeStep = step;
-        catalogueEl.hidden = step === 'checkout';
-        categoryNavigation.hidden = step === 'checkout' || categories.length === 0;
-        if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(step !== 'checkout' && categories.length > 0));
+        catalogueEl.hidden = step !== 'sessions';
+        categoryNavigation.hidden = step !== 'sessions' || categories.length === 0;
+        if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(step === 'sessions' && categories.length > 0));
         calendarEl.hidden = step === 'checkout';
         checkoutEl.hidden = step !== 'checkout';
         stepButtons.forEach(button => {
@@ -88,7 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         if (moveFocus) {
             const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : 'checkout-heading');
-            target.focus();
+            target.focus({ preventScroll: true });
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 
@@ -624,6 +625,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 slotsByDate[slot.date].push(slot);
             });
 
+            if (selectedService && !selectedSlot && !((slotsByDate[activeDateString] || []).some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)))) {
+                const firstOpenDate = Object.keys(slotsByDate).sort().find(date => slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)));
+                if (firstOpenDate) { activeDateString = firstOpenDate; viewedMonth = firstOpenDate.slice(0,7); monthSignature = ''; }
+            }
             renderMonth();
 
             // Keep an empty selected date visible through availability refreshes.
