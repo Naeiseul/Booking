@@ -282,6 +282,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     requestedServiceId = '';
                     renderCatalogue();
                     updateBookButton();
+                    const selectedDayHasOpenSlots = (slotsByDate[activeDateString] || []).some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot));
+                    if (!selectedDayHasOpenSlots) {
+                        const firstOpenDate = Object.keys(slotsByDate).sort().find(date => slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)));
+                        if (firstOpenDate) { activeDateString = firstOpenDate; viewedMonth = firstOpenDate.slice(0, 7); monthSignature = ''; }
+                    }
+                    renderMonth();
                     renderSlots(slotsByDate[activeDateString] || []);
                     showStep('schedule', true);
                 });
