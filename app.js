@@ -146,14 +146,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         run: '<circle cx="15" cy="4" r="2"/><path d="m13 8-4 4 4 3 3 6M9 12l-6 2M13 15l-5 6M16 9l5 2"/>',
         dumbbell: '<path d="m6.5 6.5 11 11M3 8l5-5M5 10l5-5M14 19l5-5M16 21l5-5"/>',
         activity: '<path d="M2 12h4l3-7 5 14 3-7h5"/>',
+        heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/><path d="M3.5 12h4l2-3 3 6 2-3h6"/>',
         calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',
         book: '<path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/>',
         star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>'
     };
     function categoryArtwork(category) {
         const name = (category.label || '').toLowerCase();
-        if (/mobility|stretch|flexib|pilates|yoga/.test(name)) return categoryIcons.stretch;
-        if (/cardio|running|run|hiit|aerobic|spin|cycling/.test(name)) return categoryIcons.run;
+        if (/mobility|stretch|flexib|pilates|yoga/.test(name)) return categoryIcons.activity;
+        if (/cardio|running|run|hiit|aerobic|spin|cycling/.test(name)) return categoryIcons.heart;
         if (/strength|weight|lifting|gym|resistance/.test(name)) return categoryIcons.dumbbell;
         if (/boxing|combat|conditioning/.test(name)) return categoryIcons.activity;
         return Object.hasOwn(categoryIcons,category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
