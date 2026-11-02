@@ -156,6 +156,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (/mobility|stretch|flexib|pilates|yoga/.test(name)) return categoryIcons.activity;
         if (/cardio|running|run|hiit|aerobic|spin|cycling/.test(name)) return categoryIcons.heart;
         if (/strength|weight|lifting|gym|resistance/.test(name)) return categoryIcons.dumbbell;
+        if (/group|class|team/.test(name)) return categoryIcons.people;
+        if (/recovery|rehab|rest/.test(name)) return categoryIcons.activity;
+        if (/personal|one.on.one|private/.test(name)) return categoryIcons.person;
         if (/boxing|combat|conditioning/.test(name)) return categoryIcons.activity;
         return Object.hasOwn(categoryIcons,category.icon) ? categoryIcons[category.icon] : categoryIcons.grid;
     }
