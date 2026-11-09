@@ -9,7 +9,7 @@ function assert(value, message) { if (!value) throw new Error(message); }
 class Element {
     constructor(document) {
         this.document = document; this.children = []; this.attrs = {}; this.listeners = {};
-        this.style = {}; this.className = ''; this.hidden = false; this.textContent = '';
+        this.style = {}; this.dataset = {}; this.className = ''; this.hidden = false; this.textContent = '';
         this.value = ''; this._html = '';
         this.classList = {
             add: name => { this.className += ' ' + name; },
@@ -59,7 +59,9 @@ async function page(options = {}) {
         initializeAdminServices: args => { serviceArguments = args; }
     };
     new Function('window', 'document', navigation)(window, document);
-    new Function('window','document','URLSearchParams','fetch','Date','SUPABASE_URL','SUPABASE_ANON_KEY','console','alert',admin)(
+    const photoWindow = {};
+    new Function('window','location','SUPABASE_URL',fs.readFileSync(path.join(__dirname,'../photo-tools.js'),'utf8'))(photoWindow,{origin:'https://booking.logtraq.co.za'},'https://fixture.invalid');
+    new Function('window','document','URLSearchParams','fetch','Date','SUPABASE_URL','SUPABASE_ANON_KEY','console','alert','PhotoTools',admin)(
         window, document, Params, async (url, request) => {
             calls.push({ url, body: JSON.parse(request.body) });
             if (options.offline) throw new Error('Offline fixture');
@@ -68,7 +70,7 @@ async function page(options = {}) {
                 slots: [{ date: '2026-10-30', time: '07:00:00', status: 'open' }]
             } };
         }, ClockDate, 'https://fixture.invalid', 'test', { error() {} },
-        () => { throw new Error('Unexpected slot error'); }
+        () => { throw new Error('Unexpected slot error'); }, photoWindow.PhotoTools
     );
     await ready();
     return {

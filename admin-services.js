@@ -18,7 +18,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     const collapsedCategories = new Set();
     function showError(element, text) { element.textContent = text; element.hidden = false; }
     let photoPath = '', selectedPhotoFile = null, photoUploadId = null, uploadedFilePath = null, previewObjectUrl = null;
-    let photoLibrary = [];
+    let photoLibrary = [], photoPreparing = false;
     const photoInput = get('service-photo');
     const photoPreview = get('service-photo-preview');
     function photoUrl(path) {
@@ -31,7 +31,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     function renderPhoto() {
         const src = previewObjectUrl || photoUrl(photoPath);
         photoPreview.hidden = !src;
-        if (src) photoPreview.src = src;
+        if (src) PhotoTools.set(photoPreview,src,{width:640,lazy:false});
         else photoPreview.removeAttribute('src');
         get('remove-service-photo').hidden = !src;
         const gallery = get('service-photo-library');
@@ -44,7 +44,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             button.setAttribute('aria-label','Choose uploaded photo ' + (index+1));
             button.setAttribute('aria-pressed',String(!selectedPhotoFile && photoPath === photo.path));
             const image=document.createElement('img');
-            image.src=src; image.alt=''; image.loading='lazy';
+            image.alt=''; PhotoTools.set(image,src,{width:192});
             button.appendChild(image);
             button.addEventListener('click',()=>{
                 clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null;
@@ -62,14 +62,23 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             if (!form.hidden) renderPhoto();
         } catch (_) { get('photo-library-error').hidden=false; }
     }
-    photoInput.addEventListener('change',()=>{
+    photoInput.addEventListener('change',async ()=>{
         const file=photoInput.files && photoInput.files[0];
-        if (!file) return;
-        if (file.size>5242880 || (file.type && !['image/jpeg','image/png','image/webp'].includes(file.type))) {
-            photoInput.value=''; showError(formError,'Choose a JPG, PNG or WebP photo up to 5 MB.'); return;
+        if (!file || saving || photoPreparing) return;
+        photoPreparing=true; fields.disabled=true; save.disabled=true; updateButtons();
+        get('service-photo-status').textContent='Preparing photo…';
+        try {
+            const prepared=await PhotoTools.prepare(file);
+            clearPreviewObject(); selectedPhotoFile=prepared; photoUploadId=crypto.randomUUID(); uploadedFilePath=null;
+            previewObjectUrl=URL.createObjectURL(prepared); renderPhoto();
+            get('service-photo-status').textContent='Photo ready. Save service to apply it.';
+            formError.hidden=true;
+        } catch(failure) {
+            showError(formError,failure.message || 'This photo could not be prepared. Choose another photo.');
+            get('service-photo-status').textContent='';
+        } finally {
+            photoInput.value=''; photoPreparing=false; fields.disabled=false; save.disabled=false; updateButtons();
         }
-        clearPreviewObject(); selectedPhotoFile=file; photoUploadId=crypto.randomUUID(); uploadedFilePath=null;
-        previewObjectUrl=URL.createObjectURL(file); renderPhoto();
     });
     get('remove-service-photo').addEventListener('click',()=>{
         clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null; photoUploadId=null; uploadedFilePath=null; photoPath=''; renderPhoto();
@@ -152,7 +161,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const editing = !form.hidden || !categoryForm.hidden;
         add.disabled = categoryAdd.disabled = !ready || saving || editing;
         reload.disabled = saving || editing;
-        get('close-service').disabled = get('cancel-service').disabled = saving;
+        get('close-service').disabled = get('cancel-service').disabled = saving || photoPreparing;
         get('close-category').disabled = get('cancel-category').disabled = saving;
     }
     function iconElement(iconName) {
@@ -193,8 +202,8 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const src = photoUrl(service.photo_path);
         if (src) {
             const image = document.createElement('img');
-            image.src = src; image.alt = ''; image.className = 'admin-service-thumb'; image.loading = 'lazy';
-            image.addEventListener('error', () => { image.hidden = true; });
+            image.alt = ''; image.className = 'admin-service-thumb'; PhotoTools.set(image,src,{width:192});
+
             row.appendChild(image);
         }
         const text = document.createElement('div'); text.className = 'admin-service-text';
@@ -344,7 +353,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     }
     function openForm(service, categoryId = '') {
         if(saving || !ready || !categoryForm.hidden || !form.hidden) return;
-        form.reset(); clearFieldErrors();
+        form.reset(); clearFieldErrors(); get('service-photo-status').textContent='';
         clearPreviewObject(); photoInput.value=''; selectedPhotoFile=null; photoUploadId=null; uploadedFilePath=null;
         photoPath=service ? service.photo_path||'' : ''; createdInlineCategory=false;
         draftId=service ? service.id : crypto.randomUUID();
@@ -458,9 +467,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     });
     add.addEventListener('click',()=>openForm(null));
     reload.addEventListener('click',loadServices);
-    ['cancel-service','close-service'].forEach(id=>get(id).addEventListener('click',()=>{if(!saving) closeForm();}));
+    ['cancel-service','close-service'].forEach(id=>get(id).addEventListener('click',()=>{if(!saving && !photoPreparing) closeForm();}));
     ['cancel-category','close-category'].forEach(id=>get(id).addEventListener('click',()=>{if(!saving) closeCategoryForm();}));
-    serviceDialog.addEventListener('cancel',event=>{event.preventDefault();if(!saving && categoryForm.hidden) closeForm();});
+    serviceDialog.addEventListener('cancel',event=>{event.preventDefault();if(!saving && !photoPreparing && categoryForm.hidden) closeForm();});
     categoryDialog.addEventListener('cancel',event=>{event.preventDefault();if(!saving) closeCategoryForm();});
     get('service-type').addEventListener('change',updateType);
     ['service-price','service-price-basis','service-participants','service-status'].forEach(id=>{
@@ -472,7 +481,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         if(target && target.closest) { const detail=target.closest('details'); if(detail) detail.open=true; }
     },true);
     form.addEventListener('submit',async event=>{
-        event.preventDefault(); if(saving || form.hidden || !categoryForm.hidden) return;
+        event.preventDefault(); if(saving || photoPreparing || form.hidden || !categoryForm.hidden) return;
         formError.hidden=true; clearFieldErrors();
         get('service-name').value=get('service-name').value.trim();
         if(!get('service-name').value || get('service-name').value.length>120) {

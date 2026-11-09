@@ -262,3 +262,7 @@ html:has(.admin-page dialog[open]) { overflow:hidden; }
  .admin-page #services-panel .service-heading-actions { width:100%; }
  .admin-page #services-panel .service-heading-actions button { padding:12px 8px; }
 }
+
+/* Show the whole supplied photo, regardless of its proportions. */
+.service-photo-preview, .photo-choice img, .admin-service-thumb { object-fit:contain; background:#f5f5f5; }
+.service-photo-preview { height:auto; }

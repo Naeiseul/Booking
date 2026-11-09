@@ -12,5 +12,38 @@
       "source": "/:biz",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "images": {
+    "sizes": [
+      96,
+      192,
+      384,
+      640,
+      960,
+      1600
+    ],
+    "domains": [],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "^jtonmfevmcmnkmdjmubn\\.supabase\\.co$",
+        "port": "",
+        "pathname": "^/storage/v1/object/public/service-photos/[a-zA-Z0-9/_-]+\\.(png|jpg|jpeg|webp)$",
+        "search": ""
+      }
+    ],
+    "localPatterns": [
+      {
+        "pathname": "^/(final_tax_logo|logo_square|phone)\\.png$",
+        "search": ""
+      }
+    ],
+    "qualities": [
+      75
+    ],
+    "formats": [
+      "image/webp"
+    ],
+    "minimumCacheTTL": 3600
+  }
 }

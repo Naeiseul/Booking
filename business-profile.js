@@ -36,9 +36,9 @@ window.BusinessProfile = (() => {
             image.style.objectFit = 'contain';
             image.style.display = logo ? 'block' : 'none';
             fallback.style.display = logo ? 'none' : 'block';
-            if (logo && image.src !== logo) image.src = logo;
+            if (logo) PhotoTools.set(image,logo,{width:192,lazy:false,priority:true,onError:()=>{image.style.display='none';fallback.style.display='block';}});
             if (!logo) image.removeAttribute('src');
-            image.onerror = () => { image.style.display = 'none'; fallback.style.display = 'block'; };
+
         }
         for (const [id, key] of [['ig-link','instagram_url'],['fb-link','facebook_url'],['tiktok-link','tiktok_url']]) {
             link(id, data.show_social_icons === false ? '' : https(data[key]));
@@ -49,8 +49,13 @@ window.BusinessProfile = (() => {
         const cover = document.getElementById('business-cover-banner');
         if (cover) {
             const coverUrl = photo(data.hero_photo_path);
-            cover.style.backgroundImage = coverUrl ? 'url("' + coverUrl + '")' : 'none';
+            cover.style.backgroundImage = 'none';
             cover.classList.toggle('has-cover-image', !!coverUrl);
+            let hero = cover.querySelector('img');
+            if (coverUrl) {
+                if (!hero) { hero=document.createElement('img'); hero.alt=''; cover.appendChild(hero); }
+                PhotoTools.set(hero,coverUrl,{width:960,sizes:'(max-width: 1100px) 100vw, 1100px',maxWidth:1600,lazy:false,priority:true});
+            } else if (hero) hero.remove();
         }
         let wa = phone(data.whatsapp_number).replace(/^\+/, '');
         if (/^0\d{9}$/.test(wa)) wa = '27' + wa.slice(1);
@@ -71,8 +76,9 @@ window.BusinessProfile = (() => {
         }
         function addImage(parent, path, alt) {
             const url = photo(path); if (!url) return;
-            const img = document.createElement('img'); img.src = url; img.alt = alt;
-            img.loading = 'lazy'; img.onerror = () => { img.hidden = true; };
+            const img = document.createElement('img'); img.alt = alt;
+            PhotoTools.set(img,url,{width:384});
+
             parent.appendChild(img);
         }
         text('p', data.description, 'public-business-about');

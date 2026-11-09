@@ -31,7 +31,7 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
             spinner.setAttribute('aria-hidden','true');
             const logoImage = document.createElement('img');
             logoImage.alt = '';
-            logoImage.src = '/final_tax_logo.png';
+            logoImage.src = '/_vercel/image?url=%2Ffinal_tax_logo.png&w=96&q=75';
             spinner.appendChild(logoImage);
             saveButton.append(spinner, document.createTextNode('Saving…'));
             saveButton.setAttribute('aria-busy','true');
@@ -70,8 +70,8 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
         if (!item) { parent.textContent = fallback ? (get('name').value.trim()[0] || 'B').toUpperCase() : 'No image'; return; }
         const src = item.preview || BusinessProfile.https(item.url) || BusinessProfile.photo(item.path);
         if (!src) { parent.textContent = 'Image unavailable'; return; }
-        const img = document.createElement('img'); img.src = src; img.alt = label;
-        img.onerror = () => { parent.textContent = 'Image unavailable'; };
+        const img = document.createElement('img'); img.alt = label;
+        PhotoTools.set(img,src,{width:384,lazy:false,onError:()=>{parent.textContent='Image unavailable';}});
         parent.appendChild(img);
     }
     function renderImages() {
@@ -115,18 +115,15 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
         finally { lock(false); }
     }
     async function choose(input, kind) {
-        if (busy) return;
-        preparing++; lock(false);
+        if (busy || preparing) return;
+        preparing++; lock(false); message('Preparing image…');
         const pending = [];
         try {
             const files = Array.from(input.files || []);
             if (kind === 'gallery' && gallery.length + files.length > 12) throw new Error('Choose up to 12 gallery photos.');
             for (const file of files) {
-                if (!['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Choose a JPG, PNG or WebP image.');
-                if (!file.size || file.size > 5242880) throw new Error('Choose an image up to 5 MB.');
-                const item = {file,id:crypto.randomUUID(),preview:URL.createObjectURL(file)}; pending.push(item);
-                const img = new Image(); img.src = item.preview;
-                await img.decode().catch(() => { throw new Error('This image could not be read. Choose another JPG, PNG or WebP.'); });
+                const prepared = await PhotoTools.prepare(file, {logo:kind === 'logo'});
+                const item = {file:prepared,id:crypto.randomUUID(),preview:URL.createObjectURL(prepared)}; pending.push(item);
             }
             if (kind === 'gallery') gallery.push(...pending);
             else if (pending.length) { dispose(kind === 'logo' ? logo : hero); if (kind === 'logo') logo=pending[0]; else hero=pending[0]; }

@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const photo=document.getElementById('booking-summary-photo');
         const source=selectedService ? servicePhotoUrl(selectedService.photo_path) : '';
         photo.hidden=!source;
-        if(source && photo.src!==source) photo.src=source;
+        if(source) PhotoTools.set(photo,source,{width:192,lazy:false});
         const fields = {
             'booking-summary-name': selectedService ? selectedService.name : '',
             'booking-summary-details': selectedService ? serviceDetails(selectedService) : '',
@@ -227,8 +227,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const photo=servicePhotoUrl(service.photo_path);
                 if(photo) {
                     const image=document.createElement('img');
-                    image.className='service-photo'; image.src=photo; image.alt=''; image.loading='lazy'; image.width=600; image.height=400;
-                    image.addEventListener('error',()=>{ image.hidden=true; });
+                    image.className='service-photo'; image.alt=''; image.width=600; image.height=400;
+                    PhotoTools.set(image,photo,{width:640,sizes:'(max-width: 640px) 100vw, (max-width: 1100px) 45vw, 360px'});
+
                     card.appendChild(image);
                 }
                 const body = document.createElement('div');
@@ -533,7 +534,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const imgEl = document.getElementById('biz-avatar-img');
                 const svgEl = document.getElementById('biz-avatar-svg');
                 if (imgEl && svgEl) {
-                    if (imgEl.src !== data.logo_url) imgEl.src = data.logo_url;
+                    PhotoTools.set(imgEl,data.logo_url,{width:192,lazy:false,priority:true});
                     imgEl.style.display = 'block';
                     svgEl.style.display = 'none';
                 }

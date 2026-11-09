@@ -11,13 +11,14 @@ class Element {
         this.value = ''; this.checked = false; this.hidden = false; this.disabled = false;
         this.required = false; this.textContent = ''; this.children = []; this.listeners = {};
         this.attributes = {}; this.focused = false; this.dataset = {}; this.open = false;
-        this.className = '';
+        this.className = ''; this.style = {};
     }
     addEventListener(name, callback) { this.listeners[name] = callback; }
     appendChild(child) { this.children.push(child); }
     replaceChildren(...children) { this.children = children; }
     setAttribute(name, value) { this.attributes[name] = value; }
     removeAttribute(name) { delete this.attributes[name]; }
+    getAttribute(name) { return name === 'src' ? this.src : this.attributes[name]; }
     focus() { this.focused = true; }
     showModal() { this.open = true; }
     close() { this.open = false; }
@@ -76,15 +77,19 @@ async function ui(api) {
     get('category-form').reportValidity = () => true;
     let uuid = 0;
     const window = {};
-    vm.runInNewContext(source, {
+    const context = {
+        PhotoTools:null, URL, location:{origin:'https://booking.logtraq.co.za'},
         window, document: { getElementById: get, createElement: () => new Element() },
         fetch: api.fetch, SUPABASE_URL: 'https://example.invalid', SUPABASE_ANON_KEY: 'test',
-        AbortController, setTimeout, clearTimeout, Intl,
+        AbortController, setTimeout, clearTimeout, Intl, FormData,
         crypto: { randomUUID: () => 'draft-' + ++uuid }
-    });
+    };
+    vm.runInNewContext(fs.readFileSync(path.join(root,'photo-tools.js'),'utf8'),context);
+    context.PhotoTools=window.PhotoTools;
+    vm.runInNewContext(source,context);
     await window.initializeAdminServices({ bizSlug: 'demo', adminKey: 'test-key' });
     return {
-        get, submit: () => get('service-form').listeners.submit({ preventDefault() {} }),
+        photoTools:window.PhotoTools, get, submit: () => get('service-form').listeners.submit({ preventDefault() {} }),
         add: () => get('add-service').listeners.click(),
         edit: id => walk(get('services-list')).find(item => item.dataset.serviceId === id).children.at(-1).listeners.click(),
         editCategory: label => walk(get('services-list')).find(item => item.attributes['aria-label'] === 'Edit group ' + label).listeners.click()
@@ -109,6 +114,26 @@ const categoryFill=(p,label,extra={})=> {
 const status=(p,value)=>{p.get('service-status').value=value;p.get('service-status').listeners.change();};
 (async()=>{
  let api=backend(),p=await ui(api);
+ // Preparing a large phone photo must block a premature save and preserve the draft on failure.
+ p.add();fill(p);
+ const input=p.get('service-photo');
+ let finish;
+ p.photoTools.prepare=()=>new Promise(resolve=>{finish=resolve;});
+ input.files=[{name:'phone.jpg',size:12000000,type:'image/jpeg'}];
+ const choosing=input.listeners.change();
+ assert.equal(p.get('service-fields').disabled,true);
+ assert.equal(p.get('save-service').disabled,true);
+ await p.submit();assert.equal(api.records.size,0);
+ finish(new File(['prepared'],'phone.webp',{type:'image/webp'}));await choosing;
+ assert.equal(p.get('service-fields').disabled,false);
+ assert.match(p.get('service-photo-status').textContent,/Photo ready/);
+ assert.equal(p.get('service-photo-preview').hidden,false);
+ p.photoTools.prepare=async()=>{throw Error('Unreadable photo');};
+ await input.listeners.change();
+ assert.match(p.get('service-form-error').textContent,/Unreadable/);
+ assert.equal(p.get('service-photo-preview').hidden,false,'Failed replacement retains the previous photo');
+ click(p,'remove-service-photo');click(p,'cancel-service');
+ api=backend();p=await ui(api);
  assert.equal(p.get('add-service').disabled,false);
  assert.equal(p.get('services-empty').hidden,false);
  p.add();fill(p);status(p,'published');
@@ -265,7 +290,8 @@ const status=(p,value)=>{p.get('service-status').value=value;p.get('service-stat
  for(const match of html.matchAll(/for="([^"]+)"/g))assert(ids.includes(match[1]));
  assert(!html.includes('nav-categories') && !html.includes('categories-panel'));
  assert(html.includes('+ Create new group'));
- assert(html.indexOf('admin-services.js?v=7')<html.indexOf('admin.js?v=4'));
+ assert(html.indexOf('/photo-tools.js?')<html.indexOf('/admin-services.js?'));
+ assert(html.indexOf('/admin-services.js?')<html.indexOf('/admin.js?'));
  console.log('PASS integrated Services: no-group inline creation/publication; group/service lost-response retries and partial failures; no duplicate saves; original IDs/photos/details/pricing; group editing/enable/order/collapse/counts/add/move; draft/published/paused flag preservation; disabled validation; classes unbookable; stale edits; offline recovery; safe text; modal locking; labels/navigation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 

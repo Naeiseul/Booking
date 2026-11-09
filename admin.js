@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const imgEl = document.getElementById('biz-avatar-img');
             const svgEl = document.getElementById('biz-avatar-svg');
             if (imgEl && svgEl) {
-                imgEl.src = data.logo_url;
+                PhotoTools.set(imgEl,data.logo_url,{width:192,lazy:false,priority:true});
                 imgEl.style.display = 'block';
                 svgEl.style.display = 'none';
             }

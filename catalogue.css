@@ -298,3 +298,6 @@
 .catalogue-page .catalogue-menu .step-indicator { display:none; }
 .catalogue-page .catalogue-menu { padding-bottom:12px; }
 @media(max-width:480px) { .catalogue-page .service-card-body { padding:18px; } }
+
+/* Preserve portrait, landscape and square photos without cutting off their edges. */
+.service-photo, .booking-summary-photo { object-fit:contain; background:#f5f5f5; }
