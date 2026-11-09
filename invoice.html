@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Customer invoice · LogTraq</title>
+<link rel="icon" href="/logtraq-favicon.svg?v=1" type="image/svg+xml">
+<link rel="stylesheet" href="/finance.css?v=1">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f5f5;color:#111;font:16px/1.6 system-ui,sans-serif;padding:28px 16px}.customer-invoice{max-width:820px;margin:auto}.customer-invoice header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:start}.customer-invoice h1{font-size:28px;margin:0}.customer-invoice h2{font-size:20px;margin:0 0 12px}.customer-invoice p{overflow-wrap:anywhere}.customer-invoice td,.customer-invoice th{padding:12px;text-align:left;border-bottom:1px solid #eee}.customer-invoice table{border-collapse:collapse;width:100%}.invoice-total{font-size:25px;font-weight:700;text-align:right}.invoice-status{padding:6px 14px;border-radius:8px;background:#eee;font-weight:600}.customer-invoice footer{font-size:13px;color:#666;margin:24px 0}.customer-invoice [hidden]{display:none!important}@media print{body{background:#fff;padding:0}.finance-actions,#invoice-message,footer{display:none!important}.finance-card{border:0;padding:0;margin:20px 0}}
+</style>
+<script defer src="/config.js"></script><script defer src="/customer-invoice.js?v=1"></script>
+</head><body><main class="customer-invoice">
+<p id="invoice-message" role="status">Loading your invoice…</p>
+<article id="customer-invoice" class="finance-card" hidden>
+<header><div><h1 id="seller-name"></h1><p id="seller-contact"></p></div><p class="invoice-status" id="customer-invoice-status"></p></header>
+<h2 id="customer-invoice-number"></h2><p id="customer-invoice-dates"></p>
+<section><h2>Bill to</h2><p id="customer-invoice-customer"></p><p id="customer-invoice-address"></p></section>
+<div class="finance-table-scroll" role="region" tabindex="0" aria-label="Invoice line items"><table><thead><tr><th scope="col">Description</th><th scope="col">Quantity</th><th scope="col">Unit price</th><th scope="col">Amount</th></tr></thead><tbody id="customer-invoice-lines"></tbody></table></div>
+<p id="customer-invoice-total" class="invoice-total"></p><p id="customer-invoice-notes"></p>
+<div class="finance-actions"><button id="customer-invoice-pay" class="finance-button" type="button" disabled>Pay securely with Paystack</button><button id="customer-invoice-check" class="finance-button finance-secondary" type="button" hidden>Check payment</button><button id="customer-invoice-pdf" class="finance-button finance-secondary" type="button">Download invoice PDF</button></div>
+<p id="customer-invoice-payment-note" class="finance-hint"></p>
+</article>
+<footer>Keep this invoice link private. A payment receipt confirms money received; appointment or class confirmation is separate.</footer>
+</main></body></html>

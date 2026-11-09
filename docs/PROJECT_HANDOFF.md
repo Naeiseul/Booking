@@ -2,6 +2,75 @@
 
 Updated 2026-11-09.
 
+## Payments, invoices and free email delivery resumed — 2026-11-09 (read first)
+
+The owner explicitly resumed building and supplied info@logtraq.co.za for the finance owner and invoice/receipt sender. This supersedes the pause below. Real values only: no visible test/environment selector, no sample production invoices/payments, and no paid email marketplace connection. Payments is now an authorised third primary admin section alongside Calendar and Services.
+
+### Implemented
+- The saved Payments UI, invoice/customer page, immutable invoice numbering/totals, private customer links, PDF generation, merchant verification/webhooks, history import and authenticated finance membership are being released from the paused candidate.
+- Added real direct Resend API delivery, requiring an explicitly configured API key and verified sender. No paid integration/account/subscription was provisioned. Invoice emails, verified-payment-only receipts, manual resend of confirmed-sent messages and owner sign-in emails share a protected delivery queue.
+- Database leases prevent concurrent sends. Frozen payloads and stable provider idempotency keys preserve the same message across uncertain retries. Ambiguous retries stop for review after 20 hours (inside Resend's 24-hour idempotency window), five attempts or expired sign-in links. A rolling 95-job reservation limit per sending key keeps this app below the free daily allowance.
+- A signed pg_cron/pg_net dispatcher runs every five minutes only for enabled senders with due jobs. Its random signing secret and all queue/quota tables are closed to browser roles. With email_enabled=false it makes no outgoing email requests.
+- info@logtraq.co.za is approved in Logtraq's finance account and configured as sender, with email_key_env RESEND_API_KEY_LOGTRAQ. It is NOT email-verified yet; no real auth user or membership has been fabricated. Email sign-in generates a Supabase one-time link only after actual email service setup, only for the approved address, with existing admin ownership and a one-minute rate limit. The requesting browser never receives the sign-in token. After verification, the server activates only that approved owner's membership.
+- Added a token-scrubbing finance-login callback page and session handoff to the existing admin dashboard. Password sign-in remains available for an existing authorised account.
+- Email "sent" means accepted by Resend, not a claim of inbox delivery. Delivery/bounce webhooks are not implemented.
+
+### Verified
+- Native finance API tests and email renderer/worker tests pass, including raw Paystack signatures/replay checks, ownership/private links, real-value amount checks, no charging without credentials, escaped templates, identical retry payload/key, reversal guard and disabled sender no-op.
+- Approved-owner sign-in privacy and signed dispatcher unit checks pass.
+- Email SQL suite passes with fixtures rolled back: leases, stale completion rejection, frozen payload, one quota reservation across retries, old/expired-job review, free quota limit and closed permissions.
+- Chromium 320/390/820/1440 checks pass for Payments sign-in/navigation, entered invoice cents, lost-response retry ID, invoice-email queue action, PDF download, safe text, sign-out cleanup and no overflow. The customer page has no test-mode UI.
+- Existing Services and admin navigation checks pass. Earlier actual isolated browser -> Supabase Auth -> invoice -> PDF -> private customer link pass remains valid for the foundation; all its disposable rows/users were deleted.
+- Security advisors contain the pre-existing calendar-function warnings and intentional RLS/no-policy informational notices for server-only finance tables; no new definer functions were added.
+- Finance API is ACTIVE v3. Applied additional migrations: 20261109123642 finance_email_delivery and 20261109124047 finance_mail_scheduler. Schema/config changes are live; email_enabled and live_enabled remain false.
+- No real Paystack call/charge or outgoing email was executed. Finance invoices/payments/email jobs/members remain empty; no test screen or sample customer transaction is published. Production asset/release checks are recorded after this commit.
+
+### Remaining actual activation
+1. Use a free direct Resend account; verify the logtraq.co.za sender domain. Store its sending key as RESEND_API_KEY_LOGTRAQ in Supabase Edge Function secrets (never in chat, frontend or Git). Enable the private finance account sender only after verification. No Vercel marketplace billing connection is needed.
+2. Configure the real Paystack account secrets (PAYSTACK_SECRET_KEY_LOGTRAQ and PAYSTACK_WEBHOOK_SECRET_LOGTRAQ), real integration ID and account binding. Add the webhook URL .../functions/v1/finance-api/webhook/logtraq in Paystack. Complete a controlled, explicitly operated real payment/email check before normal live charging is activated. Existing R1 demo checkout is untouched.
+3. Full/partial refund processing, disputes, settlement reconciliation and delivery/bounce monitoring remain later work. Current verified "reversed" states are supported; historical imports suppress unsolicited old receipt emails.
+4. The PDF's Helvetica/WinAnsi fallback still replaces unsupported characters with ?. Customer HTML keeps full text; broader Unicode PDF support remains a known limitation.
+
+Preserve existing records/photos/pricing, real Paystack destination, date/time-only slots, unbookable unscheduled classes and paused Order summary. Invoice payment does not reserve or confirm an appointment/class. The paused section below is historical.
+
+
+## PAUSED by owner: Payments and invoices — 2026-11-09 (read first)
+
+The owner explicitly paused the project after authorising Payments/invoices/verified receipt emails, briefly pausing/resuming, rejecting paid Resend-to-Vercel linkage, and insisting on real values with NO test-mode screen or sample production transactions. Stop feature work and deployments until the owner resumes. No paid email service was activated.
+
+### Current production state
+- Frontend main remains 59dcd18246b7f268ba8bfe264eeabd3fffc7c37d. The new Payments UI has NOT been merged or deployed. Last hero/banner production release remains as previously recorded.
+- Four finance migrations ARE applied to the existing Supabase project: 20261109110727 add_payments_and_invoices, 20261109111209 finance_invoice_controls, 20261109111824 finance_live_invoices, 20261109112542 finance_private_invoice_links.
+- finance-api Edge Function IS deployed and ACTIVE, version 2, ID 5925ded2-df46-4dc3-9124-9723a3b8d7e2. It has verify_jwt=false because it explicitly validates owner Supabase Auth sessions/member access or raw Paystack webhook signatures; customer invoice actions require HMAC links. No anonymous financial table/RPC access is granted.
+- All finance accounts, members, invoices, payment records and emails are empty. No real owner, Paystack credentials, webhook secret or email provider has been configured. Original businesses/services/photos/availability are unchanged. Existing R1 Paystack demo destination, client booking behaviour and scheduling safeguards remain.
+
+### Saved implementation (not a completed live payment rollout)
+Admin Payments includes protected sign-in, real-value payment history/search/SA date filters/pagination, owner-issued immutable invoices, integer-cent totals, safe retry IDs, numbered PDFs, signed customer links, atomic unpaid-invoice voiding, receipt email queue and provider history import. Sidebar gains Payments only in the saved candidate. Public invoice page displays saved invoice values, downloads a genuine PDF, and initializes/checks Paystack only when the real merchant configuration is present. There is no environment selector or visible test invoice screen; public customer invoices reject non-live rows. No made-up transactions are seeded.
+
+Backend: closed finance tables; invoker/service-role-only RPCs; verified user/business membership; per-business HMAC secrets generated server-side; raw modern/legacy webhook checks; Paystack server verification of reference/merchant context/currency/amount/customer; idempotent payment and receipt writes; reversal states cannot be downgraded by stale success notifications. Historical imports suppress receipt emails. Invoice-only payments do NOT reserve/confirm appointments/classes.
+
+### Verified
+- Transactional SQL suite passed: ownership/cross-business denial, totals, numbering, retries, amount/currency/environment checks, duplicate checkout/receipt protection, reversals, void locking and RLS/direct RPC denial. Fixtures rolled back.
+- Native API signature/replay/authorization/private-link/configuration checks passed.
+- Existing admin Services/navigation suites passed.
+- Chromium at 320/390/820/1440 passed isolated intercepted finance UI flows, amount conversion, lost-response retry, PDF download, safe text, logout cleanup and overflow checks. These are internal automated fixtures, not a published test screen.
+- ACTUAL browser -> Supabase Auth -> membership -> invoice creation -> real PDF generation -> signed customer invoice page passed on an isolated disposable QA business. No Paystack charge or email was sent.
+- Actual Logtraq setup returned access_ready=false/payments_ready=false/email_ready=false; unauthenticated dashboard returned 401.
+- At pause, the disposable QA business/user/identities and all finance child rows were deleted; zero remaining QA users/businesses/invoices/payments verified. The ephemeral Vercel Sandbox session sbx_DAVNQ8WbTadCGl69xWn45Ersi5bs was stopped.
+- Security advisors: finance tables intentionally have RLS with no browser policies and revoked browser grants. Existing calendar-function warnings remain; no new definer functions were introduced.
+
+### Still required after explicit resume
+1. Review candidate and provision the legitimate finance owner account/membership. The owner and sender email questions remain unanswered; do not invent or grant a real owner.
+2. Securely configure the actual Paystack account and signing secret in Supabase Edge secrets; bind the real integration ID/business. live_enabled stays false until a controlled real end-to-end payment verification. No Paystack API call/charge/webhook has been live-tested in this work.
+3. Finish FREE email delivery. Resend's direct Free plan was researched; no paid marketplace connection or email provider installation occurred. Current code queues receipts but DOES NOT send emails; invoice Email action explicitly remains unavailable. No Resend adapter/worker/delivery retry implementation is complete.
+4. Finish receipt delivery/retry monitoring; partial refunds/disputes and settlement reconciliation are not implemented. Current reversal support handles provider-verified full reversed transactions only.
+5. PDF uses Helvetica/WinAnsi; unsupported characters fall back to ?. Customer HTML retains the full text. Review broader Unicode font support if needed.
+6. Candidate frontend source is saved remotely as an unreferenced Git commit to avoid triggering any preview/production deployment on pause. Its commit URL is provided in the chat and in the local pause receipt. Do not claim it is on main.
+
+Owner-created invoices/customer payment-download links were the stated working assumption; clarify if customers must also create invoices. Preserve real values, no user-facing test screens, no paid email integration, existing records and all booking/payment boundaries. Work must remain paused until resumed.
+
+
+
 ## Hero corrected to a full-width top-anchored banner — 2026-11-09 (read first)
 
 The owner corrected the previous fit-content treatment: the hero must be a banner spanning the top, without stretching or cutting off the upper photo. Replaced fit-content/natural-height rules with width:100%, a responsive 150–240px banner height, and an image filling the frame using object-fit:cover and object-position:center top. The photo scales proportionally; any necessary crop falls at the sides/bottom rather than the top. Both pages reference profile.css v7. Original image, storage data, logo, upload/delivery and booking logic are unchanged.

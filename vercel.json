@@ -48,7 +48,7 @@
   },
   "headers": [
     {
-      "source": "/:asset(photo-tools|business-profile|admin-profile|admin-navigation|admin-services|admin-slot-time|admin-contacts|admin|app|styles|catalogue|profile)\\.:ext(js|css)",
+      "source": "/:asset(finance-login|admin-payments|customer-invoice|finance|photo-tools|business-profile|admin-profile|admin-navigation|admin-services|admin-slot-time|admin-contacts|admin|app|styles|catalogue|profile)\\.:ext(js|css)",
       "has": [
         {
           "type": "query",
@@ -60,6 +60,44 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/invoice.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/finance-login.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }

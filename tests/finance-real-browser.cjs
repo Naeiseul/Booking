@@ -1,0 +1,35 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require('/vercel/test-tools/node_modules/playwright');const {PDFDocument}=require('/vercel/test-tools/node_modules/pdf-lib');
+const qa=JSON.parse(process.env.QA_CONTEXT_JSON),origin='https://booking.logtraq.co.za',root='/vercel/Booking';
+(async()=>{const browser=await chromium.launch({headless:true});try{
+ const context=await browser.newContext({viewport:{width:390,height:950},permissions:['clipboard-write','clipboard-read']});
+ await context.route(origin+'/**',async route=>{
+  const u=new URL(route.request().url());let file=u.pathname.startsWith('/admin/')?'admin.html':u.pathname.slice(1);
+  if(!file||file.includes('..')||!/\.(html|css|js)$/.test(file)||!fs.existsSync(path.join(root,file)))return route.continue();
+  await route.fulfill({contentType:file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':'text/html',body:fs.readFileSync(path.join(root,file))});
+ });
+ const page=await context.newPage();
+ await page.goto(origin+'/admin/'+qa.slug+'/'+qa.admin_key+'#payments');
+ await page.locator('#finance-login-submit:not([disabled])').waitFor();
+ await page.locator('#finance-email').fill(qa.email);await page.locator('#finance-password').fill(qa.password);await page.locator('#finance-login-submit').click();
+ await page.locator('#finance-create:not([disabled])').waitFor();
+ await page.getByRole('button',{name:'Create invoice',exact:true}).click();
+ await page.locator('#invoice-customer-name').fill('Private integration verification');
+ await page.locator('#invoice-customer-email').fill('verification@example.invalid');
+ await page.locator('.invoice-description').fill('Isolated real API verification');
+ await page.locator('.invoice-price').fill('1.00');await page.locator('#invoice-save').click();
+ await page.locator('#invoice-dialog').waitFor({state:'hidden'});
+ await page.locator('#finance-detail').getByRole('heading',{name:'INV-000001'}).waitFor();
+ const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download PDF',exact:true}).click();
+ const download=await downloadPromise,stream=await download.createReadStream();const chunks=[];for await(const chunk of stream)chunks.push(chunk);
+ const pdf=await PDFDocument.load(Buffer.concat(chunks));assert(pdf.getPageCount()>0);
+ const linkResponse=page.waitForResponse(r=>r.url().includes('/finance-api')&&r.request().postDataJSON()?.action==='invoice_link');
+ await page.getByRole('button',{name:'Copy customer link',exact:true}).click();const privateUrl=(await(await linkResponse).json()).url;assert(privateUrl.includes('#'));
+ const customer=await context.newPage();await customer.goto(privateUrl);await customer.locator('#customer-invoice').waitFor({state:'visible'});
+ assert.match(await customer.locator('#customer-invoice-total').innerText(),/1[,.]00/);
+ assert(await customer.locator('#customer-invoice-pay').isDisabled(),'No charging without provider connection');
+ assert.equal(await customer.locator('#customer-invoice-status').innerText(),'ISSUED');
+ assert(await customer.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+ console.log('PASS actual browser → Supabase Auth → membership → invoice creation → genuine PDF generation → signed customer invoice link. Isolated QA business only. No Paystack charge or email sent.');
+ await context.close();
+ }finally{await browser.close();}})().catch(error=>{console.error(error.message);process.exitCode=1;});

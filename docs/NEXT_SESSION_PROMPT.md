@@ -1,7 +1,5 @@
-Continue LogTraq in Naeiseul/Booking from current main. Read AGENTS.md, newest docs/PROJECT_HANDOFF.md section and docs/photo-workflow.md first.
+Continue LogTraq Payments/invoices from current main. The owner resumed and approved info@logtraq.co.za as finance owner/sender. Read AGENTS.md, the newest docs/PROJECT_HANDOFF.md section and docs/payments-invoices.md.
 
-Owner priority: finish photo upload/proportion/loading fixes, then improve BOTH Admin and client interfaces in small agreed steps. Do not automatically move to scheduling.
+Use real values, no user-facing test mode/sample transactions and no paid email marketplace connection. The Payments/invoice/PDF/private-link and direct free-email delivery code is implemented. Actual Paystack credentials, free Resend sending key and sender-domain verification are still required; no live charge or email delivery has been performed or claimed. No real finance owner identity was fabricated; sign-in email verifies the approved owner before membership activation.
 
-Photo preparation and sized Vercel delivery are implemented. Read release notes for actual endpoint checks and outstanding browser limitations. Verify real phone/desktop file selection, EXIF orientation, encoding and multipart Supabase upload using isolated QA before claiming the whole photo flow verified. HEIC support depends on browser decoding.
-
-Preserve existing photos/records/pricing, Services groups and Business Profile. Keep shared classes unbookable until scheduling/capacity works, service payments disabled, real Paystack intact, date/time-only slots accepted and Order summary paused. Specific service sessions at exact dates/times remain a future requirement; scheduling/capacity → reservations → verified payments remains the later sequence.
+Complete the pending real service connections, then a controlled real verification. Do not confuse invoice money receipt with a reserved/confirmed booking. Preserve existing real Paystack demo link, records/photos/pricing, unbookable unscheduled classes, date/time-only slots and paused Order summary. Read exact deployment/test status in the newest handoff.

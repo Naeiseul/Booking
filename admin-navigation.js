@@ -4,6 +4,7 @@ window.initializeAdminNavigation = function (businessName, bizSlug) {
     const sidebar = document.getElementById('admin-sidebar');
     const status = document.getElementById('business-status');
     const sections = ['calendar', 'services'];
+    if (document.getElementById('payments-panel')) sections.push('payments');
     if (document.getElementById('profile-panel')) sections.push('profile');
     document.getElementById('admin-business-name').textContent = businessName || 'Your business';
     const viewBusiness = document.getElementById('admin-view-business');
@@ -23,7 +24,7 @@ window.initializeAdminNavigation = function (businessName, bizSlug) {
             if (section === active) link.setAttribute('aria-current', 'page');
             else link.removeAttribute('aria-current');
         });
-        status.textContent = active === 'calendar' ? 'Tap a slot to toggle its availability' : active === 'services' ? 'Manage your service catalogue' : 'Manage your business profile';
+        status.textContent = active === 'calendar' ? 'Tap a slot to toggle its availability' : active === 'services' ? 'Manage your service catalogue' : active === 'payments' ? 'Track payments and invoices' : 'Manage your business profile';
         if (moveFocus) document.getElementById(active + '-heading').focus();
     }
     window.addEventListener('hashchange', () => showSection(true));

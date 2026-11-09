@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.initializeAdminNavigation(data.name, bizSlug);
         window.initializeAdminServices({ bizSlug, adminKey });
         if (window.initializeAdminProfile) window.initializeAdminProfile({ bizSlug, adminKey });
+        if (window.initializeAdminPayments) window.initializeAdminPayments({ bizSlug, adminKey });
         
         // Logo and PWA injection
         if (data.name) {
