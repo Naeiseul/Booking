@@ -10,7 +10,7 @@ Found a script-loading waterfall: all external scripts were parser-blocking at t
 
 Optimized images cache for a week rather than one hour. Normal replacements use new upload UUIDs, so changed photos get fresh URLs. Versioned JS/CSS are browser-cached with immutable headers; changed client/profile/helper references have new versions. Unversioned config and HTML remain revalidated. Existing objects and business records were not changed.
 
-PASS: JS syntax, photo-tools, Services, admin navigation and availability sync native suites. OS restrictions still prevent a real browser timing/visual test; do not claim measured user-perceived speed. The owner was asked which page/images are slow; fold their answer into the investigation if supplied. Production checks follow this implementation.
+PASS: JS syntax, photo-tools, Services, admin navigation and availability sync native suites. OS restrictions still prevent a real browser timing/visual test; do not claim measured user-perceived speed. The owner was asked which page/images are slow; fold their answer into the investigation if supplied. Release 18d7a3b90d7d7e94b99c0fdc01edd77f8a230364 is production READY as dpl_AGNPXcVAW7haWLfoery5x5io14f9 on booking.logtraq.co.za. Auto-production deployment did not start after main moved, so an explicit production deployment of that exact SHA was created. Both live HTML pages and changed client/profile scripts returned 200 and matched the candidate. HTML retained max-age=0,must-revalidate; versioned JS returned max-age=31536000,immutable. Preview also confirmed config.js remains revalidated. User-perceived speed and phone/browser measurements remain unverified.
 
 
 
