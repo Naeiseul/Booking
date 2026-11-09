@@ -2,6 +2,14 @@
 
 Updated 2026-11-09.
 
+## Services action spacing — 2026-11-09 (read first)
+
+The owner reported Add group, Add service and Reload services congested across devices. Moved the three existing buttons into one labelled action toolbar below the Services heading. Desktop/tablet uses three equal columns capped at 680px; at 600px and below Add group/Add service share a row and Reload spans the following row. Explicit 12px gaps, 48px minimum hit areas and 24px space below keep actions separate from the list. Reload has a lighter secondary appearance. IDs, handlers, disabled states and loading/error feedback remain. Bumped admin.css to v14 for immutable-cache compatibility.
+
+Native Services and admin navigation checks pass. Browser visual verification remains unavailable in this Windows session (previous Chromium OS access failure); do not claim physical device testing. Only admin markup/CSS changed; records, photos, booking/payment logic and client page are unchanged. Production checks follow this release.
+
+
+
 ## Image loading follow-up — 2026-11-09 (read first)
 
 The owner reports images still taking too long after the first release. Read-only live checks confirmed the optimizer works for the actual cover/logo/service paths, but 1600px cover and 960px service requests without WebP negotiation still returned 344,934 and 299,395 bytes respectively. These endpoint checks do not measure browser load time.

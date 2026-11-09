@@ -252,15 +252,23 @@ html:has(.admin-page dialog[open]) { overflow:hidden; }
 
 
 
-/* Keep the Services toolbar stable before and after loading/saving. */
-.admin-page #services-panel .admin-section-heading { flex-wrap:wrap; }
-.admin-page #services-panel .service-heading-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:min(100%,440px); gap:10px; }
-.admin-page #services-panel .service-heading-actions button { width:100%; min-width:0; flex-shrink:1; }
-.admin-page #services-panel .service-list-toolbar { justify-content:flex-start; }
-.admin-page #services-panel #reload-services { width:auto; min-width:160px; }
-@media(max-width:480px) {
- .admin-page #services-panel .service-heading-actions { width:100%; }
- .admin-page #services-panel .service-heading-actions button { padding:12px 8px; }
+/* Services actions have their own row, clear gaps and consistent hit areas. */
+.admin-page #services-panel .admin-section-heading { margin-bottom:20px; }
+.admin-page #services-panel .service-heading-actions {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    width:100%; max-width:680px; gap:12px; margin:0 0 24px; align-items:stretch;
+}
+.admin-page #services-panel .service-heading-actions button {
+    width:100%; min-width:0; min-height:48px; margin:0; padding:12px 16px;
+    white-space:normal;
+}
+.admin-page #services-panel #reload-services {
+    background:#fff; color:#111; border-color:#d9d9d9;
+}
+.admin-page #services-panel #reload-services:hover:not(:disabled) { background:#f3f3f3; }
+@media(max-width:600px) {
+    .admin-page #services-panel .service-heading-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .admin-page #services-panel #reload-services { grid-column:1 / -1; }
 }
 
 /* Show the whole supplied photo, regardless of its proportions. */

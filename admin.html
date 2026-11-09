@@ -19,7 +19,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=3">
-    <link rel="stylesheet" href="/admin.css?v=13">
+    <link rel="stylesheet" href="/admin.css?v=14">
     <link rel="stylesheet" href="/profile.css?v=5">
 </head>
 <body class="admin-page">
@@ -102,18 +102,16 @@
                 <div class="admin-section-heading">
                     <div><h2 class="admin-section-title" id="services-heading" tabindex="-1">Services</h2>
                     <p class="muted-text admin-section-description">Create, organise and publish your services here.</p></div>
-                    <div class="service-heading-actions">
-                        <button class="service-secondary-button" id="add-category" type="button" disabled>Add group</button>
-                        <button class="admin-add-service" id="add-service" type="button" disabled>+ Add service</button>
-                    </div>
+                </div>
+                <div class="service-heading-actions" role="group" aria-label="Service actions">
+                    <button class="service-secondary-button" id="add-category" type="button" disabled>Add group</button>
+                    <button class="admin-add-service" id="add-service" type="button" disabled>+ Add service</button>
+                    <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
                 </div>
                 <p class="service-feedback" id="services-message" role="status" hidden></p>
                 <p class="service-feedback" id="categories-message" role="status" hidden></p>
                 <p class="booking-error" id="services-error" role="alert" hidden></p>
-                <div class="service-list-toolbar">
-                    <p class="muted-text" id="services-loading" role="status">Loading services…</p>
-                    <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
-                </div>
+                <p class="muted-text" id="services-loading" role="status">Loading services…</p>
                 <div id="services-list" class="services-list"></div>
                 <div class="admin-services-empty" id="services-empty" hidden>
                     <h3>Add your first service</h3>
