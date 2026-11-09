@@ -2,6 +2,18 @@
 
 Updated 2026-11-09.
 
+## Image loading follow-up — 2026-11-09 (read first)
+
+The owner reports images still taking too long after the first release. Read-only live checks confirmed the optimizer works for the actual cover/logo/service paths, but 1600px cover and 960px service requests without WebP negotiation still returned 344,934 and 299,395 bytes respectively. These endpoint checks do not measure browser load time.
+
+Found a script-loading waterfall: all external scripts were parser-blocking at the end of each page, so config, helpers and application scripts downloaded sequentially before the business RPC/image discovery. Both pages now defer external scripts (parallel download with execution order retained) and preconnect to the existing Supabase origin. First two client service photos load eagerly; later cards stay lazy. Service responsive copies are capped at 640px, cover copies at 960px, preserving the existing full-photo fit and upload logic.
+
+Optimized images cache for a week rather than one hour. Normal replacements use new upload UUIDs, so changed photos get fresh URLs. Versioned JS/CSS are browser-cached with immutable headers; changed client/profile/helper references have new versions. Unversioned config and HTML remain revalidated. Existing objects and business records were not changed.
+
+PASS: JS syntax, photo-tools, Services, admin navigation and availability sync native suites. OS restrictions still prevent a real browser timing/visual test; do not claim measured user-perceived speed. The owner was asked which page/images are slow; fold their answer into the investigation if supplied. Production checks follow this implementation.
+
+
+
 ## Photo uploads and delivery prioritised — 2026-11-09 (read first)
 
 The owner explicitly prioritised Supabase/photos first: ordinary photos should not require manual resizing, aspect ratios must be preserved, and slow strip-by-strip loading must be fixed. The NEXT project is improving BOTH Admin and client interfaces. Do not automatically resume scheduling after photos; agree the next interface step with the owner. Existing booking/payment safeguards remain.

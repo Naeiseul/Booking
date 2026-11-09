@@ -44,6 +44,24 @@
     "formats": [
       "image/webp"
     ],
-    "minimumCacheTTL": 3600
-  }
+    "minimumCacheTTL": 604800
+  },
+  "headers": [
+    {
+      "source": "/:asset(photo-tools|business-profile|admin-profile|admin-navigation|admin-services|admin-slot-time|admin-contacts|admin|app|styles|catalogue|profile)\\.:ext(js|css)",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "[0-9]+"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
 }

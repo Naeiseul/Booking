@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const signature = JSON.stringify([activeCategoryId, visibleServices, selectedService && selectedService.id]);
         if (signature !== catalogueSignature) {
             serviceList.innerHTML = '';
-            visibleServices.forEach(service => {
+            visibleServices.forEach((service,index) => {
                 const card = document.createElement('article');
                 const isSelected = Boolean(selectedService && selectedService.id === service.id);
                 card.className = 'client-service-card' + (isSelected ? ' is-selected' : '');
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if(photo) {
                     const image=document.createElement('img');
                     image.className='service-photo'; image.alt=''; image.width=600; image.height=400;
-                    PhotoTools.set(image,photo,{width:640,sizes:'(max-width: 640px) 100vw, (max-width: 1100px) 45vw, 360px'});
+                    PhotoTools.set(image,photo,{width:640,maxWidth:640,lazy:index >= 2,sizes:'(max-width: 640px) 100vw, (max-width: 1100px) 45vw, 360px'});
 
                     card.appendChild(image);
                 }
