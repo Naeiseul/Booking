@@ -1,6 +1,7 @@
 # Booking project working agreement
 
 - Work one small step at a time; prioritize working behaviour and data integrity.
+- Latest owner priority (2026-11-09): fix Supabase/photo uploads, proportions and loading performance first; then improve BOTH Admin and client interfaces in agreed steps. Read docs/photo-workflow.md and the newest handoff. Scheduling remains a remembered requirement, not the automatic next project.
 - Next-session reminder requested by the owner: discuss assigning a specific session to an exact calendar date/time, for example HIIT at 10:00. Read the newest handoff and docs/NEXT_SESSION_PROMPT.md. Do not turn generic availability into bookable shared classes before scheduling/capacity is implemented.
 - Latest catalogue redesign direction: read docs/catalogue-redesign.md and the newest handoff section before editing. Keep category (catalogue organisation), service (offering purchased), and booking type (scheduling rules) separate. The Order summary addition is paused.
 - Saved visual references: docs/references/final-visual-plan.png (customer/combined) and docs/references/admin-interface-reference.png (important admin target). Read docs/admin-interface.md before admin visual work. Images are staged design targets, not authorization to implement all pictured features or sample data.

@@ -1,6 +1,24 @@
 # Booking project handoff
 
-Updated 2026-10-31.
+Updated 2026-11-09.
+
+## Photo uploads and delivery prioritised — 2026-11-09 (read first)
+
+The owner explicitly prioritised Supabase/photos first: ordinary photos should not require manual resizing, aspect ratios must be preserved, and slow strip-by-strip loading must be fixed. The NEXT project is improving BOTH Admin and client interfaces. Do not automatically resume scheduling after photos; agree the next interface step with the owner. Existing booking/payment safeguards remain.
+
+Implementation is on fix/photo-upload-delivery, initial commit 7619dfc. Shared photo-tools.js prepares Services and Business Profile images up to 25 MB, preserving proportions and drawing the whole decoded photo. Longest edge is at most 1920px (logos 768px), with bounded compression/downsize retries targeting 1 MB. New uploads save the prepared copy through the unchanged credential-checked uploader and 5 MB bucket guard. Existing Supabase originals and record references are unchanged. HEIC/HEIF depends on browser decoding; unsupported files receive an explicit compatible-format message. Do not claim universal HEIC support or verified EXIF handling.
+
+Vercel image delivery is configured for six bounded sizes, quality 75, WebP negotiation and a restricted allowlist for this project's public photo bucket plus three local PNGs. The Supabase organisation is on Free, so no paid Supabase transformation service was enabled. Client cards/hero use responsive images; small thumbs request small files. Service/hero previews contain the full photo and logos keep their edges. Images reveal after decode; failed optimizer requests fall back to the saved original.
+
+Preview dpl_8zaDD26zGKRj1PRLEfLoohPdX7jj is READY. Actual endpoint checks: existing mobility PNG (2,313,079 bytes) returned 200 at width 384 with Content-Length 61,110 bytes; footer logo (422,994 bytes) returned 200 at width 96 with Content-Length 6,344 bytes. Requests without a WebP Accept header returned PNG. An unapproved external source returned 400. No newly measured browser load time or WebP payload reduction is claimed.
+
+PASS: JS syntax; native photo preparation/delivery suite (mocked canvas/image APIs, proportions, no crop/enlargement, oversized/invalid/decode failures, compression retries/PNG fallback, cleanup, decode reveal/original fallback); Services (preparation locks, failed replacement retention, prior CRUD/retry/concurrency/status/pricing cases); admin navigation; cross-tab availability sync; slot expiry. Existing client-categories and monthly-calendar tests also fail on unchanged main (old DOM mocks lack append/scrollIntoView). client-booking-flow uses an already expired November 1 fixture. Those are not new photo regressions.
+
+This session's Chromium launch failed with Windows OS access/IPC restrictions. Real browser file encoding/EXIF orientation, actual multipart upload from the changed UI, Safari/iOS, and responsive visual checks remain unverified. Do not report these as passed. See docs/photo-workflow.md for the implementation contract. Production status/assets are verified after the release commit.
+
+No business records, storage objects/originals, bucket policies, schema, payments, scheduling, reservations or Order summary changed.
+
+
 
 ## Next-session reminder: specific sessions at exact times; WhatsApp icon — 2026-10-31 (read first)
 

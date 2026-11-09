@@ -1,9 +1,7 @@
-Continue LogTraq in Naeiseul/Booking from current main. Read AGENTS.md and docs/PROJECT_HANDOFF.md, newest section first.
+Continue LogTraq in Naeiseul/Booking from current main. Read AGENTS.md, newest docs/PROJECT_HANDOFF.md section and docs/photo-workflow.md first.
 
-First remind me about assigning specific sessions to exact calendar times. For example, an admin must be able to schedule HIIT at 10:00 on a chosen date, with that time assigned to that session. Inspect the current calendar and agree the smallest next step with me.
+Owner priority: finish photo upload/proportion/loading fixes, then improve BOTH Admin and client interfaces in small agreed steps. Do not automatically move to scheduling.
 
-Check that the supplied WhatsApp icon is saved in GitHub and Supabase and replaces the stray WhatsApp text on the client page. Keep WhatsApp and call links separate, using the business's saved numbers.
+Photo preparation and sized Vercel delivery are implemented. Read release notes for actual endpoint checks and outstanding browser limitations. Verify real phone/desktop file selection, EXIF orientation, encoding and multipart Supabase upload using isolated QA before claiming the whole photo flow verified. HEIC support depends on browser decoding.
 
-Finish careful photo-upload checks and review how actual saved services appear in admin and client views.
-
-Keep everything simple and phone/tablet friendly. Preserve existing records, original logos, Services groups and Business Profile. Keep shared classes unbookable until scheduling/capacity works, service payments disabled, real Paystack intact and Order summary paused. Follow scheduling/capacity → reservations → verified payments.
+Preserve existing photos/records/pricing, Services groups and Business Profile. Keep shared classes unbookable until scheduling/capacity works, service payments disabled, real Paystack intact, date/time-only slots accepted and Order summary paused. Specific service sessions at exact dates/times remain a future requirement; scheduling/capacity → reservations → verified payments remains the later sequence.
