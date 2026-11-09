@@ -2,6 +2,14 @@
 
 Updated 2026-11-09.
 
+## Hero corrected to a full-width top-anchored banner — 2026-11-09 (read first)
+
+The owner corrected the previous fit-content treatment: the hero must be a banner spanning the top, without stretching or cutting off the upper photo. Replaced fit-content/natural-height rules with width:100%, a responsive 150–240px banner height, and an image filling the frame using object-fit:cover and object-position:center top. The photo scales proportionally; any necessary crop falls at the sides/bottom rather than the top. Both pages reference profile.css v7. Original image, storage data, logo, upload/delivery and booking logic are unchanged.
+
+No browser/device visual pass is available in this session. Production files are checked after release. This supersedes the previous hero fit-content instruction.
+
+
+
 ## Hero frame follows the supplied photo — 2026-11-09 (read first)
 
 The owner reported the hero section extending beyond the picture and authorised improving its size/appearance. The supplied-photo hero now uses a fit-content frame, automatic image width/height, max-width:100% and a responsive 180–320px maximum image height. This removes the long dark side bars while preserving the complete photo, its aspect ratio, centred placement and the existing overlapping logo. The no-photo banner fallback remains. No crop, source-image edit or storage/business-data change. Both HTML pages reference profile.css v6 to refresh the immutable stylesheet cache.
