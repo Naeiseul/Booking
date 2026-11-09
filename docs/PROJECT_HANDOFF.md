@@ -6,7 +6,7 @@ Updated 2026-11-09.
 
 The owner corrected the previous fit-content treatment: the hero must be a banner spanning the top, without stretching or cutting off the upper photo. Replaced fit-content/natural-height rules with width:100%, a responsive 150–240px banner height, and an image filling the frame using object-fit:cover and object-position:center top. The photo scales proportionally; any necessary crop falls at the sides/bottom rather than the top. Both pages reference profile.css v7. Original image, storage data, logo, upload/delivery and booking logic are unchanged.
 
-No browser/device visual pass is available in this session. Production files are checked after release. This supersedes the previous hero fit-content instruction.
+No browser/device visual pass is available in this session. Release 023ab6ced2c6b2b1a090bb70b189fda970534150 is READY as dpl_J5iYUhAsrbyf5wSrCCAY5XKeJCbh on booking.logtraq.co.za. Live profile.css?v=7, index.html and admin.html returned 200 and matched the candidate. An index.html request during BUILDING returned 404; after READY the recheck returned 200 with the correct content. This supersedes the previous hero fit-content instruction.
 
 
 
