@@ -6,7 +6,7 @@ Updated 2026-11-09.
 
 The owner reported the hero section extending beyond the picture and authorised improving its size/appearance. The supplied-photo hero now uses a fit-content frame, automatic image width/height, max-width:100% and a responsive 180–320px maximum image height. This removes the long dark side bars while preserving the complete photo, its aspect ratio, centred placement and the existing overlapping logo. The no-photo banner fallback remains. No crop, source-image edit or storage/business-data change. Both HTML pages reference profile.css v6 to refresh the immutable stylesheet cache.
 
-CSS/markup change only. Existing OS restrictions still prevent visual browser/device verification; production asset checks follow this release. Photo delivery, upload and booking/payment logic are unchanged.
+CSS/markup change only. Existing OS restrictions still prevent visual browser/device verification; release b854d075f43efc1faba04a3d35ffce5d42cbef68 is production READY as dpl_GnLa2SvXBGZju2ysNx4gpitNNSMp on booking.logtraq.co.za. Live profile.css?v=6, index.html and admin.html returned 200 and matched the candidate. Admin navigation regression checks pass. Photo delivery, upload and booking/payment logic are unchanged.
 
 
 
