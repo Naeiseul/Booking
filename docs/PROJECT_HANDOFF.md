@@ -6,7 +6,7 @@ Updated 2026-11-09.
 
 The owner reported Add group, Add service and Reload services congested across devices. Moved the three existing buttons into one labelled action toolbar below the Services heading. Desktop/tablet uses three equal columns capped at 680px; at 600px and below Add group/Add service share a row and Reload spans the following row. Explicit 12px gaps, 48px minimum hit areas and 24px space below keep actions separate from the list. Reload has a lighter secondary appearance. IDs, handlers, disabled states and loading/error feedback remain. Bumped admin.css to v14 for immutable-cache compatibility.
 
-Native Services and admin navigation checks pass. Browser visual verification remains unavailable in this Windows session (previous Chromium OS access failure); do not claim physical device testing. Only admin markup/CSS changed; records, photos, booking/payment logic and client page are unchanged. Production checks follow this release.
+Native Services and admin navigation checks pass. Browser visual verification remains unavailable in this Windows session (previous Chromium OS access failure); do not claim physical device testing. Only admin markup/CSS changed; records, photos, booking/payment logic and client page are unchanged. Release c9ffc230942708fe4faaeb2f1bf3f553e76676e2 is production READY as dpl_8kyza2fhzoHSsEdfBfvEWBYPSXuU on booking.logtraq.co.za. Live admin.html and admin.css?v=14 both returned 200 and matched the candidate.
 
 
 
