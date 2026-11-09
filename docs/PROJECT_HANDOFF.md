@@ -2,6 +2,14 @@
 
 Updated 2026-11-09.
 
+## Hero frame follows the supplied photo — 2026-11-09 (read first)
+
+The owner reported the hero section extending beyond the picture and authorised improving its size/appearance. The supplied-photo hero now uses a fit-content frame, automatic image width/height, max-width:100% and a responsive 180–320px maximum image height. This removes the long dark side bars while preserving the complete photo, its aspect ratio, centred placement and the existing overlapping logo. The no-photo banner fallback remains. No crop, source-image edit or storage/business-data change. Both HTML pages reference profile.css v6 to refresh the immutable stylesheet cache.
+
+CSS/markup change only. Existing OS restrictions still prevent visual browser/device verification; production asset checks follow this release. Photo delivery, upload and booking/payment logic are unchanged.
+
+
+
 ## Services action spacing — 2026-11-09 (read first)
 
 The owner reported Add group, Add service and Reload services congested across devices. Moved the three existing buttons into one labelled action toolbar below the Services heading. Desktop/tablet uses three equal columns capped at 680px; at 600px and below Add group/Add service share a row and Reload spans the following row. Explicit 12px gaps, 48px minimum hit areas and 24px space below keep actions separate from the list. Reload has a lighter secondary appearance. IDs, handlers, disabled states and loading/error feedback remain. Bumped admin.css to v14 for immutable-cache compatibility.
