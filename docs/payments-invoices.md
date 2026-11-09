@@ -19,7 +19,7 @@ The owner explicitly resumed building and supplied info@logtraq.co.za for the fi
 - Existing Services and admin navigation checks pass. Earlier actual isolated browser -> Supabase Auth -> invoice -> PDF -> private customer link pass remains valid for the foundation; all its disposable rows/users were deleted.
 - Security advisors contain the pre-existing calendar-function warnings and intentional RLS/no-policy informational notices for server-only finance tables; no new definer functions were added.
 - Finance API is ACTIVE v3. Applied additional migrations: 20261109123642 finance_email_delivery and 20261109124047 finance_mail_scheduler. Schema/config changes are live; email_enabled and live_enabled remain false.
-- No real Paystack call/charge or outgoing email was executed. Finance invoices/payments/email jobs/members remain empty; no test screen or sample customer transaction is published. Production asset/release checks are recorded after this commit.
+- No real Paystack call/charge or outgoing email was executed. Finance invoices/payments/email jobs/members remain empty; no test screen or sample customer transaction is published. Production frontend release 02ade93163a2e934906b2625cfbc0a2131563cdf is READY on booking.logtraq.co.za. All seven affected live page/script/style assets returned 200 and matched the candidate. Payment/email activation remains pending actual credentials and domain verification.
 
 ### Remaining actual activation
 1. Use a free direct Resend account; verify the logtraq.co.za sender domain. Store its sending key as RESEND_API_KEY_LOGTRAQ in Supabase Edge Function secrets (never in chat, frontend or Git). Enable the private finance account sender only after verification. No Vercel marketplace billing connection is needed.
