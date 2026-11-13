@@ -1,0 +1,4 @@
+-- Already applied to Supabase under two managed migrations on 2026-11-13.
+-- Source-of-truth snapshot for checkout schema should be obtained via supabase db pull
+-- before deploying this repository migration in another environment.
+-- Do not apply an incomplete copy automatically.
