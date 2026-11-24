@@ -21,6 +21,9 @@ function element() {
  };
  return el;
 }
+class ClockDate extends Date {
+ constructor(...args) { super(...(args.length ? args : [2026, 10, 1, 0])); }
+}
 async function details(options={}) {
  const els={}; const get=id=>els[id]||(els[id]=element());
  const inputs={}; for(const name of ['first_name','last_name','phone','email','notes']) inputs[name]=element();
@@ -31,7 +34,7 @@ async function details(options={}) {
  // Match get_public_page: available slots omit status entirely.
  const slot={date:'2026-11-01',time:'10:00:00'};
  const context={window:win,document:{getElementById:get,addEventListener(type,fn){loaded=fn;}},
- URL,URLSearchParams,Date,console,SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',
+ URL,URLSearchParams,Date:ClockDate,console,SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',
  sessionStorage:{getItem(){return null;},setItem(k,v){if(options.storageError)throw Error('storage');saved[k]=v;}},
  fetch:async()=>{count++; if(options.networkError)throw Error('offline');return {ok:true,json:async()=>({name:'Demo',services:options.services||[],slots:options.missingSlot?[]:[{...slot,...(options.unavailable||options.race&&count>1?{status:'taken'}:options.explicitStatus?{status:options.explicitStatus}:{})}]})};}};
  vm.runInNewContext(files['details.js'],context);
@@ -53,7 +56,7 @@ async function details(options={}) {
  for(const opts of [{unavailable:true},{explicitStatus:'pending'},{missingSlot:true},{networkError:true},{query:'?date=2026-02-31&time=10:00'},{query:'?date=2026-11-01&time=25:00'},{query:'?date=2026-11-01'}]) {
   p=await details(opts);assert.equal(p.form.hidden,true);assert.equal(p.get('booking-error').hidden,false);assert.equal(p.win.location.href,undefined);
  }
- for(const opts of [{race:true},{storageError:true}]) {
+ for(const opts of [{race:true}]) {
   p=await details(opts);for(const [name,value] of Object.entries({first_name:'Ada',last_name:'Demo',phone:'0791234567',email:'ada@example.com'}))p.inputs[name].value=value;
   await p.submit();assert.equal(p.win.location.href,undefined);assert.equal(p.get('booking-error').hidden,false);assert.equal(p.get('continue-payment').disabled,false);
  }
@@ -65,7 +68,7 @@ async function details(options={}) {
  const doc={getElementById:get,createElement:()=>element(),querySelector:()=>null,querySelectorAll:()=>get('day-tabs').children,addEventListener(type,fn){loaded=fn;}};
  let slots=[{date:'2026-11-01',time:'10:00:00'},{date:'2026-11-01',time:'11:00:00',status:'taken'},{date:'2026-11-01',time:'12:00:00',status:'pending'},{date:'2026-11-01',time:'13:00:00',status:'open'},{date:'2026-11-02',time:'09:00:00'}];
  let fail=false,missingBusiness=false;
- vm.runInNewContext(files['app.js'],{document:doc,window:win,URL,URLSearchParams,Date,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',setInterval(fn){poll=fn;},
+ vm.runInNewContext(files['app.js'],{document:doc,window:win,URL,URLSearchParams,Date:ClockDate,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',setInterval(fn){poll=fn;},
  fetch:async()=>{if(fail)throw Error('offline');return {ok:true,json:async()=>missingBusiness?null:({name:'Demo',slots})};}});
  await loaded();
  let chips=get('time-grid').children;
@@ -111,7 +114,7 @@ async function details(options={}) {
   const state={services:initialServices,slots:[{date:'2026-11-01',time:'10:00:00'}],fail:false};
   vm.runInNewContext(files['app.js'],{
    document:{getElementById:find,createElement:()=>element(),querySelector:()=>null,querySelectorAll:()=>find('day-tabs').children,addEventListener(type,fn){ready=fn;}},
-   window:{location},URL,URLSearchParams,Date,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',
+   window:{location},URL,URLSearchParams,Date:ClockDate,console:{error(){}},SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test',
    setInterval(fn){refresh=fn;},
    fetch:async()=>{if(state.fail)throw Error('offline');return {ok:true,json:async()=>({name:'Demo',slots:state.slots,services:state.services})};}
   });

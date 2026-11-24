@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let catalogueSignature = null;
     let activeStep = 'sessions';
     const stepMenu = document.querySelector('.catalogue-menu');
-    const stepButtons = Array.from(stepMenu.querySelectorAll('button[data-step]'));
+    const stepButtons = stepMenu ? Array.from(stepMenu.querySelectorAll('button[data-step]')) : [];
     const categoryNavigation = document.getElementById('category-navigation');
     const categoryList = document.getElementById('category-buttons');
     const catalogueLayout = document.querySelector('.catalogue-layout');
@@ -66,6 +66,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     const serviceList = document.getElementById('client-services');
     const calendarEl = document.getElementById('client-calendar');
     const checkoutEl = document.getElementById('client-checkout');
+
+    const continueBtn = document.getElementById('luxury-continue-btn');
+    const navServices = document.getElementById('nav-services');
+    const navGallery = document.getElementById('nav-gallery');
+    if (navServices) {
+        navServices.addEventListener('click', () => showStep('sessions', true));
+    }
+    if (navGallery) {
+        navGallery.addEventListener('click', () => showStep('sessions', true));
+    }
+
+    function advanceToSchedule() {
+        if (!selectedService) return;
+        const selectedDayHasOpenSlots = (slotsByDate[activeDateString] || []).some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot));
+        if (!selectedDayHasOpenSlots) {
+            const firstOpenDate = Object.keys(slotsByDate).sort().find(date => slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)));
+            if (firstOpenDate) { activeDateString = firstOpenDate; viewedMonth = firstOpenDate.slice(0, 7); monthSignature = ''; }
+        }
+        renderMonth();
+        renderSlots(slotsByDate[activeDateString] || []);
+        showStep('schedule', true);
+    }
+
+    if (continueBtn) {
+        continueBtn.addEventListener('click', advanceToSchedule);
+    }
+
+    function updateContinueButton() {
+        if (continueBtn) {
+            continueBtn.disabled = !selectedService;
+        }
+    }
 
     function showStep(step, moveFocus = false) {
         if (step === 'checkout') {
@@ -75,21 +107,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         activeStep = step;
-        catalogueEl.hidden = step !== 'sessions';
+        const heroTitle = document.getElementById('luxury-hero-title');
+        if (heroTitle) {
+            heroTitle.innerHTML = step === 'sessions' ? 'Our<br>Services' : 'Our<br>Schedule';
+        }
+        if (navServices) {
+            if (step === 'sessions') navServices.classList.add('active');
+            else navServices.classList.remove('active');
+        }
+        catalogueEl.hidden = services.length > 0 ? step !== 'sessions' : false;
         categoryNavigation.hidden = step !== 'sessions' || categories.length === 0;
         if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(step === 'sessions' && categories.length > 0));
-        calendarEl.hidden = step === 'checkout';
+        calendarEl.hidden = services.length > 0 ? step !== 'schedule' : step === 'checkout';
         checkoutEl.hidden = step !== 'checkout';
         stepButtons.forEach(button => {
             const isCurrent = button.dataset.step === step;
             button.setAttribute('aria-pressed', String(isCurrent));
             if (isCurrent) button.setAttribute('aria-current', 'step');
-            else button.removeAttribute('aria-current');
+            else if (button.removeAttribute) button.removeAttribute('aria-current');
         });
         if (moveFocus) {
             const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : 'checkout-heading');
-            target.focus({ preventScroll: true });
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (target && target.focus) {
+                target.focus({ preventScroll: true });
+                if (target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     }
 
@@ -214,7 +256,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function renderCatalogue() {
         const visibleServices = services.filter(service => service.category_id === activeCategoryId);
-        stepMenu.hidden = false;
+        if (stepMenu) stepMenu.hidden = false;
         renderCategoryNavigation();
         const signature = JSON.stringify([activeCategoryId, visibleServices, selectedService && selectedService.id]);
         if (signature !== catalogueSignature) {
@@ -222,80 +264,51 @@ document.addEventListener("DOMContentLoaded", async () => {
             visibleServices.forEach((service,index) => {
                 const card = document.createElement('article');
                 const isSelected = Boolean(selectedService && selectedService.id === service.id);
-                card.className = 'client-service-card' + (isSelected ? ' is-selected' : '');
+                card.className = 'luxury-service-item client-service-card' + (isSelected ? ' is-selected' : '');
                 card.dataset.serviceId = service.id;
-                const photo=servicePhotoUrl(service.photo_path);
-                if(photo) {
-                    const image=document.createElement('img');
-                    image.className='service-photo'; image.alt=''; image.width=600; image.height=400;
-                    PhotoTools.set(image,photo,{width:640,maxWidth:640,lazy:index >= 2,sizes:'(max-width: 640px) 100vw, (max-width: 1100px) 45vw, 360px'});
 
-                    card.appendChild(image);
-                }
                 const body = document.createElement('div');
-                body.className = 'service-card-body';
+                body.className = 'luxury-service-body service-card-body';
+
                 const title = document.createElement('h3');
+                title.className = 'luxury-service-name';
                 title.textContent = service.name;
                 body.appendChild(title);
+
+                const meta = document.createElement('div');
+                meta.className = 'luxury-service-meta';
+                meta.textContent = serviceDuration(service).toUpperCase() + ' \u2022 ' + servicePrice(service);
+                body.appendChild(meta);
+
                 if (service.description) {
                     const description = document.createElement('p');
-                    description.className = 'client-service-description';
+                    description.className = 'luxury-service-desc client-service-description';
                     description.textContent = service.description;
                     body.appendChild(description);
                 }
-                const meta = document.createElement('div');
-                meta.className = 'service-card-meta';
-                const people = document.createElement('span');
-                people.textContent = service.service_type === 'class' ? '◉ Shared class' : '♙ ' + service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking';
-                const duration = document.createElement('span');
-                duration.textContent = '◷ ' + serviceDuration(service);
-                meta.append(people,duration);
-                body.appendChild(meta);
-                const purchase = document.createElement('div');
-                purchase.className = 'service-card-purchase';
-                const priceBlock = document.createElement('div');
-                priceBlock.className = 'service-card-price-block';
-                const priceCaption = document.createElement('span');
-                priceCaption.className = 'service-card-price-caption';
-                priceCaption.textContent = service.price_basis === 'per_person' ? 'PRICE PER PERSON' : 'PRICE PER BOOKING';
-                const price = document.createElement('strong');
-                price.className = 'client-service-price';
-                price.textContent = servicePrice(service);
-                priceBlock.append(priceCaption,price);
-                if (service.price_basis === 'per_person' && service.service_type === 'private' && service.participant_count > 1) {
-                    const total = document.createElement('span');
-                    total.className = 'service-card-total';
-                    total.textContent = servicePrice(service, true) + ' total for ' + service.participant_count + ' people';
-                    priceBlock.appendChild(total);
-                }
-                const dateHint = document.createElement('span');
-                dateHint.className = 'service-card-date-hint';
-                dateHint.textContent = 'Choose your date';
-                purchase.append(priceBlock,dateHint);
-                body.appendChild(purchase);
+
                 const choose = document.createElement('button');
                 choose.type = 'button';
-                choose.className = 'catalogue-service-button';
+                choose.className = 'luxury-select-btn catalogue-service-button' + (isSelected ? ' selected' : '');
                 choose.disabled = service.service_type === 'class';
-                choose.textContent = choose.disabled ? 'Booking unavailable' : isSelected ? 'Selected · choose date & time →' : 'Choose date & time →';
+                choose.textContent = choose.disabled ? 'Unavailable' : isSelected ? 'Selected' : 'Select';
                 choose.setAttribute('aria-pressed', String(isSelected));
-                choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'Choose booking date and time for ') + service.name);
+                choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'Select ') + service.name);
                 choose.addEventListener('click', () => {
                     if (choose.disabled) return;
-                    if (!selectedService || selectedService.id !== service.id) selectedSlot = null;
-                    selectedService = service;
-                    requestedServiceId = '';
-                    renderCatalogue();
-                    updateBookButton();
-                    const selectedDayHasOpenSlots = (slotsByDate[activeDateString] || []).some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot));
-                    if (!selectedDayHasOpenSlots) {
-                        const firstOpenDate = Object.keys(slotsByDate).sort().find(date => slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)));
-                        if (firstOpenDate) { activeDateString = firstOpenDate; viewedMonth = firstOpenDate.slice(0, 7); monthSignature = ''; }
+                    if (!selectedService || selectedService.id !== service.id) {
+                        selectedSlot = null;
+                        selectedService = service;
+                        requestedServiceId = '';
+                        renderCatalogue();
+                        updateBookButton();
+                        updateContinueButton();
+                        renderSlots(slotsByDate[activeDateString] || []);
+                    } else {
+                        advanceToSchedule();
                     }
-                    renderMonth();
-                    renderSlots(slotsByDate[activeDateString] || []);
-                    showStep('schedule', true);
                 });
+
                 body.appendChild(choose);
                 card.appendChild(body);
                 serviceList.appendChild(card);
@@ -319,6 +332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         renderBookingSummary();
         showStep(activeStep);
+        updateContinueButton();
         document.getElementById('calendar-service').hidden = true;
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
@@ -330,7 +344,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function updateBookButton() {
         if (selectedSlot && !slotIsFuture(selectedSlot)) selectedSlot=null;
         bookButton.disabled = !selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService);
-        bookButton.textContent = 'Continue to checkout';
+        bookButton.innerHTML = 'Confirm Booking <span aria-hidden="true">&nearr;</span>';
         const checkoutButton=stepButtons.find(button=>button.dataset.step==='checkout');
         if(checkoutButton) checkoutButton.disabled=bookButton.disabled;
     }
@@ -360,13 +374,44 @@ document.addEventListener("DOMContentLoaded", async () => {
         const month = new Date(viewedMonth + '-01T12:00:00');
         const monthLabel = month.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
         const monthHeading = document.getElementById('calendar-month');
-        if (monthHeading.textContent !== monthLabel) monthHeading.textContent = monthLabel;
-        document.getElementById('previous-month').disabled = viewedMonth <= today.slice(0, 7);
-        document.getElementById('next-month').disabled = false;
-        document.getElementById('selected-calendar-date').textContent =
-            new Date(activeDateString + 'T12:00:00').toLocaleDateString('en-ZA', {
-                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
-            });
+        if (monthHeading && monthHeading.textContent !== monthLabel) monthHeading.textContent = monthLabel;
+        const prevBtn = document.getElementById('previous-month');
+        if (prevBtn) prevBtn.disabled = viewedMonth <= today.slice(0, 7);
+        const nextBtn = document.getElementById('next-month');
+        if (nextBtn) nextBtn.disabled = false;
+        const selDateEl = document.getElementById('selected-calendar-date');
+        if (selDateEl) {
+            selDateEl.textContent =
+                new Date(activeDateString + 'T12:00:00').toLocaleDateString('en-ZA', {
+                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+                });
+        }
+
+        const monthTabsEl = document.getElementById('luxury-month-tabs');
+        if (monthTabsEl) {
+            monthTabsEl.innerHTML = '';
+            const viewedBase = new Date(viewedMonth + '-01T12:00:00');
+            const todayBase = new Date(today.slice(0, 7) + '-01T12:00:00');
+            let startOffset = 0;
+            if (viewedBase > todayBase) {
+                startOffset = Math.max(0, Math.round((viewedBase.getTime() - todayBase.getTime()) / (30 * 24 * 3600 * 1000)) - 1);
+            }
+            for (let i = 0; i < 3; i++) {
+                const mDate = new Date(todayBase.getFullYear(), todayBase.getMonth() + startOffset + i, 1, 12);
+                const mKey = localDateString(mDate).slice(0, 7);
+                const tab = document.createElement('button');
+                tab.type = 'button';
+                tab.className = 'luxury-month-tab' + (mKey === viewedMonth ? ' active' : '');
+                tab.textContent = mDate.toLocaleDateString('en-ZA', { month: 'long' }).toUpperCase();
+                tab.addEventListener('click', () => {
+                    if (viewedMonth !== mKey) {
+                        viewedMonth = mKey;
+                        renderMonth();
+                    }
+                });
+                monthTabsEl.appendChild(tab);
+            }
+        }
         const days = new Date(month.getFullYear(), month.getMonth() + 1, 0, 12).getDate();
         const openings = Object.keys(slotsByDate).filter(date => date.startsWith(viewedMonth) &&
             slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot))).sort();
@@ -475,13 +520,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         loadingData = true;
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timeout = controller && typeof setTimeout === 'function' ? setTimeout(() => controller.abort(), 15000) : null;
         try {
             // 2. Knock on the "public door" in Supabase
             const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_page`, {
                 method: 'POST',
-                signal: controller.signal,
+                signal: controller ? controller.signal : undefined,
                 cache: 'no-store', // Force browser to always fetch fresh data
                 headers: {
                     'Content-Type': 'application/json',
@@ -548,7 +593,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const tiktokEl = document.getElementById('tiktok-link');
             if (tiktokEl) {
                 tiktokEl.style.display = 'none';
-                tiktokEl.removeAttribute('href');
+                if (tiktokEl.removeAttribute) tiktokEl.removeAttribute('href');
                 try {
                     const rawTikTok = typeof data.tiktok_url === 'string' ? data.tiktok_url.trim() : '';
                     const tiktokUrl = new URL(/^(?:[a-z0-9-]+\.)*tiktok\.com\//i.test(rawTikTok)
@@ -567,8 +612,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const phoneEl = document.getElementById('business-phone-link');
             if (phoneEl) {
                 phoneEl.style.display = 'none';
-                phoneEl.removeAttribute('href');
-                phoneEl.removeAttribute('title');
+                if (phoneEl.removeAttribute) {
+                    phoneEl.removeAttribute('href');
+                    phoneEl.removeAttribute('title');
+                }
                 phoneEl.setAttribute('aria-label', 'Call business');
                 const phone = typeof data.whatsapp_number === 'string' ? data.whatsapp_number.trim() : '';
                 const dialNumber = phone.replace(/[\s().-]/g, '');
@@ -660,7 +707,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 statusEl.textContent = 'Could not refresh availability. Please check your connection.';
             }
         } finally {
-            clearTimeout(timeout);
+            if (timeout && typeof clearTimeout === 'function') clearTimeout(timeout);
             loadingData = false;
             if (refreshQueued) {
                 refreshQueued = false;
@@ -684,12 +731,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             channel.addEventListener('message', event => availabilityChanged(event.data));
         }
     } catch (_) { /* Polling/storage/focus refresh remain available. */ }
-    window.addEventListener('storage', event => {
-        if (event.key !== updateKey || !event.newValue) return;
-        try { availabilityChanged(JSON.parse(event.newValue)); } catch (_) {}
-    });
-    window.addEventListener('focus', () => loadData());
-    window.addEventListener('pageshow', event => { if (event.persisted) loadData(); });
+    if (typeof window.addEventListener === 'function') {
+        window.addEventListener('storage', event => {
+            if (event.key !== updateKey || !event.newValue) return;
+            try { availabilityChanged(JSON.parse(event.newValue)); } catch (_) {}
+        });
+        window.addEventListener('focus', () => loadData());
+        window.addEventListener('pageshow', event => { if (event.persisted) loadData(); });
+    }
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') loadData();
     });
