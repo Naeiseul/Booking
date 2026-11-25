@@ -749,4 +749,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     // LIVE UPDATES: Poll the server silently every 3 seconds to update the UI
     setInterval(loadData, 3000);
 });
-
