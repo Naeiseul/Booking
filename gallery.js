@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     albums.forEach(album => {
       const card = document.createElement('button'); card.type = 'button'; card.className = 'album-card';
       const cover = document.createElement('img'); cover.className = 'album-cover'; cover.alt = '';
-      const coverUrl = photo(album.cover); if (coverUrl) PhotoTools.set(cover, coverUrl, {width:640,sizes:'(max-width:780px) 50vw, 33vw'}); card.appendChild(cover);
+      const coverUrl = photo(album.cover); if (coverUrl) PhotoTools.set(cover, coverUrl, {width:640,sizes:'(max-width:780px) 50vw, 33vw',lazy:false,priority:true}); card.appendChild(cover);
       const meta = document.createElement('div'); meta.className = 'album-meta'; meta.textContent = album.date; card.appendChild(meta);
       const title = document.createElement('h2'); title.textContent = album.title; card.appendChild(title);
       const description = document.createElement('p'); description.textContent = album.description; card.appendChild(description);
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('album-title').textContent = album.title;
     document.getElementById('album-description').textContent = album.description;
     const photos = document.getElementById('photo-grid'); photos.replaceChildren();
-    album.paths.forEach((path, position) => { const url = photo(path); if (!url) return; const image = document.createElement('img'); image.alt = album.title + ' photo ' + (position + 1); image.loading='lazy'; PhotoTools.set(image,url,{width:960,sizes:'(max-width:780px) 50vw, 33vw'}); photos.appendChild(image); });
+    album.paths.forEach((path, position) => { const url = photo(path); if (!url) return; const image = document.createElement('img'); image.alt = album.title + ' photo ' + (position + 1); image.loading = position < 4 ? 'eager' : 'lazy'; PhotoTools.set(image,url,{width:960,sizes:'(max-width:780px) 50vw, 33vw',lazy:position >= 4,priority:position < 2}); photos.appendChild(image); });
     window.scrollTo({top:0,behavior:'smooth'});
   }
   detailBack.addEventListener('click', () => { history.pushState({}, '', location.pathname); renderIndex(); window.scrollTo({top:0,behavior:'smooth'}); });
