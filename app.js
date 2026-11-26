@@ -76,7 +76,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         navServices.addEventListener('click', () => showStep('sessions', true));
     }
     if (navGallery) {
-        navGallery.addEventListener('click', () => showStep('gallery', true));
+        navGallery.addEventListener('click', () => {
+            window.location.href = '/' + encodeURIComponent(bizSlug) + '/gallery';
+        });
     }
 
     function advanceToSchedule() {
