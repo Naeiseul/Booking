@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   detailBack.addEventListener('click', () => { history.pushState({}, '', location.pathname); renderIndex(); window.scrollTo({top:0,behavior:'smooth'}); });
   window.addEventListener('popstate', () => { const id=decodeURIComponent(location.hash.slice(1)); const album=albums.find(item=>item.id===id); album ? openAlbum(album) : renderIndex(); });
   try {
-    const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_public_page', {method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({p_slug:slug})});
+    const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/get_public_gallery', {method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({p_slug:slug})});
     if (!response.ok) throw new Error('Could not load the portfolio.');
     const data = await response.json(); if (!data) throw new Error('Could not find this portfolio.');
     document.title = (data.name || 'Portfolio') + ' — Gallery';
