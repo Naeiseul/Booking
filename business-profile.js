@@ -40,8 +40,8 @@ window.BusinessProfile = (() => {
             if (!logo) image.removeAttribute('src');
 
         }
-        for (const [id, key] of [['ig-link','instagram_url'],['fb-link','facebook_url'],['tiktok-link','tiktok_url']]) {
-            link(id, data.show_social_icons === false ? '' : https(data[key]));
+        for (const [id, key, title] of [['ig-link','instagram_url','Instagram'],['fb-link','facebook_url','Facebook'],['tiktok-link','tiktok_url','TikTok']]) {
+            link(id, data.show_social_icons === false ? '' : https(data[key]), title);
         }
         const dial = phone(data.phone_number === undefined ? data.whatsapp_number : data.phone_number);
         link('business-phone-link', dial ? 'tel:' + dial : '', 'Call business' + (dial ? ' on ' + dial : ''));
