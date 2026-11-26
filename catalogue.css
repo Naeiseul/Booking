@@ -530,3 +530,28 @@ body.catalogue-page {
         font-size: 13px;
     }
 }
+
+
+/* Client portfolio gallery */
+.luxury-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    max-height: 420px;
+}
+.luxury-gallery-grid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #e8e3da;
+}
+.luxury-gallery-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--lux-text-muted);
+    font-family: var(--lux-sans);
+    line-height: 1.5;
+}
