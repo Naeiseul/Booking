@@ -66,6 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const serviceList = document.getElementById('client-services');
     const calendarEl = document.getElementById('client-calendar');
     const checkoutEl = document.getElementById('client-checkout');
+    const galleryEl = document.getElementById('client-gallery');
+    const galleryGrid = document.getElementById('client-gallery-grid');
 
     const continueBtn = document.getElementById('luxury-continue-btn');
     const navServices = document.getElementById('nav-services');
@@ -74,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         navServices.addEventListener('click', () => showStep('sessions', true));
     }
     if (navGallery) {
-        navGallery.addEventListener('click', () => showStep('sessions', true));
+        navGallery.addEventListener('click', () => showStep('gallery', true));
     }
 
     function advanceToSchedule() {
@@ -109,16 +111,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         activeStep = step;
         const heroTitle = document.getElementById('luxury-hero-title');
         if (heroTitle) {
-            heroTitle.innerHTML = step === 'sessions' ? 'Our<br>Services' : 'Our<br>Schedule';
+            heroTitle.innerHTML = step === 'sessions' ? 'Our<br>Services' : step === 'gallery' ? 'Our<br>Work' : 'Our<br>Schedule';
         }
-        if (navServices) {
-            if (step === 'sessions') navServices.classList.add('active');
-            else navServices.classList.remove('active');
-        }
+        if (navServices) navServices.classList.toggle('active', step === 'sessions');
+        if (navGallery) navGallery.classList.toggle('active', step === 'gallery');
         catalogueEl.hidden = services.length > 0 ? step !== 'sessions' : false;
         categoryNavigation.hidden = step !== 'sessions' || categories.length === 0;
         if (catalogueLayout) catalogueLayout.setAttribute('data-has-categories', String(step === 'sessions' && categories.length > 0));
         calendarEl.hidden = services.length > 0 ? step !== 'schedule' : step === 'checkout';
+        galleryEl.hidden = step !== 'gallery';
         checkoutEl.hidden = step !== 'checkout';
         stepButtons.forEach(button => {
             const isCurrent = button.dataset.step === step;
@@ -127,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             else if (button.removeAttribute) button.removeAttribute('aria-current');
         });
         if (moveFocus) {
-            const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : 'checkout-heading');
+            const target = step === 'sessions' ? catalogueEl : document.getElementById(step === 'schedule' ? 'calendar-heading' : step === 'gallery' ? 'gallery-heading' : 'checkout-heading');
             if (target && target.focus) {
                 target.focus({ preventScroll: true });
                 if (target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -338,6 +339,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
             document.getElementById('calendar-service-details').textContent = serviceDetails(selectedService) + ' · ' +
                 servicePrice(selectedService, true) + ' per booking';
+        }
+    }
+
+    function renderGallery(photoPaths) {
+        if (!galleryGrid) return;
+        galleryGrid.replaceChildren();
+        const paths = Array.isArray(photoPaths) ? photoPaths.slice(0, 12) : [];
+        paths.forEach((path, index) => {
+            const url = window.BusinessProfile ? BusinessProfile.photo(path) : '';
+            if (!url) return;
+            const image = document.createElement('img');
+            image.alt = 'Portfolio photo ' + (index + 1);
+            image.loading = 'lazy';
+            PhotoTools.set(image, url, { width: 640, sizes: '(max-width: 768px) 50vw, 320px' });
+            galleryGrid.appendChild(image);
+        });
+        if (!galleryGrid.children.length) {
+            const message = document.createElement('p');
+            message.className = 'luxury-gallery-empty';
+            message.textContent = 'Portfolio photos will appear here soon.';
+            galleryGrid.appendChild(message);
         }
     }
 
@@ -638,6 +660,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             if (window.BusinessProfile) BusinessProfile.render(data);
+            renderGallery(data.gallery_photo_paths || []);
             const nextServices = data.services || [];
             const publicCategories = data.categories || [];
             // The RPC enforces published + active + enabled, scoped to this business.
