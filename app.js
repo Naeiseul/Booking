@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const gridEl = document.getElementById('time-grid');
     const bookButton = document.getElementById('book-selected-slot');
 
+    // Show the last known name immediately while fresh business data loads.
+    if (bizSlug) {
+        try {
+            const cachedName = localStorage.getItem('booking-business-name:' + bizSlug);
+            if (cachedName) nameEl.textContent = cachedName;
+        } catch (_) {}
+    }
+
     // If no business is specified in the link
     if (!bizSlug) {
         nameEl.textContent = "Welcome";
@@ -592,6 +600,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // 4. Update the UI with the business data
             nameEl.textContent = data.name || "Booking Calendar";
+            try { localStorage.setItem('booking-business-name:' + bizSlug, nameEl.textContent); } catch (_) {}
             statusEl.textContent = '';
             statusEl.hidden = true;
             
