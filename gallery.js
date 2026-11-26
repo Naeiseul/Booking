@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ? SUPABASE_URL + '/storage/v1/object/public/service-photos/' + path : '';
   }
   function normalise(data) {
-    const saved = Array.isArray(data.gallery_albums) ? data.gallery_albums : [];
+    const saved = Array.isArray(data.albums) ? data.albums : Array.isArray(data.gallery_albums) ? data.gallery_albums : [];
     const structured = saved.map((album, position) => ({
       id: String(album.id || position),
       title: album.title || 'Untitled collection',
