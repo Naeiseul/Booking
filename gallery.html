@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#312923">
+  <title>Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/gallery.css?v=1">
+</head>
+<body>
+  <main class="gallery-page">
+    <header class="gallery-header">
+      <a class="gallery-back" id="gallery-back" href="/" aria-label="Back to booking page">← <span>Back to booking</span></a>
+      <p class="gallery-brand" id="gallery-brand">Portfolio</p>
+    </header>
+
+    <section class="album-index" id="album-index" aria-labelledby="gallery-title">
+      <p class="gallery-eyebrow">Selected stories</p>
+      <h1 id="gallery-title">Our Packages</h1>
+      <div class="album-grid" id="album-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="album-detail" id="album-detail" hidden aria-labelledby="album-title">
+      <button type="button" class="detail-back" id="detail-back">← All albums</button>
+      <div class="album-detail-heading">
+        <p class="gallery-eyebrow" id="album-date"></p>
+        <h1 id="album-title"></h1>
+        <p id="album-description"></p>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </section>
+  </main>
+  <script defer src="/config.js"></script>
+  <script defer src="/photo-tools.js?v=2"></script>
+  <script defer src="/gallery.js?v=1"></script>
+</body>
+</html>
