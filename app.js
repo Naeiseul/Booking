@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function updateBookButton() {
         if (selectedSlot && !slotIsFuture(selectedSlot)) selectedSlot=null;
         bookButton.disabled = !selectedSlot || !availabilityLoaded || (services.length > 0 && !selectedService);
-        bookButton.innerHTML = 'Confirm Booking <span aria-hidden="true">&nearr;</span>';
+        bookButton.textContent = 'Confirm Booking';
         const checkoutButton=stepButtons.find(button=>button.dataset.step==='checkout');
         if(checkoutButton) checkoutButton.disabled=bookButton.disabled;
     }
