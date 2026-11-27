@@ -66,7 +66,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const file=photoInput.files && photoInput.files[0];
         if (!file || saving || photoPreparing) return;
         photoPreparing=true; fields.disabled=true; save.disabled=true; updateButtons();
-        get('service-photo-status').textContent='Preparing photo…';
+        get('service-photo-status').textContent='Preparing photo�?�';
         try {
             const prepared=await PhotoTools.prepare(file);
             clearPreviewObject(); selectedPhotoFile=prepared; photoUploadId=crypto.randomUUID(); uploadedFilePath=null;
@@ -90,7 +90,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         body.append('upload_id',photoUploadId); body.append('file',selectedPhotoFile);
         const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),60000);
         try {
-            save.textContent='Uploading photo…';
+            save.textContent='Uploading photo�?�';
             const response=await fetch(SUPABASE_URL+'/functions/v1/service-photo-upload',{
                 method:'POST',body,signal:controller.signal
             });
@@ -210,9 +210,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const name = document.createElement('h4'); name.textContent = service.name; text.appendChild(name);
         const details = document.createElement('p'); details.className = 'muted-text';
         const price = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: service.currency }).format(service.price_amount / 100);
-        details.textContent = durationLabel(service.duration_minutes) + ' · ' +
+        details.textContent = durationLabel(service.duration_minutes) + ' �� ' +
             (service.service_type === 'class' ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people')) +
-            ' · ' + price + (service.price_basis === 'per_person' ? ' per person' : ' per booking');
+            ' �� ' + price + (service.price_basis === 'per_person' ? ' per person' : ' per booking');
         text.appendChild(details);
         if (service.price_basis === 'per_person' && service.service_type === 'private' && service.participant_count > 1) {
             const total = document.createElement('p'); total.className = 'service-hint';
@@ -239,6 +239,9 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const edit = button('Edit', () => openForm(service));
         edit.setAttribute('aria-label', 'Edit ' + service.name);
         row.appendChild(edit);
+        const remove = button('Delete', () => deleteService(service), 'service-text-button service-delete-button');
+        remove.setAttribute('aria-label', 'Delete ' + service.name);
+        row.appendChild(remove);
         return row;
     }
     function renderServices() {
@@ -265,7 +268,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             toggle.appendChild(heading);
             const count = document.createElement('span'); count.className='service-group-count';
             count.textContent=items.length+' '+(items.length===1?'service':'services'); toggle.appendChild(count);
-            const chevron=document.createElement('span'); chevron.className='service-group-chevron'; chevron.textContent='⌃';
+            const chevron=document.createElement('span'); chevron.className='service-group-chevron'; chevron.textContent='�O�';
             chevron.setAttribute('aria-hidden','true'); toggle.appendChild(chevron);
             header.appendChild(toggle);
             if(category) {
@@ -322,7 +325,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         const formatted=new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'});
         get('service-price-help').textContent=get('service-price').value!=='' && Number.isFinite(raw) && raw>=0
             ? formatted.format(raw)+(perPerson?' per person':' per booking')+
-                (perPerson && get('service-type').value!=='class' && people>1?' · '+formatted.format(raw*people)+' total for '+people+' people':'') : '';
+                (perPerson && get('service-type').value!=='class' && people>1?' �� '+formatted.format(raw*people)+' total for '+people+' people':'') : '';
     }
     function updateType() {
         const isClass=get('service-type').value==='class';
@@ -391,6 +394,19 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         } catch(failure) { showError(error,requestError(failure,'load')); }
         finally { loading.hidden=true; updateButtons(); }
     }
+    async function deleteService(service) {
+        if (saving || !ready || !form.hidden || !categoryForm.hidden) return;
+        if (!window.confirm('Delete �?o' + service.name + '�??? This cannot be undone.')) return;
+        saving=true; error.hidden=true; message.hidden=true; updateButtons(); renderServices();
+        try {
+            const deleted=await rpc('delete_admin_service',{p_id:service.id,p_expected_updated_at:service.updated_at});
+            if (!deleted || deleted.id !== service.id) throw Error('Invalid delete response');
+            services=services.filter(item=>item.id!==service.id);
+            message.textContent='Service deleted.'; message.hidden=false;
+        } catch(failure) {
+            showError(error,requestError(failure,'delete'));
+        } finally { saving=false; updateButtons(); renderServices(); }
+    }
     async function moveGroup(category,step) {
         if(saving || !ready || !form.hidden || !categoryForm.hidden) return;
         const ordered=[...categories].sort((a,b)=>a.sort_order-b.sort_order || String(a.created_at).localeCompare(String(b.created_at)) || a.id.localeCompare(b.id));
@@ -444,7 +460,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             showError(categoryError,'Reload Services and try saving this group again.'); return;
         }
         if(!categoryForm.reportValidity()) return;
-        saving=true; get('category-fields').disabled=true; get('save-category').textContent='Saving…'; updateButtons();
+        saving=true; get('category-fields').disabled=true; get('save-category').textContent='Saving�?�'; updateButtons();
         try {
             const wasNew=categoryExpectedUpdatedAt===null;
             const saved=await rpc('save_admin_category',{p_id:categoryDraftId,p_label:get('category-label').value,
@@ -485,7 +501,7 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
         formError.hidden=true; clearFieldErrors();
         get('service-name').value=get('service-name').value.trim();
         if(!get('service-name').value || get('service-name').value.length>120) {
-            fieldError('service-name','Enter a service name of 1–120 characters.'); return;
+            fieldError('service-name','Enter a service name of 1�?"120 characters.'); return;
         }
         const category=categorySelection(), {published,active}=catalogueState();
         if(published && !category) { fieldError('service-category','Choose a group or use + Create new group to publish.'); return; }
@@ -507,10 +523,10 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
             get('service-participants').setAttribute('aria-invalid','true'); get('service-participants').focus(); return;
         }
         if(!form.reportValidity()) return;
-        saving=true; fields.disabled=true; save.textContent='Saving…'; updateButtons();
+        saving=true; fields.disabled=true; save.textContent='Saving�?�'; updateButtons();
         try {
             if(selectedPhotoFile && !uploadedFilePath) await uploadPhoto();
-            save.textContent='Saving…';
+            save.textContent='Saving�?�';
             const saved=await rpc('save_admin_service',{p_id:draftId,p_name:get('service-name').value,
                 p_description:get('service-description').value.trim(),p_service_type:serviceType,p_duration_minutes:duration,
                 p_price_amount:priceAmount,p_price_basis:serviceType==='class'?'per_person':get('service-price-basis').value,
@@ -529,5 +545,6 @@ window.initializeAdminServices = function ({ bizSlug, adminKey }) {
     });
     return loadServices();
 };
+
 
 
