@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let categorySignature = null;
     const categoryButtons = new Map();
     let selectedService = null;
+    let currentServiceIndex = 0;
     let requestedServiceId = urlParams.get('service') || '';
     let catalogueSignature = null;
     let activeStep = 'sessions';
@@ -101,6 +102,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const galleryGrid = document.getElementById('client-gallery-grid');
 
     const continueBtn = document.getElementById('luxury-continue-btn');
+    const previousServiceBtn = document.getElementById('previous-service');
+    const nextServiceBtn = document.getElementById('next-service');
     const navServices = document.getElementById('nav-services');
     const navGallery = document.getElementById('nav-gallery');
     if (navServices) {
@@ -111,6 +114,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = '/' + encodeURIComponent(bizSlug) + '/gallery';
         });
     }
+    function moveService(direction) {
+        if (!services.length) return;
+        currentServiceIndex = (currentServiceIndex + direction + services.length) % services.length;
+        selectedService = null;
+        selectedSlot = null;
+        availabilityLoaded = true;
+        requestedServiceId = '';
+        renderCatalogue();
+        updateBookButton();
+        updateContinueButton();
+    }
+    if (previousServiceBtn) previousServiceBtn.addEventListener('click', () => moveService(-1));
+    if (nextServiceBtn) nextServiceBtn.addEventListener('click', () => moveService(1));
+    const backToServices = document.getElementById('back-to-services');
+    if (backToServices) backToServices.addEventListener('click', () => showStep('sessions', true));
+
 
     function advanceToSchedule() {
         if (!selectedService) return;
@@ -304,46 +323,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderCatalogue() {
-        const hasCategories = categories.length > 0;
-        if (!activeCategoryId || !categories.some(category => category.id === activeCategoryId)) {
-            activeCategoryId = categories[0]?.id || '__individual__';
-        }
-        const visibleServices = activeCategoryId === '__individual__'
-            ? services.filter(service => !service.category_id)
-            : services.filter(service => service.category_id === activeCategoryId);
+        const service = services[currentServiceIndex] || null;
+        const signature = JSON.stringify([currentServiceIndex, service, selectedService && selectedService.id]);
+        const position = document.getElementById('service-position');
+        if (position) position.textContent = services.length ? (currentServiceIndex + 1) + ' of ' + services.length : '0 services';
+        if (previousServiceBtn) previousServiceBtn.disabled = services.length < 2;
+        if (nextServiceBtn) nextServiceBtn.disabled = services.length < 2;
+        const categoryLabel = document.getElementById('service-category-label');
+        const category = service && categories.find(item => item.id === service.category_id);
+        if (categoryLabel) categoryLabel.textContent = category ? category.label : 'Individual service';
         if (stepMenu) stepMenu.hidden = false;
-        renderCategoryNavigation();
-        if (!hasCategories) categoryNavigation.hidden = true;
-        const signature = JSON.stringify([activeCategoryId, visibleServices, selectedService && selectedService.id]);
+        if (categoryNavigation) categoryNavigation.hidden = true;
         if (signature !== catalogueSignature) {
-            serviceList.innerHTML = '';
-            visibleServices.forEach((service,index) => {
+            serviceList.replaceChildren();
+            if (service) {
                 const card = document.createElement('article');
                 const isSelected = Boolean(selectedService && selectedService.id === service.id);
                 card.className = 'luxury-service-item client-service-card' + (isSelected ? ' is-selected' : '');
                 card.dataset.serviceId = service.id;
-
                 const body = document.createElement('div');
                 body.className = 'luxury-service-body service-card-body';
-
                 const title = document.createElement('h3');
                 title.className = 'luxury-service-name';
                 title.textContent = service.name;
                 body.appendChild(title);
-
                 const meta = document.createElement('div');
                 meta.className = 'luxury-service-meta';
                 const durationText = serviceDuration(service);
                 meta.textContent = [durationText ? durationText.toUpperCase() : '', servicePrice(service)].filter(Boolean).join(' · ');
                 body.appendChild(meta);
-
                 if (service.description) {
                     const description = document.createElement('p');
                     description.className = 'luxury-service-desc client-service-description';
                     description.textContent = service.description;
                     body.appendChild(description);
                 }
-
                 const choose = document.createElement('button');
                 choose.type = 'button';
                 choose.className = 'luxury-select-btn catalogue-service-button' + (isSelected ? ' selected' : '');
@@ -360,26 +374,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                         availabilityLoaded = false;
                         updateBookButton();
                         try {
-                            await loadServiceOpenings(service,true);
+                            await loadServiceOpenings(service, true);
+                            availabilityLoaded = true;
                             renderCatalogue();
                             updateBookButton();
                             updateContinueButton();
                             renderMonth();
                             renderSlots(slotsByDate[activeDateString] || []);
                         } catch (error) {
-                            statusEl.hidden=false;
-                            statusEl.textContent=error.message||'Could not load service availability.';
+                            statusEl.hidden = false;
+                            statusEl.textContent = error.message || 'Could not load service availability.';
                         }
                     } else {
                         advanceToSchedule();
                     }
                 });
-
                 body.appendChild(choose);
                 card.appendChild(body);
                 serviceList.appendChild(card);
-            });
-            if (!visibleServices.length) {
+            } else {
                 const empty = document.createElement('article');
                 empty.className = 'client-service-card service-card-empty';
                 const body = document.createElement('div');
@@ -389,8 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const message = document.createElement('p');
                 message.className = 'muted-text';
                 message.textContent = 'Published services will appear here.';
-                body.appendChild(title);
-                body.appendChild(message);
+                body.append(title, message);
                 empty.appendChild(body);
                 serviceList.appendChild(empty);
             }
@@ -402,8 +414,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('calendar-service').hidden = true;
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
-            document.getElementById('calendar-service-details').textContent = serviceDetails(selectedService) + ' · ' +
-                servicePrice(selectedService, true);
+            document.getElementById('calendar-service-details').textContent =
+                serviceDetails(selectedService) + ' · ' + servicePrice(selectedService, true);
         }
     }
 
@@ -744,9 +756,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 selectedService = fresh || null;
             }
             services = nextServices;
+            currentServiceIndex = selectedService ? Math.max(0, services.findIndex(service => service.id === selectedService.id)) : 0;
             if (requestedServiceId) {
                 selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
                 if (selectedService) {
+                    currentServiceIndex = Math.max(0, services.findIndex(service => service.id === selectedService.id));
                     activeStep = 'schedule';
                     activeCategoryId = selectedService.category_id || '__individual__';
                     requestedServiceId = '';
