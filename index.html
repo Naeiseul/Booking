@@ -26,7 +26,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=4">
-    <link rel="stylesheet" href="/catalogue.css?v=13">
+    <link rel="stylesheet" href="/catalogue.css?v=14">
     <link rel="stylesheet" href="/profile.css?v=8">
 </head>
 <body class="catalogue-page">
@@ -92,6 +92,12 @@
                 <!-- Step 1: Select Service -->
                 <section id="service-catalogue" class="luxury-panel-step" aria-label="Services" tabindex="-1">
                     <h2 class="luxury-panel-title">Select Service</h2>
+                    <div class="service-carousel-navigation" aria-label="Browse services">
+                        <button id="previous-service" type="button" class="service-carousel-arrow" aria-label="Previous service">‹</button>
+                        <span id="service-position" aria-live="polite"></span>
+                        <button id="next-service" type="button" class="service-carousel-arrow" aria-label="Next service">›</button>
+                    </div>
+                    <p id="service-category-label" class="service-category-label"></p>
                     <div id="client-services" class="luxury-services-list"></div>
                     <button type="button" id="luxury-continue-btn" class="luxury-cta-btn" disabled>
                         Continue
@@ -100,6 +106,7 @@
 
                 <!-- Step 2: Now Booking (Calendar and Time Slots) -->
                 <section id="client-calendar" class="luxury-panel-step" aria-labelledby="calendar-heading" hidden>
+                    <button id="back-to-services" class="catalogue-back-button" type="button">‹ Back to services</button>
                     <h2 id="calendar-heading" class="luxury-panel-title">Now Booking</h2>
 
                     <!-- Month Selection Pills -->
@@ -190,8 +197,8 @@
     <!-- Scripts -->
     <script defer src="/config.js"></script>
     <script defer src="/photo-tools.js?v=4"></script>
-    <script defer src="/business-profile.js?v=9"></script>
-    <script defer src="/app.js?v=19"></script>
+    <script defer src="/business-profile.js?v=10"></script>
+    <script defer src="/app.js?v=20"></script>
 </body>
 </html>
 
