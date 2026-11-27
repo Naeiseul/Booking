@@ -151,20 +151,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     function serviceDuration(service) {
-        const hours = Math.floor(service.duration_minutes / 60);
-        const minutes = service.duration_minutes % 60;
+        const duration = Number(service.duration_minutes);
+        if (!Number.isFinite(duration) || duration <= 0) return '';
+        const hours = Math.floor(duration / 60);
+        const minutes = duration % 60;
         return [hours ? hours + ' hr' : '', minutes ? minutes + ' min' : ''].filter(Boolean).join(' ');
     }
 
     function servicePrice(service, total = false) {
-        const multiplier = total && service.price_basis === 'per_person' ? service.participant_count : 1;
-        return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: service.currency })
-            .format(service.price_amount * multiplier / 100);
+        const people = Number(service.participant_count) || 1;
+        const multiplier = total && service.price_basis === 'per_person' ? people : 1;
+        return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: service.currency || 'ZAR' })
+            .format((Number(service.price_amount) || 0) * multiplier / 100);
     }
 
     function serviceDetails(service) {
-        return serviceDuration(service) + ' · ' + (service.service_type === 'class'
-            ? 'Shared class' : service.participant_count + (service.participant_count === 1 ? ' person' : ' people') + ' per booking');
+        const duration = serviceDuration(service);
+        const count = Number(service.participant_count) || 0;
+        const people = count ? count + (count === 1 ? ' person' : ' people') + ' per booking' : '';
+        return [duration, people].filter(Boolean).join(' · ') || 'Booking details available after selection';
     }
 
     function renderBookingSummary() {
@@ -266,9 +271,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderCatalogue() {
-        const visibleServices = services.filter(service => service.category_id === activeCategoryId);
+        const hasCategories = categories.length > 0;
+        if (!activeCategoryId || !categories.some(category => category.id === activeCategoryId)) {
+            activeCategoryId = categories[0]?.id || '__individual__';
+        }
+        const visibleServices = activeCategoryId === '__individual__'
+            ? services.filter(service => !service.category_id)
+            : services.filter(service => service.category_id === activeCategoryId);
         if (stepMenu) stepMenu.hidden = false;
         renderCategoryNavigation();
+        if (!hasCategories) categoryNavigation.hidden = true;
         const signature = JSON.stringify([activeCategoryId, visibleServices, selectedService && selectedService.id]);
         if (signature !== catalogueSignature) {
             serviceList.innerHTML = '';
@@ -288,7 +300,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 const meta = document.createElement('div');
                 meta.className = 'luxury-service-meta';
-                meta.textContent = serviceDuration(service).toUpperCase() + ' \u2022 ' + servicePrice(service);
+                const durationText = serviceDuration(service);
+                meta.textContent = [durationText ? durationText.toUpperCase() : '', servicePrice(service),
+                    service.price_basis === 'per_person' ? 'per person' : 'per booking'].filter(Boolean).join(' · ');
                 body.appendChild(meta);
 
                 if (service.description) {
@@ -692,12 +706,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 selectedService = services.find(service => service.id === requestedServiceId && service.service_type === 'private') || null;
                 if (selectedService) {
                     activeStep = 'schedule';
-                    activeCategoryId = selectedService.category_id;
+                    activeCategoryId = selectedService.category_id || '__individual__';
                     requestedServiceId = '';
                 }
             }
             if (!categories.some(category => category.id === activeCategoryId)) {
-                activeCategoryId = selectedService ? selectedService.category_id : categories.length ? categories[0].id : null;
+                activeCategoryId = selectedService && selectedService.category_id
+                    ? selectedService.category_id
+                    : categories.length ? categories[0].id : '__individual__';
             }
             renderCatalogue();
             const slots = (data.slots || []).filter(slotIsFuture);
