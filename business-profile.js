@@ -46,6 +46,13 @@ window.BusinessProfile = (() => {
         const dial = phone(data.phone_number === undefined ? data.whatsapp_number : data.phone_number);
         link('business-phone-link', dial ? 'tel:' + dial : '', 'Call business' + (dial ? ' on ' + dial : ''));
         if (admin) return;
+        const landingHero = document.getElementById('luxury-hero-img');
+        if (landingHero) {
+            const landingHeroUrl = photo(data.hero_photo_path);
+            landingHero.hidden = !landingHeroUrl;
+            if (landingHeroUrl) PhotoTools.set(landingHero,landingHeroUrl,{width:960,sizes:'(max-width: 900px) 100vw, 50vw',maxWidth:1600,lazy:false,priority:true});
+            else landingHero.removeAttribute('src');
+        }
         const cover = document.getElementById('business-cover-banner');
         if (cover) {
             const coverUrl = photo(data.hero_photo_path);
@@ -84,7 +91,7 @@ window.BusinessProfile = (() => {
         text('p', data.description, 'public-business-about');
         text('p', data.service_area, 'public-business-location');
         const methods = {in_person:'In person',online:'Online',mobile:'Mobile visits'};
-        text('p', (data.delivery_methods || []).map(k => methods[k]).filter(Boolean).join(' · '));
+        text('p', (data.delivery_methods || []).map(k => methods[k]).filter(Boolean).join(' �� '));
         const contacts = document.createElement('div'); contacts.className = 'public-profile-contacts';
         const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email || '') ? data.email : '';
         for (const [label, href] of [['Email',email ? 'mailto:' + email : ''],['Website',https(data.website_url)]]) {
@@ -100,3 +107,4 @@ window.BusinessProfile = (() => {
     }
     return {https, photo, phone, render};
 })();
+
