@@ -299,15 +299,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     p_customer_data:customer,p_selected_addons:addons,p_answers:answers
                 });
                 const booking=await bookingRpc('get_service_booking',{p_reference:result.payment_reference});
-                const status=booking?.status||result.status;
-                const complete=document.getElementById('booking-complete');
-                const statusText=status==='confirmed'?'Your booking is confirmed.':status==='quote_requested'?'Your quotation request has been recorded.':'Your booking request has been recorded and is awaiting confirmation.';
-                const total=booking?.total_amount??result.total_amount;
-                const due=booking?.payment_amount??result.payment_amount;
-                complete.textContent=statusText+(total===null?' The business will provide a quotation.':' Total: '+money(total)+'. Amount due: '+money(due)+'. Contact the business if you need payment instructions or changes.');
-                complete.hidden=false;form.hidden=true;
-                document.querySelector('.booking-summary').hidden=true;
-                document.getElementById('details-service').hidden=true;
+                const draft={business:bizSlug,date,time,service_id:serviceId,booking_reference:result.payment_reference};
+                fields.forEach(name=>{draft[name]=form.elements.namedItem(name).value;});
+                draft.participant_count=Number(document.getElementById('booking-participant-count').value);
+                draft.total_amount=booking?.total_amount??result.total_amount;
+                draft.payment_amount=booking?.payment_amount??result.payment_amount;
+                draft.addons=addons;
+                draft.answers=answers;
+                draft.customer=customer;
+                try{sessionStorage.setItem(draftKey,JSON.stringify(draft));}catch(_){}
+                const payment=new URL('https://paystack.shop/pay/o495iejvn3');
+                ['first_name','last_name','email'].forEach(name=>payment.searchParams.set(name,draft[name]||''));
+                payment.searchParams.set('amount','1');
+                payment.searchParams.set('reference',result.payment_reference);
+                payment.searchParams.set('service',selectedService.name);
+                window.location.href=payment.href;
                 return;
             }
             const draft = { business: bizSlug, date, time, service_id: serviceId || null };
