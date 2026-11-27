@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pathParts = window.location.pathname.split('/').filter(Boolean);
         // Clean URL expected format: /admin/slug-name/secret123
         if (pathParts.length >= 3 && pathParts[0] === 'admin') {
-            bizSlug = pathParts[1];
-            adminKey = pathParts[2];
+            bizSlug = bizSlug || pathParts[pathParts.length - 2];
+            adminKey = adminKey || pathParts[pathParts.length - 1];
         }
     }
 

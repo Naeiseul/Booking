@@ -12,11 +12,15 @@
     el.textContent=text || ''; el.hidden=!text;
     el.classList.toggle('is-error',!!error);
   }
-  function rpc(name, args) {
-    return window.supabaseClient.rpc(name,args).then(({data,error})=>{
-      if(error) throw error;
-      return data;
+  async function rpc(name, args) {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+      method:'POST', cache:'no-store',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      body:JSON.stringify(args)
     });
+    const payload=await response.json().catch(()=>null);
+    if(!response.ok) throw new Error(payload && payload.message || 'Could not save service data.');
+    return payload;
   }
   function categoryRpc(id,label,updated) {
     return rpc('save_admin_category',{
@@ -164,15 +168,10 @@
     try{await categoryRpc(id,label,state.groupOnly?state.groups.find(g=>g.id===id)?.updated_at:null);closeDialog('group-dialog');await load();message('Group saved.');}
     catch(e){formError(err,e.message||'Could not save group.');}
   }
-  function init(){
-    const client=window.supabase||window.supabaseClient||window.sb;
-    if(!client||!client.rpc){setTimeout(init,100);return;}
-    window.supabaseClient=client;
-    const parts=location.pathname.split('/').filter(Boolean);
-    const q=new URLSearchParams(location.search);
-    state.slug=q.get('biz')||parts[parts.length-1]||'';
-    const adminUrl=new URL(location.href);
-    state.key=q.get('key')||q.get('admin')||adminUrl.hash.slice(1);
+  window.initializeAdminServices = function(credentials) {
+    state.slug = credentials.bizSlug;
+    state.key = credentials.adminKey;
+    $('add-service').disabled=false;
     $('add-service').addEventListener('click',newService);
     $('service-form').addEventListener('submit',saveService);
     $('group-form').addEventListener('submit',saveGroup);
@@ -183,6 +182,5 @@
     $('close-group').addEventListener('click',()=>closeDialog('group-dialog'));
     $('cancel-group').addEventListener('click',()=>closeDialog('group-dialog'));
     load().catch(e=>{ $('services-loading').hidden=true;message(e.message||'Could not load services.',true); });
-  }
-  document.addEventListener('DOMContentLoaded',init,{once:true});
+  };
 })();
