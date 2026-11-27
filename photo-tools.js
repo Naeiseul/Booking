@@ -21,7 +21,7 @@ window.PhotoTools = (() => {
         const local = url.origin === location.origin && /^\/(final_tax_logo|logo_square|phone)\.png$/.test(url.pathname);
         if ((!owned && !local) || url.search || url.hash) return safe;
         const size = widths.find(value => value >= width) || widths[widths.length - 1];
-        return '/_vercel/image?url=' + encodeURIComponent(local ? url.pathname : safe) + '&w=' + size + '&q=75';
+        return '/_vercel/image?url=' + encodeURIComponent(local ? url.pathname : safe) + '&w=' + size + '&q=85';
     }
     function set(img, source, options = {}) {
         const safe = original(source);
@@ -71,21 +71,21 @@ window.PhotoTools = (() => {
             catch (_) { throw new Error('This browser cannot read this image. Choose a JPG, PNG, WebP or AVIF version of this photo.'); }
             const width = image.naturalWidth, height = image.naturalHeight;
             if (!width || !height || width * height > 60000000) throw new Error('Choose a photo up to 60 megapixels.');
-            const edge = options.logo ? 768 : 1920;
+            const edge = options.logo ? 768 : 2560;
             let scale = Math.min(1, edge / Math.max(width, height));
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             if (!context) throw new Error('Image preparation is unavailable. Try another browser.');
             let blob;
-            for (let attempt = 0; attempt < 4; attempt++) {
+            for (let attempt = 0; attempt < 5; attempt++) {
                 canvas.width = Math.max(1, Math.round(width * scale));
                 canvas.height = Math.max(1, Math.round(height * scale));
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
-                blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.84 - attempt * 0.06));
+                blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.92 - attempt * 0.035));
                 if (!blob) throw new Error('This image could not be prepared. Choose another photo.');
-                if (blob.size <= 1024 * 1024) break;
-                scale *= 0.75;
+                if (blob.size <= 4 * 1024 * 1024) break;
+                scale *= 0.9;
             }
             if (blob.size > 5242880) throw new Error('This image could not be prepared. Choose another photo.');
             const extension = blob.type === 'image/webp' ? 'webp' : 'png';
