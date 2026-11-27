@@ -50,8 +50,17 @@ window.BusinessProfile = (() => {
         if (landingHero) {
             const landingHeroUrl = photo(data.hero_photo_path);
             landingHero.hidden = !landingHeroUrl;
-            if (landingHeroUrl) landingHero.removeAttribute('srcset'); landingHero.removeAttribute('sizes'); landingHero.loading='eager'; landingHero.decoding='async'; landingHero.src=landingHeroUrl;
-            else landingHero.removeAttribute('src');
+            const heroCard=document.getElementById('luxury-hero-card');
+            if (landingHeroUrl) {
+                landingHero.removeAttribute('srcset'); landingHero.removeAttribute('sizes');
+                landingHero.loading='eager'; landingHero.decoding='async'; landingHero.hidden=false;
+                if(heroCard)heroCard.style.backgroundImage='url("'+landingHeroUrl.replace(/"/g,'%22')+'")';
+                landingHero.onerror=()=>{if(heroCard)heroCard.style.backgroundImage='url("'+landingHeroUrl.replace(/"/g,'%22')+'")';};
+                landingHero.src=landingHeroUrl;
+            } else {
+                landingHero.removeAttribute('src');
+                if(heroCard)heroCard.style.backgroundImage='none';
+            }
         }
         const cover = document.getElementById('business-cover-banner');
         if (cover) {
