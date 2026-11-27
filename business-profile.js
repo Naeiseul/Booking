@@ -33,7 +33,7 @@ window.BusinessProfile = (() => {
         const image = document.getElementById('biz-avatar-img');
         const fallback = document.getElementById('biz-avatar-svg');
         if (image && fallback) {
-            image.style.objectFit = 'contain';
+            image.style.objectFit = 'cover';
             image.style.display = logo ? 'block' : 'none';
             fallback.style.display = logo ? 'none' : 'block';
             if (logo) PhotoTools.set(image,logo,{width:192,lazy:false,priority:true,onError:()=>{image.style.display='none';fallback.style.display='block';}});
