@@ -63,6 +63,7 @@ window.PhotoTools = (() => {
         const supported = /^(image\/(jpeg|png|webp|avif|heic|heif))$/i.test(file.type || '') ||
             /\.(jpe?g|png|webp|avif|heic|heif)$/i.test(file.name || '');
         if (!supported) throw new Error('Choose a JPG, PNG, WebP, AVIF or supported phone photo.');
+        if (options.preserve && /^(image\/(jpeg|png|webp))$/i.test(file.type || '')) return file;
         const preview = URL.createObjectURL(file);
         const image = new Image();
         try {
