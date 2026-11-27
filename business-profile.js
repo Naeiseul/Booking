@@ -50,7 +50,7 @@ window.BusinessProfile = (() => {
         if (landingHero) {
             const landingHeroUrl = photo(data.hero_photo_path);
             landingHero.hidden = !landingHeroUrl;
-            if (landingHeroUrl) PhotoTools.set(landingHero,landingHeroUrl,{width:960,sizes:'(max-width: 900px) 100vw, 50vw',maxWidth:1600,lazy:false,priority:true});
+            if (landingHeroUrl) PhotoTools.set(landingHero,landingHeroUrl,{width:1600,sizes:'100vw',maxWidth:1600,lazy:false,priority:true});
             else landingHero.removeAttribute('src');
         }
         const cover = document.getElementById('business-cover-banner');
@@ -61,7 +61,7 @@ window.BusinessProfile = (() => {
             let hero = cover.querySelector('img');
             if (coverUrl) {
                 if (!hero) { hero=document.createElement('img'); hero.alt=''; cover.appendChild(hero); }
-                PhotoTools.set(hero,coverUrl,{width:640,sizes:'(max-width: 640px) 100vw, 640px',maxWidth:960,lazy:false,priority:true});
+                PhotoTools.set(hero,coverUrl,{width:1600,sizes:'100vw',maxWidth:1600,lazy:false,priority:true});
             } else if (hero) hero.remove();
         }
         let wa = phone(data.whatsapp_number).replace(/^\+/, '');
