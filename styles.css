@@ -201,3 +201,16 @@ h1 {
 .details-page .booking-back { color:#1E293B; }
 .details-page .booking-field input:focus, .details-page .booking-field textarea:focus { outline-color:#64748B; }
 .details-page .booking-summary-photo { width:72px; height:72px; object-fit:cover; border-radius:10px; margin-bottom:12px; }
+
+/* Individual service booking options on checkout. */
+.service-booking-fields { display: grid; gap: 14px; margin: 16px 0; }
+.service-booking-fields .booking-field { display: grid; gap: 8px; margin: 0; }
+.service-booking-fields .booking-field > span { font-size: 14px; font-weight: 600; }
+.service-booking-fields input:not([type="checkbox"]), .service-booking-fields textarea, .service-booking-fields select {
+  width: 100%; min-height: 44px; padding: 11px 12px; border: 1px solid #CBD5E1; border-radius: 10px;
+  color: var(--text); background: var(--surface); font: inherit; font-size: 16px;
+}
+.service-booking-fields .booking-addon-option { display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; }
+.service-booking-fields .booking-addon-option input { width: 20px; height: 20px; accent-color: var(--brand); }
+.booking-total { padding: 14px; border-radius: 12px; background: var(--taken-bg); line-height: 1.6; font-weight: 650; }
+.booking-complete { padding: 18px; border: 1px solid #CBD5E1; border-radius: 16px; line-height: 1.7; background: var(--surface); }
