@@ -122,7 +122,7 @@ window.initializeAdminProfile = function ({bizSlug, adminKey}) {
             const files = Array.from(input.files || []);
             if (kind === 'gallery' && gallery.length + files.length > 12) throw new Error('Choose up to 12 gallery photos.');
             for (const file of files) {
-                const prepared = await PhotoTools.prepare(file, {logo:kind === 'logo'});
+                const prepared = await PhotoTools.prepare(file, {logo:kind === 'logo',preserve:kind === 'hero'});
                 const item = {file:prepared,id:crypto.randomUUID(),preview:URL.createObjectURL(prepared)}; pending.push(item);
             }
             if (kind === 'gallery') gallery.push(...pending);
