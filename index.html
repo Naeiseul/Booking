@@ -26,7 +26,7 @@
         })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=4">
-    <link rel="stylesheet" href="/catalogue.css?v=10">
+    <link rel="stylesheet" href="/catalogue.css?v=11">
     <link rel="stylesheet" href="/profile.css?v=8">
 </head>
 <body class="catalogue-page">
@@ -46,11 +46,22 @@
             </div>
             <div class="luxury-header-menu">
                 <div id="social-links" class="client-header-socials">
-                    <a id="business-phone-link" aria-label="Call business">☎</a>
-                    <a id="business-whatsapp-link" aria-label="WhatsApp">◔</a>
-                    <a id="ig-link" aria-label="Instagram">◎</a>
-                    <a id="tiktok-link" aria-label="TikTok">♪</a>
-                    <a id="fb-link" aria-label="Facebook">f</a>
+                    <a id="business-phone-link" aria-label="Call business" style="display: none;">
+                        <img src="/_vercel/image?url=%2Fphone.png&amp;w=96&amp;q=75" width="24" height="24" alt="" aria-hidden="true" style="display: block;">
+                    </a>
+                    <a id="tiktok-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok profile" title="TikTok" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="80 50 385 445" width="24" height="24" aria-hidden="true" focusable="false">
+                            <path fill="#25F4EE" transform="translate(-14 -19)" d="M297 85H352C361 136 394 169 434 177V223C396 226 362 207 337 177V356C337 416 289 459 226 459C163 459 113 412 113 350C113 289 162 240 224 240V278C185 276 151 307 151 345C151 382 181 412 218 412C254 412 282 383 282 346V85Z"/>
+                            <path fill="#FE2C55" transform="translate(15 19)" d="M297 85H352C361 136 394 169 434 177V223C396 226 362 207 337 177V356C337 416 289 459 226 459C163 459 113 412 113 350C113 289 162 240 224 240V278C185 276 151 307 151 345C151 382 181 412 218 412C254 412 282 383 282 346V85Z"/>
+                            <path fill="#000" d="M297 85H352C361 136 394 169 434 177V223C396 226 362 207 337 177V356C337 416 289 459 226 459C163 459 113 412 113 350C113 289 162 240 224 240V278C185 276 151 307 151 345C151 382 181 412 218 412C254 412 282 383 282 346V85Z"/>
+                        </svg>
+                    </a>
+                    <a id="ig-link" href="#" target="_blank" style="display: none; color: #E1306C; transition: transform 0.2s ease;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                    <a id="fb-link" href="#" target="_blank" style="display: none; color: #1877F2; transition: transform 0.2s ease;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </a>
                 </div>
                 <button type="button" class="luxury-menu-btn" id="luxury-menu-btn" aria-label="Menu">
                     <span></span><span></span><span></span>
