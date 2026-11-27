@@ -6,9 +6,9 @@
     <meta name="referrer" content="no-referrer">
     <title>Your details | Booking</title>
     <link rel="icon" type="image/svg+xml" href="/logtraq-favicon.svg?v=1">
-    <link rel="stylesheet" href="/styles.css?v=3">
+    <link rel="stylesheet" href="/styles.css?v=4">
     <script src="/config.js" defer></script>
-    <script src="/details.js?v=5" defer></script>
+    <script src="/details.js?v=7" defer></script>
 </head>
 <body class="details-page">
     <main class="container-public">
@@ -50,8 +50,11 @@
                 <label for="notes">Additional details (optional)</label>
                 <textarea id="notes" name="notes" maxlength="2000" placeholder="Anything you would like us to know"></textarea>
             </div>
+            <section id="service-booking-fields" class="service-booking-fields" hidden></section>
+            <p id="service-price-breakdown" class="booking-total" hidden></p>
             <button id="continue-payment" class="booking-button" type="submit">Continue to secure payment</button>
         </form>
+        <section id="booking-complete" class="booking-complete" role="status" aria-live="polite" hidden></section>
         <noscript>Please enable JavaScript to enter your booking details.</noscript>
     </main>
 </body>
