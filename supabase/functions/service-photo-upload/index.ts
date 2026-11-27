@@ -11,7 +11,7 @@ export async function handle(request, env = Deno.env, fetcher = fetch) {
   if(request.method!=="POST") return reply(405,{error:"Use POST."});
   try {
     const length=Number(request.headers.get("content-length")||0);
-    if(length>6291456) return reply(413,{error:"Choose a photo smaller than 5 MB."});
+    if(length>27262976) return reply(413,{error:"Choose a photo smaller than 25 MB."});
     const json=request.headers.get("content-type")?.includes("application/json");
     const body=json?await request.json():await request.formData();
     const get=name=>json?body[name]:body.get(name);
@@ -38,10 +38,10 @@ export async function handle(request, env = Deno.env, fetcher = fetch) {
     } else {
       const file=get("file");
       if(!file||typeof file.arrayBuffer!=="function") return reply(400,{error:"Choose a photo."});
-      if(file.size>5242880) return reply(413,{error:"Choose a photo smaller than 5 MB."});
+      if(file.size>26214400) return reply(413,{error:"Choose a photo smaller than 25 MB."});
       bytes=new Uint8Array(await file.arrayBuffer());
     }
-    if(bytes.length===0||bytes.length>5242880) return reply(413,{error:"Choose a photo smaller than 5 MB."});
+    if(bytes.length===0||bytes.length>26214400) return reply(413,{error:"Choose a photo smaller than 25 MB."});
     let ext="",mime="";
     if(bytes.length>=8&&[137,80,78,71,13,10,26,10].every((value,i)=>bytes[i]===value)) {ext="png";mime="image/png";}
     else if(bytes.length>=3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255) {ext="jpg";mime="image/jpeg";}
