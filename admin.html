@@ -40,7 +40,7 @@
                 <a href="#calendar" id="nav-calendar" aria-controls="calendar-panel" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg><span>Calendar</span></a>
                 <a href="#services" id="nav-services" aria-controls="services-panel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3"/></svg><span>Services</span></a>
             <a href="#payments" id="nav-payments"><span aria-hidden="true">R</span><span>Payments</span></a>
-                <a href="#gallery" id="nav-gallery"><span aria-hidden="true">�-�</span><span>Gallery</span></a>
+                <a href="#gallery" id="nav-gallery"><span aria-hidden="true">-</span><span>Gallery</span></a>
                 </nav>
             <div class="admin-sidebar-footer">
 <a id="nav-profile" class="admin-profile-link" href="#profile" aria-controls="profile-panel"><span id="profile-sidebar-avatar" class="profile-sidebar-avatar">B</span><span><strong id="profile-sidebar-name">Your business</strong><small>Business profile</small></span></a>
@@ -85,7 +85,7 @@
             <p class="admin-calendar-day-help">The selected day is white. Tap a time to change its availability.</p>
             <div class="admin-calendar-legend">
                 <span><span class="admin-calendar-key" aria-hidden="true"></span>Available</span>
-                <span><span class="admin-calendar-key is-unavailable" aria-hidden="true"></span>Unavailable �� crossed out</span>
+                <span><span class="admin-calendar-key is-unavailable" aria-hidden="true"></span>Unavailable  crossed out</span>
             </div>
 
             <!-- Time slot chips will be injected here -->
@@ -107,25 +107,22 @@
                     <p class="muted-text admin-section-description">Create, organise and publish your services here.</p></div>
                 </div>
                 <div class="service-heading-actions" role="group" aria-label="Service actions">
-                    <button class="service-secondary-button" id="add-category" type="button" disabled>Add group</button>
-                    <button class="admin-add-service" id="add-service" type="button" disabled>+ Add service</button>
-                    <button class="service-text-button" id="reload-services" type="button" disabled>Reload services</button>
+                    <button class="admin-add-service" id="add-service" type="button" disabled>Add service</button>
                 </div>
-                <p class="service-feedback" id="services-message" role="status" hidden></p>
-                <p class="service-feedback" id="categories-message" role="status" hidden></p>
+                <p class="service-feedback" id="services-message" role="status" aria-live="polite" hidden></p>
                 <p class="booking-error" id="services-error" role="alert" hidden></p>
-                <p class="muted-text" id="services-loading" role="status">Loading services�?�</p>
+                <p class="muted-text" id="services-loading" role="status">Loading services...</p>
                 <div id="services-list" class="services-list"></div>
                 <div class="admin-services-empty" id="services-empty" hidden>
                     <h3>Add your first service</h3>
-                    <p>You can create its group while adding the service.</p>
+                    <p>Choose whether it belongs to a group or stands alone.</p>
                 </div>
             </section>
 
 
             <section id="payments-panel" class="finance-panel" aria-labelledby="payments-heading" hidden>
                 <div class="finance-heading"><div><h2 class="admin-section-title" id="payments-heading" tabindex="-1">Payments</h2><p>Track received payments and manage customer invoices.</p></div></div>
-                <p id="finance-setup" class="finance-notice" role="status">Checking Payments access�?�</p>
+                <p id="finance-setup" class="finance-notice" role="status">Checking Payments access?</p>
                 <p id="finance-message" role="status" aria-live="polite"></p>
                 <form id="finance-login" class="finance-login">
                     <h3>Finance sign in</h3><p>Your finance account protects customer and payment records.</p>
@@ -184,144 +181,36 @@
             </dialog>
 
             <dialog id="service-dialog" class="service-drawer" aria-labelledby="service-form-heading">
-                <form class="service-form" id="service-form" aria-labelledby="service-form-heading" novalidate hidden>
-                    <div class="drawer-heading">
-                        <h3 id="service-form-heading">Add service</h3>
-                        <button id="close-service" class="service-icon-button" type="button" aria-label="Close service form">�-</button>
-                    </div>
-                    <fieldset id="service-fields">
-                        <div class="booking-field">
-                            <label for="service-name">Service name</label>
-                            <input id="service-name" name="service_name" maxlength="120" required aria-describedby="service-name-error">
-                            <p id="service-name-error" class="booking-error field-error" hidden></p>
-                        </div>
-                        <div class="booking-field">
-                            <label for="service-category">Group</label>
-                            <select id="service-category" name="category_id" aria-describedby="service-category-error">
-                                <option value="">Choose a group</option>
-                            </select>
-                            <div class="category-form-actions">
-                                <button id="create-service-category" class="service-text-button" type="button">+ Create new group</button>
-                                <button id="edit-service-category" class="service-text-button" type="button" hidden>Edit group</button>
-                            </div>
-                            <p id="service-category-error" class="booking-error field-error" hidden></p>
-                        </div>
-                        <div class="booking-field">
-                            <label for="service-type">Booking type</label>
-                            <select id="service-type" name="service_type">
-                                <option value="private">Private appointment</option>
-                                <option value="class">Shared class</option>
-                            </select>
-                            <p class="service-hint" id="service-type-help"></p>
-                        </div>
-                        <div class="service-duration" role="group" aria-labelledby="service-duration-label">
-                            <p class="service-field-label" id="service-duration-label">Duration</p>
-                            <div class="service-form-columns">
-                                <div class="booking-field">
-                                    <label for="service-hours">Hours</label>
-                                    <input id="service-hours" name="hours" type="number" min="0" max="24" step="1" value="0" required aria-describedby="service-duration-error">
-                                </div>
-                                <div class="booking-field">
-                                    <label for="service-minutes">Minutes</label>
-                                    <input id="service-minutes" name="minutes" type="number" min="0" max="59" step="1" value="0" required aria-describedby="service-duration-error">
-                                </div>
-                            </div>
-                            <p id="service-duration-error" class="booking-error field-error" hidden></p>
-                        </div>
-                        <div class="booking-field">
-                            <label for="service-price">Price (ZAR)</label>
-                            <input id="service-price" name="price" type="number" inputmode="decimal" min="0" max="21474836.47" step="0.01" required aria-describedby="service-price-help service-price-error">
-                            <p class="service-hint" id="service-price-help"></p>
-                            <p id="service-price-error" class="booking-error field-error" hidden></p>
-                        </div>
-                        <div class="booking-field">
-                            <label for="service-status">Catalogue status</label>
-                            <select id="service-status" name="catalogue_status" aria-describedby="service-publication-help">
-                                <option value="draft">Draft (hidden from clients)</option>
-                                <option value="published">Published (show in catalogue)</option>
-                                <option value="paused">Paused (temporarily hidden)</option>
-                            </select>
-                            <p id="service-publication-help" class="service-hint" role="status"></p>
-                        </div>
-
-                        <details id="service-content" class="service-options">
-                            <summary>Description &amp; photos</summary>
-                            <div class="booking-field">
-                                <label for="service-description">Description (optional)</label>
-                                <textarea id="service-description" name="description" maxlength="2000"></textarea>
-                            </div>
-                            <div class="booking-field service-photo-field">
-                                <label for="service-photo">Photo (optional)</label>
-                                <input id="service-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif">
-                                <p class="service-hint">Portrait, landscape or square. Up to 25 MB. We resize and compress it for you.</p>
-                                <p id="service-photo-status" class="service-hint" role="status"></p>
-                                <img id="service-photo-preview" class="service-photo-preview" alt="Selected service photo" hidden>
-                                <button id="remove-service-photo" class="service-secondary-button" type="button" hidden>Remove photo</button>
-                                <p id="photo-library-error" class="booking-error" role="status" hidden>Could not load saved photos. You can still upload a photo.</p>
-                                <div id="service-photo-library" class="service-photo-library" aria-label="Saved photos"></div>
-                            </div>
-                        </details>
-                        <details id="service-advanced" class="service-options">
-                            <summary>Pricing options</summary>
-                            <div class="booking-field">
-                                <label for="service-price-basis">Price applies to</label>
-                                <select id="service-price-basis" name="price_basis">
-                                    <option value="per_session">Whole booking</option>
-                                    <option value="per_person">Each person</option>
-                                </select>
-                            </div>
-                            <div class="booking-field" id="service-participants-field">
-                                <label for="service-participants">People included in one booking</label>
-                                <input id="service-participants" name="participants" type="number" min="1" max="10000" step="1" value="1" required>
-                                <p class="service-hint">Private booking size, not shared-class capacity.</p>
-                            </div>
-                        </details>
-                        <p class="booking-error" id="service-form-error" role="alert" tabindex="-1" hidden></p>
-                        <div class="service-form-actions drawer-actions">
-                            <button class="admin-add-service" id="save-service" type="submit">Save service</button>
-                            <button class="service-secondary-button" id="cancel-service" type="button">Cancel</button>
-                        </div>
-                    </fieldset>
-                </form>
-            </dialog>
-
-            <dialog id="category-dialog" class="category-dialog" aria-labelledby="category-form-heading">
-                <form class="service-form" id="category-form" aria-labelledby="category-form-heading" novalidate hidden>
-                    <div class="drawer-heading">
-                        <h3 id="category-form-heading">Create group</h3>
-                        <button id="close-category" class="service-icon-button" type="button" aria-label="Close category form">�-</button>
-                    </div>
-                    <fieldset id="category-fields">
-                        <div class="booking-field">
-                            <label for="category-label">Group name</label>
-                            <input id="category-label" name="label" maxlength="80" required>
-                        </div>
-                        <details id="category-options" class="category-options"><summary>More options</summary>
-                        <div class="service-form-columns">
-                            <div class="booking-field">
-                                <span class="service-field-label" id="category-icon-label">Group symbol</span>
-                                <div id="category-icon-picker" class="category-icon-picker" role="group" aria-labelledby="category-icon-label"></div>
-                                <select id="category-icon" name="icon" hidden aria-hidden="true" tabindex="-1">
-                                    <option value="grid">Grid</option><option value="person">Person</option>
-                                    <option value="people">People</option><option value="calendar">Calendar</option>
-                                    <option value="book">Book</option><option value="star">Star</option>
-                                </select>
-                            </div>
-                            <input id="category-order" name="sort_order" type="hidden" value="0">
-                        </div>
-                        <label class="service-checkbox" for="category-enabled">
-                            <input id="category-enabled" name="enabled" type="checkbox" checked>Show to clients
-                        </label>
-                        <p class="service-hint" id="category-impact">Hiding this group also hides its services.</p>
-                        </details>
-                        <p class="booking-error" id="category-form-error" role="alert" tabindex="-1" hidden></p>
-                        <div class="service-form-actions">
-                            <button class="admin-add-service" id="save-category" type="submit">Save group</button>
-                            <button class="service-secondary-button" id="cancel-category" type="button">Cancel</button>
-                        </div>
-                    </fieldset>
-                </form>
-            </dialog>
+  <form class="service-form" id="service-form" novalidate>
+    <div class="drawer-heading"><h3 id="service-form-heading">Add service</h3><button id="close-service" class="service-secondary-button" type="button">Close</button></div>
+    <fieldset id="service-fields">
+      <div class="booking-field"><label for="service-kind">Add as</label><select id="service-kind"><option value="individual">Individual service</option><option value="group">Service in a group</option></select></div>
+      <div class="booking-field" id="group-select-wrap" hidden><label for="service-category">Group</label><select id="service-category"></select><button id="create-group-inline" class="service-text-button" type="button">Create new group</button></div>
+      <div class="booking-field"><label for="service-name">Service name</label><input id="service-name" maxlength="120" required></div>
+      <div class="booking-field"><label for="service-description">What is this service?</label><textarea id="service-description" maxlength="2000" rows="3" placeholder="A short description for clients (optional)"></textarea></div>
+      <div class="booking-field"><label for="service-price">Price in ZAR (optional)</label><input id="service-price" type="number" inputmode="decimal" min="0" max="21474836.47" step="0.01"></div>
+      <div class="booking-field"><label for="service-price-basis">Pricing applies to</label><select id="service-price-basis"><option value="per_session">Whole booking</option><option value="per_person">Per person</option></select></div>
+      <div class="service-form-columns">
+        <div class="booking-field"><label for="service-participants">Number of people (optional)</label><input id="service-participants" type="number" min="1" max="10000" step="1"></div>
+        <div class="booking-field"><span class="service-field-label">Duration (optional)</span><div class="service-form-columns"><label>Hours<input id="service-hours" type="number" min="0" max="24" step="1"></label><label>Minutes<input id="service-minutes" type="number" min="0" max="59" step="1"></label></div></div>
+      </div>
+      <div class="booking-field"><label for="service-location">Location or travel details (optional)</label><input id="service-location" maxlength="250"></div>
+      <div class="booking-field"><label for="service-policy">Booking policy (optional)</label><textarea id="service-policy" maxlength="2000" rows="3"></textarea></div>
+      <div class="booking-field"><label for="service-status">Client visibility</label><select id="service-status"><option value="draft">Draft - hidden from clients</option><option value="published">Published - visible to clients</option><option value="paused">Paused - hidden from clients</option></select></div>
+      <p class="booking-error" id="service-form-error" role="alert" tabindex="-1" hidden></p>
+      <div class="service-form-actions drawer-actions"><button class="admin-add-service" type="submit">Save service</button><button id="cancel-service" class="service-secondary-button" type="button">Cancel</button></div>
+    </fieldset>
+  </form>
+</dialog>
+<dialog id="group-dialog" class="category-dialog" aria-labelledby="group-form-heading">
+  <form class="service-form" id="group-form" novalidate>
+    <div class="drawer-heading"><h3 id="group-form-heading">Create group</h3><button id="close-group" class="service-secondary-button" type="button">Close</button></div>
+    <fieldset><input id="group-id" type="hidden"><div class="booking-field"><label for="group-label">Group name</label><input id="group-label" maxlength="80" required></div>
+      <p class="booking-error" id="group-form-error" role="alert" hidden></p>
+      <div class="service-form-actions"><button class="admin-add-service" type="submit">Save group</button><button id="cancel-group" class="service-secondary-button" type="button">Cancel</button></div>
+    </fieldset>
+  </form>
+</dialog>
         <section id="gallery-panel" aria-labelledby="gallery-heading" hidden>
             <h2 id="gallery-heading" class="admin-section-title" tabindex="-1">Gallery</h2>
             <p class="muted-text">Create portfolio albums and choose the photos clients see together.</p>
@@ -329,8 +218,8 @@
         </section>
 
         <section id="profile-panel" aria-labelledby="profile-heading" hidden>
- <div class="profile-heading-row"><div><h2 id="profile-heading" tabindex="-1">Business Profile</h2><p>Manage your business details, branding and client-facing information.</p></div><a id="profile-preview" class="profile-button profile-secondary" target="_blank" rel="noopener noreferrer">Preview client page ��-</a></div>
- <p id="profile-feedback" role="status" aria-live="polite">Loading business profile�?�</p>
+ <div class="profile-heading-row"><div><h2 id="profile-heading" tabindex="-1">Business Profile</h2><p>Manage your business details, branding and client-facing information.</p></div><a id="profile-preview" class="profile-button profile-secondary" target="_blank" rel="noopener noreferrer">Preview client page -</a></div>
+ <p id="profile-feedback" role="status" aria-live="polite">Loading business profile?</p>
  <button type="button" id="profile-reload" class="profile-button profile-secondary">Reload saved profile</button>
  <form id="business-profile-form">
  <fieldset id="profile-fields" disabled><legend class="admin-sr-only">Business profile details</legend><div class="profile-grid">
@@ -350,11 +239,11 @@
             <div style="margin-top: 24px; font-size: 12px; color: #94A3B8; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500;">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <img src="/_vercel/image?url=%2Ffinal_tax_logo.png&amp;w=96&amp;q=75" alt="Logtraq" style="width: 14px; height: 14px; object-fit: contain;">
-                    <span>�� 2026 Logtraq</span>
+                    <span> 2026 Logtraq</span>
                 </div>
                 <span style="opacity: 0.4;">|</span>
-                <a href="mailto:info@logtraq.co.za" style="text-decoration: none; font-size: 14px; opacity: 0.8; transition: opacity 0.2s;" title="Email Logtraq">�o%��?</a>
-                <a href="tel:+27793257256" style="text-decoration: none; font-size: 14px; opacity: 0.8; transition: opacity 0.2s;" title="Call Logtraq">�Y"z</a>
+                <a href="mailto:info@logtraq.co.za" style="text-decoration: none; font-size: 14px; opacity: 0.8; transition: opacity 0.2s;" title="Email Logtraq">o%?</a>
+                <a href="tel:+27793257256" style="text-decoration: none; font-size: 14px; opacity: 0.8; transition: opacity 0.2s;" title="Call Logtraq">Y"z</a>
             </div>
         </footer>
     </div>
@@ -368,7 +257,7 @@
     <script defer src="/business-profile.js?v=5"></script>
     <script defer src="/admin-profile.js?v=4"></script>
     <script defer src="/admin-navigation.js?v=5"></script>
-    <script defer src="/admin-services.js?v=9"></script>
+    <script defer src="/admin-services.js?v=10"></script>
     <script defer src="/admin-slot-time.js?v=1"></script>
     <script defer src="/admin-payments.js?v=2"></script>
     <script defer src="/admin.js?v=6"></script>
