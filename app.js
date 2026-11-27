@@ -46,10 +46,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path || '')
             ? SUPABASE_URL+'/storage/v1/object/public/service-photos/'+path : '';
     }
+    async function loadServiceOpenings(service, force = false) {
+        if (!service) return slotsByDate;
+        const cached=serviceSlotsCache.get(service.id);
+        if (!force&&cached&&Date.now()-cached.loadedAt<15000) {slotsByDate=cached.byDate;return slotsByDate;}
+        const from=localDateString(new Date());
+        const untilDate=new Date(from+'T12:00:00');untilDate.setDate(untilDate.getDate()+89);
+        const to=localDateString(untilDate);
+        const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/get_service_availability',{
+            method:'POST',cache:'no-store',
+            headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+            body:JSON.stringify({p_slug:bizSlug,p_service_id:service.id,p_from:from,p_to:to})
+        });
+        if(!response.ok)throw new Error('Could not load times for this service.');
+        const openings=await response.json(),byDate={};
+        (Array.isArray(openings)?openings:[]).forEach(slot=>{
+            if(!byDate[slot.date])byDate[slot.date]=[];
+            byDate[slot.date].push(slot);
+        });
+        serviceSlotsCache.set(service.id,{loadedAt:Date.now(),byDate});
+        slotsByDate=byDate;
+        return byDate;
+    }
 
     let activeDateString = null;
     let viewedMonth = null;
     let slotsByDate = {};
+    const serviceSlotsCache = new Map();
     let monthSignature = null;
 
     let selectedSlot = null;
@@ -151,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     function serviceDuration(service) {
-        const duration = Number(service.duration_minutes);
+        const duration = Number(service.booking_config?.duration_minutes || service.duration_minutes);
         if (!Number.isFinite(duration) || duration <= 0) return '';
         const hours = Math.floor(duration / 60);
         const minutes = duration % 60;
@@ -159,17 +182,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function servicePrice(service, total = false) {
-        const people = Number(service.participant_count) || 1;
-        const multiplier = total && service.price_basis === 'per_person' ? people : 1;
-        return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: service.currency || 'ZAR' })
-            .format((Number(service.price_amount) || 0) * multiplier / 100);
+        const pricing = service.booking_config?.pricing || {};
+        const mode = pricing.mode || (service.price_basis === 'per_person' ? 'per_person' : 'fixed');
+        let amount = Number(pricing.amount ?? service.price_amount) || 0;
+        if (mode === 'custom_quote') return 'Custom quotation';
+        if (mode === 'tiered') {
+            const tier = (pricing.tiers || []).slice().sort((a,b)=>a.amount-b.amount)[0];
+            if (!tier) return 'Custom quotation';
+            amount = Number(tier.amount) || 0;
+        }
+        const formatted = new Intl.NumberFormat('en-ZA', { style:'currency', currency:service.currency||'ZAR' }).format(amount/100);
+        return mode === 'per_person' ? formatted + ' per person'
+            : mode === 'per_hour' ? formatted + ' per hour'
+            : formatted;
     }
 
     function serviceDetails(service) {
         const duration = serviceDuration(service);
-        const count = Number(service.participant_count) || 0;
-        const people = count ? count + (count === 1 ? ' person' : ' people') + ' per booking' : '';
-        return [duration, people].filter(Boolean).join(' · ') || 'Booking details available after selection';
+        const capacity = service.booking_config?.capacity;
+        const low = Number(capacity?.minimum || 1), high = Number(capacity?.maximum || service.participant_count || 1);
+        const people = low === high ? low + (low === 1 ? ' person' : ' people') : low + '-' + high + ' participants';
+        return [duration, people].filter(Boolean).join(' · ');
     }
 
     function renderBookingSummary() {
@@ -186,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const fields = {
             'booking-summary-name': selectedService ? selectedService.name : '',
             'booking-summary-details': selectedService ? serviceDetails(selectedService) : '',
-            'booking-summary-price': selectedService ? servicePrice(selectedService, true) + ' per booking' : ''
+            'booking-summary-price': selectedService ? servicePrice(selectedService, true) : ''
         };
         Object.entries(fields).forEach(([id, text]) => {
             const element = document.getElementById(id);
@@ -301,8 +334,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const meta = document.createElement('div');
                 meta.className = 'luxury-service-meta';
                 const durationText = serviceDuration(service);
-                meta.textContent = [durationText ? durationText.toUpperCase() : '', servicePrice(service),
-                    service.price_basis === 'per_person' ? 'per person' : 'per booking'].filter(Boolean).join(' · ');
+                meta.textContent = [durationText ? durationText.toUpperCase() : '', servicePrice(service)].filter(Boolean).join(' · ');
                 body.appendChild(meta);
 
                 if (service.description) {
@@ -319,16 +351,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                 choose.textContent = choose.disabled ? 'Unavailable' : isSelected ? 'Selected' : 'Select';
                 choose.setAttribute('aria-pressed', String(isSelected));
                 choose.setAttribute('aria-label', (choose.disabled ? 'Class times not available for ' : 'Select ') + service.name);
-                choose.addEventListener('click', () => {
+                choose.addEventListener('click', async () => {
                     if (choose.disabled) return;
                     if (!selectedService || selectedService.id !== service.id) {
                         selectedSlot = null;
                         selectedService = service;
                         requestedServiceId = '';
-                        renderCatalogue();
+                        availabilityLoaded = false;
                         updateBookButton();
-                        updateContinueButton();
-                        renderSlots(slotsByDate[activeDateString] || []);
+                        try {
+                            await loadServiceOpenings(service,true);
+                            renderCatalogue();
+                            updateBookButton();
+                            updateContinueButton();
+                            renderMonth();
+                            renderSlots(slotsByDate[activeDateString] || []);
+                        } catch (error) {
+                            statusEl.hidden=false;
+                            statusEl.textContent=error.message||'Could not load service availability.';
+                        }
                     } else {
                         advanceToSchedule();
                     }
@@ -362,7 +403,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (selectedService) {
             document.getElementById('calendar-service-name').textContent = selectedService.name;
             document.getElementById('calendar-service-details').textContent = serviceDetails(selectedService) + ' · ' +
-                servicePrice(selectedService, true) + ' per booking';
+                servicePrice(selectedService, true);
         }
     }
 
@@ -691,11 +732,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             // The RPC enforces published + active + enabled, scoped to this business.
             // Fail closed on an inconsistent response rather than expose the slot-only fallback.
             if (!Array.isArray(nextServices) || !Array.isArray(publicCategories) ||
-                nextServices.some(service => !publicCategories.some(category => category.id === service.category_id))) {
+                nextServices.some(service => service.category_id && !publicCategories.some(category => category.id === service.category_id))) {
                 throw new Error('Invalid catalogue category response');
             }
             categories = publicCategories.filter(category =>
                 nextServices.some(service => service.category_id === category.id));
+            if(nextServices.some(service=>!service.category_id))categories.push({id:'__individual__',label:'Individual services',icon:'grid',sort_order:999999});
             if (selectedService) {
                 const fresh = nextServices.find(service => service.id === selectedService.id && service.service_type === 'private');
                 if (!fresh || JSON.stringify(fresh) !== JSON.stringify(selectedService)) selectedSlot = null;
@@ -716,23 +758,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                     : categories.length ? categories[0].id : '__individual__';
             }
             renderCatalogue();
-            const slots = (data.slots || []).filter(slotIsFuture);
-            availabilityLoaded = true;
-            if (selectedSlot && !slots.some(slot =>
-                slot.date === selectedSlot.date && slot.time &&
-                slot.time.substring(0, 5) === selectedSlot.time &&
-                (slot.status === undefined || slot.status === 'open')
-            )) {
-                selectedSlot = null;
-            }
-            updateBookButton();
-            // 5. Group ONLY the slots returned by the database
-            slotsByDate = {};
-            slots.forEach(slot => {
-                if (!slotsByDate[slot.date]) slotsByDate[slot.date] = [];
+            const baseSlots=(data.slots||[]).filter(slotIsFuture);
+            availabilityLoaded=true;
+            slotsByDate={};
+            baseSlots.forEach(slot=>{
+                if(!slotsByDate[slot.date])slotsByDate[slot.date]=[];
                 slotsByDate[slot.date].push(slot);
             });
-
+            if(selectedService) await loadServiceOpenings(selectedService);
+            if(selectedSlot&&!((slotsByDate[selectedSlot.date]||[]).some(slot=>
+                slot.time&&slot.time.substring(0,5)===selectedSlot.time&&slotIsFuture(slot)))){
+                selectedSlot=null;
+            }
+            updateBookButton();
             if (selectedService && !selectedSlot && !((slotsByDate[activeDateString] || []).some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)))) {
                 const firstOpenDate = Object.keys(slotsByDate).sort().find(date => slotsByDate[date].some(slot => (slot.status === undefined || slot.status === 'open') && slotIsFuture(slot)));
                 if (firstOpenDate) { activeDateString = firstOpenDate; viewedMonth = firstOpenDate.slice(0,7); monthSignature = ''; }
