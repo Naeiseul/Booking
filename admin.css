@@ -278,3 +278,32 @@ html:has(.admin-page dialog[open]) { overflow:hidden; }
 
 /* Admin portfolio gallery */
 .admin-gallery-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0}.admin-gallery-button{border:1px solid #111;background:#111;color:#fff;border-radius:10px;padding:10px 14px;font:600 14px inherit;cursor:pointer}.admin-gallery-list{display:grid;gap:12px}.admin-gallery-card{display:grid;grid-template-columns:92px 1fr auto;gap:14px;align-items:center;padding:12px;border:1px solid #e4e4e4;border-radius:14px;background:#fff}.admin-gallery-card img{width:92px;height:72px;object-fit:cover;border-radius:9px;background:#eee}.admin-gallery-card h3{margin:0;font-size:16px}.admin-gallery-card p{margin:5px 0 0;color:#666;font-size:13px}.admin-gallery-editor{margin-top:20px;padding:20px;border:1px solid #ddd;border-radius:14px;background:#fff}.admin-gallery-editor label{display:flex;flex-direction:column;gap:7px;margin:12px 0;font-size:13px;font-weight:600}.admin-gallery-editor input,.admin-gallery-editor textarea{padding:10px;border:1px solid #d6d6d6;border-radius:8px;font:inherit}.admin-gallery-editor textarea{min-height:92px;resize:vertical}.admin-gallery-photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}.admin-gallery-photo{position:relative}.admin-gallery-photo img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}.admin-gallery-photo button{position:absolute;right:2px;top:2px;border:0;border-radius:50%;width:28px;height:28px;background:#fff;color:#111;font-size:18px;cursor:pointer}@media(max-width:600px){.admin-gallery-card{grid-template-columns:70px 1fr}.admin-gallery-card img{width:70px;height:58px}.admin-gallery-card .admin-gallery-button{grid-column:1/-1}.admin-gallery-photos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Service booking settings stay contained within the Services editor. */
+.service-booking-settings { display: grid; gap: 14px; }
+.service-config-section { min-width: 0; padding: 16px; border: 1px solid #D7DCE3 !important; border-radius: 14px; background: #FAFAFA; }
+.service-config-section legend { padding: 0 6px; font-size: 16px; font-weight: 700; }
+.service-config-body { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.service-config-body > .booking-field { margin: 0; }
+.service-config-body input:not([type="checkbox"]), .service-config-body textarea {
+  width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #CBD5E1; border-radius: 10px;
+  background: var(--surface); color: var(--text); font: inherit;
+}
+.service-config-inherit { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; }
+.service-config-inherit input, .service-config-check input { width: 18px; height: 18px; accent-color: var(--ui-action); }
+.service-config-checks { display: flex; flex-wrap: wrap; gap: 10px 16px; grid-column: 1 / -1; padding: 10px; border: 1px solid #E1E5EA; border-radius: 10px; }
+.service-config-checks legend { font-size: 13px; margin: 0; padding: 0 5px; }
+.service-config-check { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 14px; }
+.service-config-list { grid-column: 1 / -1; display: grid; gap: 10px; }
+.service-config-list-heading { font-weight: 650; }
+.service-config-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: end; gap: 10px; padding: 12px; border: 1px solid #E1E5EA; border-radius: 10px; background: white; }
+.service-config-row .booking-field { margin: 0; }
+.service-config-row .booking-field input:not([type="checkbox"]), .service-config-row .booking-field select { min-width: 0; }
+.service-config-row > button { grid-column: 1 / -1; justify-self: start; }
+.service-bookings { margin-top: 28px; }
+.service-booking-row { display: flex; justify-content: space-between; gap: 18px; padding: 14px 0; border-bottom: 1px solid #D7DCE3; }
+.service-booking-row p { margin: 6px 0 0; }
+@media (max-width: 620px) {
+  .service-config-body { grid-template-columns: minmax(0,1fr); }
+  .service-config-row { grid-template-columns: minmax(0,1fr); }
+  .service-config-checks { grid-column: 1; }
+}
